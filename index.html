@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="de" id="htmlRoot">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="icon" type="image/png" sizes="64x64" href="icons/favicon-64.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Salonplafond">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Salonplafond BAR v3.1.04</title>
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- SheetJS pre Excel Import & Export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class' };</script>
+  <meta name="theme-color" content="#0f172a">
+  <script>
+    // Vor dem ersten Zeichnen: Blur-Einstellung, Schriftgröße und Design setzen (kein Flackern)
+    try {
+      var de = document.documentElement;
+      if (localStorage.getItem('salon_blur') !== 'off') de.classList.add('blur-on');
+      var st = JSON.parse(localStorage.getItem('salon_settings') || '{}');
+      if (st.fontScale) de.style.fontSize = st.fontScale + '%';
+      if (st.reduceMotion) de.classList.add('reduce-motion');
+      var th = localStorage.getItem('salon_theme') || st.theme || 'dark';
+      var dark = th === 'auto' ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) : th !== 'light';
+      if (dark) de.classList.add('dark');
+      window.__salonDark = dark;
+    } catch (e) { document.documentElement.classList.add('dark'); window.__salonDark = true; }
+  </script>
+  <link rel="stylesheet" href="css/style.css?v=3.1.04">
+</head>
+<body class="dark-mode p-3 pt-0 md:p-8 max-w-6xl mx-auto pb-32" onclick="closeDropdowns(event)">
+  <script>if (window.__salonDark === false) { document.body.classList.remove('dark-mode'); document.body.classList.add('light-mode'); }</script>
+
+  <!-- 1. PRIHLASOVACIA OBRAZOVKA -->
+  <div id="authContainer" class="fixed inset-0 z-[200] bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center p-4 md:p-6 text-center overflow-y-auto">
+    <div class="flex flex-col items-center gap-4 w-full max-w-lg my-auto">
+      
+      <div class="login-logo-advanced w-16 h-16 bg-amber-400 rounded-2xl flex flex-col items-center justify-center shadow-2xl p-1 text-slate-950 font-bold select-none border-2 border-amber-300 mx-auto">
+        <div class="logo-bar-login"></div>
+        <div class="text-2xl font-black leading-none my-0">O</div>
+        <div class="text-[10px] font-black leading-none mt-0.5">•</div>
+      </div>
+
+      <div>
+        <h1 class="text-lg md:text-xl font-black tracking-wider text-slate-900 dark:text-white uppercase">Anmeldung</h1>
+        <h2 class="text-xl md:text-2xl font-extrabold text-amber-700 dark:text-amber-400 tracking-tight mt-1">Salonplafond BAR</h2>
+        <span class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-0.5 block"><span data-app-version>v3.1.04</span> • Touch-Grid PIN-Login</span>
+      </div>
+
+      <div id="pinLoginForm" class="w-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 p-5 rounded-2xl shadow-2xl space-y-4 text-left mt-1">
+        <div>
+          <label class="block text-xs font-semibold uppercase mb-2 text-slate-700 dark:text-slate-300 flex items-center justify-between">
+            <span>1. Wer bist du? (Personal wählen)</span>
+            <span id="selectedWaiterLabel" class="text-amber-700 dark:text-amber-400 font-bold"></span>
+          </label>
+          <div id="loginPickerWrap">
+            <div id="loginSearchRow" class="hidden mb-3">
+              <input type="search" id="loginSearchInput" oninput="renderLoginGrid()" onkeydown="if (event.key === 'Enter') { event.preventDefault(); loginPickFirstMatch(); }" autocomplete="off" placeholder="🔍 Name suchen ..." class="ui-search">
+            </div>
+            <div id="waiterGridContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
+              <p class="col-span-full text-slate-500 italic text-xs text-center py-4">Personal wird geladen...</p>
+            </div>
+            <div class="login-view-toggle">
+              <button type="button" id="loginViewToggleBtn" onclick="toggleLoginView()"></button>
+            </div>
+          </div>
+        </div>
+
+        <div id="pinInputSection" class="hidden border-t border-slate-300 dark:border-slate-800 pt-3">
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-semibold uppercase text-slate-700 dark:text-slate-300">2. PIN-Code eingeben</label>
+            <button type="button" onclick="resetWaiterSelection()" class="text-[11px] text-amber-700 dark:text-amber-400 hover:underline">← Anderen Namen wählen</button>
+          </div>
+          <div class="relative mb-2">
+            <input type="password" id="loginPinInput" readonly placeholder="••••" class="w-full p-2.5 text-center tracking-widest text-base rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-amber-700 dark:text-amber-400 font-black focus:outline-none focus:border-amber-400">
+          </div>
+
+          <div class="grid grid-cols-3 gap-1.5">
+            <button type="button" onclick="appendPinNum('1')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">1</button>
+            <button type="button" onclick="appendPinNum('2')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">2</button>
+            <button type="button" onclick="appendPinNum('3')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">3</button>
+            <button type="button" onclick="appendPinNum('4')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">4</button>
+            <button type="button" onclick="appendPinNum('5')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">5</button>
+            <button type="button" onclick="appendPinNum('6')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">6</button>
+            <button type="button" onclick="appendPinNum('7')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">7</button>
+            <button type="button" onclick="appendPinNum('8')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">8</button>
+            <button type="button" onclick="appendPinNum('9')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">9</button>
+            <button type="button" onclick="clearPinInput()" class="p-2.5 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-700 dark:text-red-400 text-xs font-bold rounded-xl transition">C</button>
+            <button type="button" onclick="appendPinNum('0')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">0</button>
+            <button type="button" onclick="backspacePinInput()" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-amber-700 dark:text-amber-400 text-xs font-bold rounded-xl transition">⌫</button>
+          </div>
+          <button type="button" id="pinSubmitBtn" onclick="submitPinLogin()" class="w-full mt-2 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold rounded-xl text-sm transition shadow-lg">🔓 Anmelden</button>
+        </div>
+
+        <div id="pinAuthError" class="text-xs text-red-700 dark:text-red-400 hidden font-medium text-center"></div>
+
+      </div>
+
+      <div class="mt-2 flex flex-col items-center gap-1">
+        <span class="text-xs text-slate-700 dark:text-slate-300 font-extrabold block">Erstellt von © T0mc1k (Tomas Kardos)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPRÁVCOVSKÝ PANEL PRE PERSONAL & PINs -->
+  <div id="staffPinManagementModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-[260]">
+    <div class="card max-w-3xl w-full relative flex flex-col max-h-[88vh] overflow-hidden p-0 border-amber-500/50 shadow-2xl">
+
+      <div class="ui-head">
+        <div>
+          <h3 class="ui-head-title">👤 Personal & PINs</h3>
+          <p class="ui-head-sub">Mitarbeiter, PIN-Codes, Rollen und Rechte verwalten.</p>
+        </div>
+        <button type="button" onclick="closeStaffPinModal()" class="ui-close" aria-label="Schließen">&times;</button>
+      </div>
+
+      <!-- Ansicht 1: Mitarbeiter-Liste -->
+      <div id="staffViewList" class="flex flex-col min-h-0 flex-1">
+        <div class="ui-toolbar">
+          <div class="flex gap-2 flex-wrap items-center">
+            <input type="search" id="staffSearchInput" oninput="renderStaffList()" placeholder="🔍 Mitarbeiter suchen..." class="ui-search flex-1 min-w-[10rem]">
+            <button type="button" onclick="startNewStaff()" class="ui-btn-primary">➕ Neuer Mitarbeiter</button>
+            <button type="button" onclick="openLoginHistoryModal()" class="ui-btn-ghost">📜 Login-Protokoll</button>
+          </div>
+          <div class="flex gap-1.5 flex-wrap items-center">
+            <button type="button" id="staffChip_all" onclick="setStaffRoleFilter('all')" class="ui-chip active">Alle</button>
+            <button type="button" id="staffChip_staff" onclick="setStaffRoleFilter('staff')" class="ui-chip">Kellner</button>
+            <button type="button" id="staffChip_manager" onclick="setStaffRoleFilter('manager')" class="ui-chip">Manager</button>
+            <button type="button" id="staffChip_developer" onclick="setStaffRoleFilter('developer')" class="ui-chip">Developer</button>
+            <span id="staffSummary" class="staff-summary"></span>
+          </div>
+        </div>
+        <div id="staffManagementListContainer" class="staff-grid">
+          <p class="staff-empty">Lade Personal...</p>
+        </div>
+      </div>
+
+      <!-- Ansicht 2: Mitarbeiter anlegen / bearbeiten -->
+      <div id="staffViewForm" class="hidden flex-col min-h-0 flex-1">
+        <div class="ui-toolbar">
+          <div class="flex items-center gap-3 flex-wrap">
+            <button type="button" onclick="cancelStaffForm()" class="ui-btn-ghost">← Zurück zur Liste</button>
+            <h4 id="staffFormTitle" class="staff-form-title">➕ Neuer Mitarbeiter</h4>
+          </div>
+        </div>
+
+        <div id="staffFormScroll" class="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
+          <input type="hidden" id="editingStaffOriginalName" value="">
+          <input type="hidden" id="staffInputAvatar" value="">
+          <select id="staffInputRole" class="hidden">
+            <option value="staff">staff</option>
+            <option value="manager">manager</option>
+            <option value="developer">developer</option>
+          </select>
+
+          <div class="form-section">
+            <div class="form-section-title">1 · Profil</div>
+            <div class="flex gap-4 items-start flex-wrap">
+              <div id="staffAvatarPreview" class="staff-avatar-lg">?</div>
+              <div class="flex-1 min-w-[13rem] flex flex-col gap-3">
+                <div>
+                  <label class="form-label" for="staffInputName">Name / Vorname</label>
+                  <input type="text" id="staffInputName" oninput="updateStaffAvatarPreview()" maxlength="40" placeholder="z. B. Max" class="ui-field">
+                </div>
+                <div>
+                  <label class="form-label">Profilbild (optional)</label>
+                  <input type="file" id="staffAvatarFile" accept="image/*" onchange="uploadStaffAvatarToSupabase(event)" class="text-xs file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-600 cursor-pointer">
+                  <span id="staffAvatarStatus" class="form-hint block mt-1"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-title">2 · Rolle</div>
+            <div class="role-seg">
+              <button type="button" id="staffRoleBtn_staff" onclick="setStaffRole('staff')" class="role-opt active">
+                <span class="role-ico">🍹</span><b>Kellner</b><small>Rezepte ansehen, Chat, eigenes Profil</small>
+              </button>
+              <button type="button" id="staffRoleBtn_manager" onclick="setStaffRole('manager')" class="role-opt">
+                <span class="role-ico">🧑‍💼</span><b>Manager</b><small>Personal, Tickets, Login-Protokoll und Getränke verwalten</small>
+              </button>
+              <button type="button" id="staffRoleBtn_developer" onclick="setStaffRole('developer')" class="role-opt">
+                <span class="role-ico">🛠️</span><b>Developer</b><small>Wie Manager, zusätzlich Tickets löschen</small>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-title">3 · PIN-Code</div>
+            <div class="flex gap-2 items-center flex-wrap">
+              <input type="password" id="staffInputPin" inputmode="numeric" maxlength="6" autocomplete="new-password" placeholder="4 bis 6 Ziffern" class="ui-field flex-1 min-w-[10rem] tracking-widest">
+              <button type="button" onclick="toggleStaffPinVisibility()" class="ui-btn-ghost" title="PIN anzeigen oder verbergen">👁️ Anzeigen</button>
+              <button type="button" onclick="generateStaffPin()" class="ui-btn-ghost" title="Zufälligen 4-stelligen PIN erzeugen">🎲 Vorschlag</button>
+            </div>
+            <p id="staffPinHint" class="form-hint mt-1.5">Pflichtfeld: 4 bis 6 Ziffern.</p>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-title">4 · Rechte</div>
+            <label class="switch-row">
+              <span class="min-w-0">
+                <b class="block text-xs">🍸 Darf Getränke bearbeiten</b>
+                <small id="staffCanEditNote" class="form-hint block mt-0.5">Erlaubt dem Mitarbeiter, Getränke anzulegen, zu ändern und zu löschen.</small>
+              </span>
+              <span class="switch"><input type="checkbox" id="staffInputCanEdit"><span class="switch-track"></span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="ui-foot">
+          <button type="button" onclick="cancelStaffForm()" class="ui-btn-ghost">Abbrechen</button>
+          <button type="button" onclick="saveStaffMember()" class="ui-btn-primary">💾 Speichern</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LOGIN-HISTORIE / PROTOKOLL -->
+  <div id="loginHistoryModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-[285]">
+    <div class="card max-w-2xl w-full p-6 relative flex flex-col gap-4 max-h-[85vh] overflow-y-auto border-amber-500/50 shadow-2xl">
+      <button onclick="closeLoginHistoryModal()" class="absolute top-4 right-4 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-2xl font-bold">&times;</button>
+      
+      <div class="flex items-center justify-between pr-8">
+        <div>
+          <h3 class="text-xl font-bold text-amber-600 dark:text-amber-400 flex items-center gap-2">📜 Login-Historie & Protokoll</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Übersicht darüber, welcher Benutzer sich wann im System angemeldet hat und wer aktuell online ist.</p>
+        </div>
+        <button onclick="clearLoginHistoryLogs()" class="px-3 py-1.5 bg-red-500/20 hover:bg-red-500 text-red-600 dark:text-red-400 hover:text-white rounded-lg transition text-xs font-bold border border-red-500/30 shrink-0 flex items-center gap-1" title="Login-Protokoll leeren">
+          🗑️ Protokoll leeren
+        </button>
+      </div>
+
+      <!-- Online Status Box -->
+      <div id="onlineUsersSummaryBox" class="custom-box p-3 rounded-xl border flex flex-col gap-2 text-xs">
+        <span class="font-bold text-amber-600 dark:text-amber-400 uppercase text-[10px]">🟢 Aktiv online in den letzten 15 Minuten (<span id="onlineCountBadge">0</span>):</span>
+        <div id="onlineUsersListContainer" class="flex flex-wrap gap-1.5">
+          <span class="text-slate-500 italic">Lade Online-Status...</span>
+        </div>
+      </div>
+
+      <div id="loginHistoryListContainer" class="flex flex-col gap-2 max-h-[40vh] overflow-y-auto pr-1 custom-box p-3 rounded-xl border text-xs">
+        <p class="text-slate-500 italic text-xs text-center py-4">Lade Login-Protokoll...</p>
+      </div>
+
+      <div class="flex justify-end pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeLoginHistoryModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-white rounded-xl text-xs transition">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MÔJ PROFIL (USER PROFILE) S BIO -->
+  <div id="userProfileModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-[280]">
+    <div class="card max-w-xl w-full relative flex flex-col max-h-[90vh] overflow-hidden p-0 border-amber-500/50 shadow-2xl">
+
+      <div class="ui-head">
+        <div>
+          <h3 class="ui-head-title">👤 Mein Profil</h3>
+          <p class="ui-head-sub">So sehen dich deine Kollegen im Chat und in der Personalliste.</p>
+        </div>
+        <button type="button" onclick="closeUserProfileModal()" class="ui-close" aria-label="Schließen">&times;</button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
+
+        <!-- Profilkarte -->
+        <div class="profile-hero">
+          <div class="profile-cover"></div>
+          <div class="profile-hero-body">
+            <button type="button" id="profileAvatarButton" class="profile-avatar-wrap" onclick="document.getElementById('profileAvatarFile').click()" title="Profilfoto ändern">
+              <span id="profileModalAvatarContainer" class="profile-avatar"></span>
+              <span class="profile-avatar-cam">📷</span>
+            </button>
+            <div class="profile-id">
+              <h4 id="profileModalName" class="profile-name"></h4>
+              <div class="flex gap-2 flex-wrap items-center mt-1">
+                <span id="profileModalRole" class="staff-pill pill-staff"></span>
+                <span id="profileLastLogin" class="profile-meta"></span>
+              </div>
+            </div>
+          </div>
+          <p id="profileBioPreview" class="profile-bio-preview"></p>
+          <div class="flex gap-2 flex-wrap px-4 pb-4">
+            <button type="button" onclick="document.getElementById('profileAvatarFile').click()" class="ui-btn-ghost">📷 Foto ändern</button>
+            <button type="button" onclick="openMyFullAvatar()" class="ui-btn-ghost">🔍 Foto ansehen</button>
+            <span id="profileAvatarStatus" class="profile-meta self-center"></span>
+          </div>
+          <input type="file" id="profileAvatarFile" accept="image/*" class="hidden" onchange="uploadMyAvatarToSupabase(event)">
+          <input type="hidden" id="profileInputAvatarUrl" value="">
+        </div>
+
+        <!-- Arbeitsplan -->
+        <button type="button" onclick="closeUserProfileModal(); openWorkScheduleModal();" class="profile-link">
+          <span class="profile-link-ico">🗓️</span>
+          <span class="min-w-0 flex-1 text-left"><b class="block text-sm">Mein Arbeitsplan</b><small class="block text-xs profile-link-sub">Deine Schichten dieser Woche ansehen</small></span>
+          <span class="menu-arrow">›</span>
+        </button>
+
+        <!-- Über mich -->
+        <div class="form-section">
+          <div class="form-section-title">Über mich</div>
+          <textarea id="profileInputBio" rows="2" maxlength="140" oninput="onProfileBioInput()" placeholder="Schreibe etwas über dich oder deinen Status ..." class="ui-field"></textarea>
+          <div class="flex items-center justify-between gap-2 mt-1.5 flex-wrap">
+            <div class="flex gap-1.5 flex-wrap">
+              <button type="button" class="ui-chip" onclick="setProfileBio('🍸 Hinter der Bar')">🍸 Hinter der Bar</button>
+              <button type="button" class="ui-chip" onclick="setProfileBio('☕ In der Pause')">☕ In der Pause</button>
+              <button type="button" class="ui-chip" onclick="setProfileBio('🔥 Heute voll dabei')">🔥 Voll dabei</button>
+              <button type="button" class="ui-chip" onclick="setProfileBio('')">Leeren</button>
+            </div>
+            <span id="profileBioCount" class="form-hint">0 / 140</span>
+          </div>
+        </div>
+
+        <!-- PIN -->
+        <div class="form-section">
+          <div class="form-section-title">PIN-Code ändern</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="form-label" for="profileInputNewPin">Neuer PIN</label>
+              <input type="password" id="profileInputNewPin" inputmode="numeric" maxlength="6" autocomplete="new-password" oninput="onProfilePinInput()" placeholder="4 bis 6 Ziffern" class="ui-field tracking-widest">
+            </div>
+            <div>
+              <label class="form-label" for="profileInputPin2">PIN wiederholen</label>
+              <input type="password" id="profileInputPin2" inputmode="numeric" maxlength="6" autocomplete="new-password" oninput="onProfilePinInput()" placeholder="Zur Kontrolle" class="ui-field tracking-widest">
+            </div>
+          </div>
+          <div class="flex items-center justify-between gap-2 mt-2 flex-wrap">
+            <p id="profilePinHint" class="form-hint">Leer lassen, wenn dein PIN gleich bleiben soll.</p>
+            <button type="button" onclick="toggleProfilePinVisibility()" class="ui-link-btn">👁️ Anzeigen / verbergen</button>
+          </div>
+        </div>
+
+        <!-- Rechte -->
+        <div class="form-section">
+          <div class="form-section-title">Meine Rechte</div>
+          <div id="profileRightsBox" class="flex flex-col gap-1.5"></div>
+        </div>
+      </div>
+
+      <div class="ui-foot">
+        <span id="profileDirtyHint" class="profile-dirty hidden">● Ungespeicherte Änderungen</span>
+        <span class="flex-1"></span>
+        <button type="button" onclick="closeUserProfileModal()" class="ui-btn-ghost">Schließen</button>
+        <button type="button" id="profileSaveBtn" onclick="saveMyUserProfile()" class="ui-btn-primary">💾 Speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- USER DETAIL MODAL (Zobrazenie cudzieho profilu bez PINu) -->
+  <div id="userDetailModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-[290]">
+    <div class="card max-w-sm w-full p-6 relative flex flex-col gap-4 items-center text-center border-amber-500/50 shadow-2xl">
+      <button onclick="closeUserDetailModal()" class="absolute top-4 right-4 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-2xl font-bold">&times;</button>
+      <div id="userDetailAvatarContainer" class="w-24 h-24 rounded-full border-2 border-amber-500 bg-slate-100 dark:bg-slate-800 overflow-hidden flex items-center justify-center shadow-lg cursor-pointer hover:scale-105 transition" title="Foto in Großansicht öffnen">
+        <span class="text-2xl font-black text-amber-700 dark:text-amber-400" id="userDetailAvatarFallback">?</span>
+      </div>
+      <div>
+        <h4 id="userDetailName" class="text-lg font-bold text-slate-900 dark:text-white"></h4>
+        <span id="userDetailRole" class="text-[10px] uppercase tracking-wider text-amber-700 dark:text-amber-400 font-semibold block mt-0.5"></span>
+      </div>
+      <div class="w-full custom-box p-3 rounded-xl border text-left">
+        <span class="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400 block mb-1">Über mich:</span>
+        <p id="userDetailBio" class="text-xs italic text-slate-700 dark:text-slate-300">Keine Beschreibung angegeben.</p>
+      </div>
+      <button onclick="closeUserDetailModal()" class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-white rounded-xl text-xs transition">Schließen</button>
+    </div>
+  </div>
+
+  <!-- Celá aplikácia -->
+  <div id="appContainer" class="hidden">
+
+    <!-- Header -->
+    <header id="appBar" class="app-bar">
+      <div class="flex items-center gap-2.5 md:gap-3 min-w-0">
+        <div class="header-logo-container" onclick="showRandomMotivation(event)" title="Klick mich für Osterei-Motivation! 🍸">
+          <span class="logo-macron" id="headerLogoMacron"></span>
+          <span class="logo-main-char" id="headerLogoChar">O</span>
+          <span class="logo-dot" id="headerLogoDot">•</span>
+        </div>
+
+        <div class="flex flex-col justify-center min-w-0">
+          <h1 class="text-lg md:text-3xl font-bold tracking-tight text-amber-700 dark:text-amber-400 leading-none whitespace-nowrap">Salonplafond BAR</h1>
+          <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium block mt-0.5" data-app-version>v3.1.04</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <button onclick="handleLogout()" class="hidden md:inline-flex px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/30 rounded-lg text-xs font-bold transition items-center gap-1.5 shadow-sm" title="Benutzer wechseln">
+          🚪 Benutzer wechseln
+        </button>
+
+        <button onclick="openTeamChatModal()" id="headerChatEnvelopeBtn" class="relative w-10 h-10 md:w-auto md:h-auto md:px-3 md:py-1.5 justify-center bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-700 text-amber-700 dark:text-amber-400 rounded-xl md:rounded-lg text-base md:text-xs font-bold transition flex items-center gap-1.5 shadow-sm" title="Team-Chat öffnen">
+          <span>✉️<span class="hidden md:inline"> Chat</span></span>
+          <span id="headerChatBadgeDot" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-slate-950 pulse-badge-dot"></span>
+        </button>
+
+        <button onclick="toggleFullscreen()" class="hidden md:inline-flex px-3 py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg text-xs font-semibold border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-300 items-center gap-1 transition">
+          ⛶ Vollbild
+        </button>
+
+        <div class="relative">
+          <button onclick="toggleSettingsMenu(event)" class="w-10 h-10 md:w-auto md:h-auto md:px-3 md:py-1.5 justify-center bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl md:rounded-lg text-base md:text-xs flex items-center gap-1 shadow-md transition relative" title="Menü" aria-label="Menü">
+            <span class="md:hidden">⚙️</span><span class="hidden md:inline">☰ Menü</span>
+            <span id="menuNotificationDot" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-amber-500 dark:bg-amber-400 rounded-full border-2 border-white dark:border-slate-950 pulse-badge-dot"></span>
+          </button>
+
+          <div id="settingsMenuBackdrop" class="hidden fixed inset-0 z-[240] bg-black/60 md:bg-transparent" onclick="closeSettingsMenu()"></div>
+          
+          <div id="settingsDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-2xl shadow-2xl p-2 z-50 flex flex-col gap-0.5 text-slate-900 dark:text-slate-100">
+
+            <button type="button" onclick="openUserProfileModalFromMenu()" class="menu-profile" title="Mein Profil bearbeiten">
+              <span id="menuAvatarThumbnailContainer" class="menu-avatar">
+                <span class="text-sm font-black text-amber-700 dark:text-amber-400" id="menuAvatarFallback">?</span>
+              </span>
+              <span class="menu-text">
+                <span class="menu-name block truncate" id="menuUserName">Mein Profil</span>
+                <span class="menu-role block" id="menuUserRole">Profil bearbeiten</span>
+              </span>
+              <span class="menu-arrow">›</span>
+            </button>
+
+            <button type="button" onclick="openAddDrinkModalFromMenu()" id="menuAddDrinkBtn" class="hidden menu-primary mt-1">
+              ➕ Neues Getränk hinzufügen
+            </button>
+
+            <div class="menu-section">Getränke & Karte</div>
+
+            <button type="button" onclick="openSeasonModal()" class="menu-item">
+              <span class="menu-ico">📅</span>
+              <span class="menu-text"><span class="menu-label">Saison wählen</span><span class="menu-sub" id="menuSeasonSub">Aktive Karte wechseln</span></span>
+            </button>
+            <button type="button" onclick="createNewSeasonPrompt()" id="menuNewSeasonBtn" class="hidden menu-item">
+              <span class="menu-ico">➕</span>
+              <span class="menu-text"><span class="menu-label">Neue Saison erstellen</span><span class="menu-sub">Neue Karte anlegen</span></span>
+            </button>
+            <button type="button" onclick="openShoppingModal()" class="menu-item">
+              <span class="menu-ico">🛒</span>
+              <span class="menu-text"><span class="menu-label">Einkaufsliste / Inventur</span><span class="menu-sub">Zutaten der Saison zusammenrechnen</span></span>
+            </button>
+            <button type="button" onclick="openA3PrintSetupModal()" class="menu-item">
+              <span class="menu-ico">🖨️</span>
+              <span class="menu-text"><span class="menu-label">Karten-Druck (A3)</span><span class="menu-sub">Getränkekarte zum Ausdrucken</span></span>
+            </button>
+            <button type="button" onclick="openImportExportModal()" id="btnMenuImportExport" class="hidden menu-item">
+              <span class="menu-ico">📊</span>
+              <span class="menu-text"><span class="menu-label">Import & Export</span><span class="menu-sub">Excel oder CSV</span></span>
+            </button>
+
+            <div class="menu-section">Team & Arbeit</div>
+
+            <button type="button" onclick="openTeamChatModal()" class="menu-item">
+              <span class="menu-ico">💬<span id="menuChatBadge" class="hidden menu-count">0</span></span>
+              <span class="menu-text"><span class="menu-label">Team-Chat</span><span class="menu-sub">Nachrichten an das ganze Team</span></span>
+            </button>
+            <button type="button" onclick="openWorkScheduleModal()" class="menu-item">
+              <span class="menu-ico">🗓️</span>
+              <span class="menu-text"><span class="menu-label">Mein Arbeitsplan</span><span class="menu-sub">Deine Schichten</span></span>
+            </button>
+
+            <div id="menuAdminSection" class="hidden flex-col gap-0.5">
+              <div class="menu-section">Verwaltung</div>
+              <button type="button" onclick="openStaffPinModalFromMenu()" id="menuStaffPinBtn" class="menu-item">
+                <span class="menu-ico">👤</span>
+                <span class="menu-text"><span class="menu-label">Personal & PINs</span><span class="menu-sub">Mitarbeiter, Rollen und Rechte</span></span>
+              </button>
+            </div>
+
+            <div class="menu-section">App</div>
+
+            <button type="button" onclick="openUnifiedSettingsModal()" class="menu-item">
+              <span class="menu-ico">⚙️</span>
+              <span class="menu-text"><span class="menu-label">Einstellungen & Zentrale</span><span class="menu-sub">Design, Schrift, Hinweise, Sortierung</span></span>
+            </button>
+            <button type="button" onclick="refreshData()" class="menu-item">
+              <span class="menu-ico">🔄</span>
+              <span class="menu-text"><span class="menu-label">Daten aktualisieren</span><span class="menu-sub">Getränke neu laden</span></span>
+            </button>
+            <button type="button" onclick="openInstallSettings()" id="menuInstallBtn" class="hidden menu-item">
+              <span class="menu-ico">📲</span>
+              <span class="menu-text"><span class="menu-label">App installieren</span><span class="menu-sub">Symbol auf dem Startbildschirm</span></span>
+            </button>
+            <button type="button" onclick="toggleFullscreen(); closeSettingsMenu();" class="menu-item menu-mobile-only">
+              <span class="menu-ico">⛶</span>
+              <span class="menu-text"><span class="menu-label">Vollbild</span><span class="menu-sub">Ganzer Bildschirm ein/aus</span></span>
+            </button>
+            <button type="button" onclick="openChangelogModal()" class="menu-item">
+              <span class="menu-ico">🚀</span>
+              <span class="menu-text"><span class="menu-label">Was ist neu?</span><span class="menu-sub">Neuigkeiten in <span data-app-version>v3.1.04</span></span></span>
+            </button>
+            <button type="button" onclick="openSupportModal()" class="menu-item">
+              <span class="menu-ico">🛟<span id="menuDropdownTicketDot" class="hidden menu-dot pulse-badge-dot"></span></span>
+              <span class="menu-text"><span class="menu-label">Support & Tickets</span><span class="menu-sub">Fehler melden oder Fragen stellen</span></span>
+            </button>
+
+            <div class="menu-divider"></div>
+
+            <button type="button" onclick="handleLogout()" class="menu-item menu-item-danger">
+              <span class="menu-ico">🚪</span>
+              <span class="menu-text"><span class="menu-label">Benutzer wechseln</span><span class="menu-sub">Abmelden</span></span>
+            </button>
+
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Angemeldet: am Handy gleich unter der Kopfleiste -->
+    <div class="md:hidden">
+      <div class="mobile-userbar">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span id="headerMobileAvatar" class="mobile-avatar" onclick="openUserProfileModal()" title="Mein Profil">?</span>
+          <span id="mobileUserLabel" class="mobile-user-label"></span>
+        </div>
+        <button type="button" onclick="handleLogout()" class="mobile-switch-btn">🚪 Wechseln</button>
+      </div>
+    </div>
+
+    <!-- Angemeldet (nur am Computer) -->
+    <div class="hidden md:flex mb-5 items-center justify-between flex-wrap gap-3">
+      <div class="inline-flex items-center gap-3">
+        <div id="headerUserAvatarContainer" onclick="openUserProfileModal()" class="w-8 h-8 rounded-full border-2 border-amber-500 bg-slate-100 dark:bg-slate-800 overflow-hidden flex items-center justify-center shrink-0 cursor-pointer hover:scale-105 transition shadow" title="Klicken, um mein Profil zu öffnen">
+          <span class="text-[10px] font-bold text-amber-700 dark:text-amber-400" id="headerAvatarFallback">?</span>
+        </div>
+        <span class="text-xs text-slate-800 dark:text-slate-200 font-bold">Angemeldet: <span id="currentUserEmail" class="text-amber-700 dark:text-amber-300"></span></span>
+      </div>
+    </div>
+
+    <!-- Suche -->
+    <div class="mb-3 md:mb-4">
+      <div class="relative w-full">
+        <input type="text" id="searchInput" autocomplete="off" oninput="onSearchInput()" placeholder="🔍 Getränk oder Zutat suchen..." class="px-4 py-3 pr-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white w-full focus:outline-none focus:border-amber-500 text-sm shadow-md font-medium">
+        <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-sm font-bold bg-slate-200/70 dark:bg-slate-700/50 hover:bg-slate-300 dark:hover:bg-slate-700 w-5 h-5 rounded-full items-center justify-center">&times;</button>
+      </div>
+    </div>
+
+    <!-- Kategorien (wischbar) -->
+    <div class="cat-bar mb-2 md:mb-3">
+      <span class="hidden md:inline text-xs text-slate-600 dark:text-slate-400 font-semibold mr-1 shrink-0">Kategorie:</span>
+      <div id="categories" class="flex gap-2"></div>
+    </div>
+
+    <!-- Schnellzugriff: Saison, Arbeitsplan, Filter -->
+    <div class="quick-row mb-3 md:mb-5">
+      <div id="activeSeasonBadge" onclick="openSeasonModal()" title="Klicken, um Saison zu wechseln" class="hidden quick-chip quick-chip-amber">
+        <span>📅<span class="hidden sm:inline"> Saison:</span></span> <span id="activeSeasonName"></span>
+      </div>
+      <button type="button" onclick="openWorkScheduleModal()" class="quick-chip desktop-only">🗓️ Arbeitsplan</button>
+      <button type="button" onclick="toggleFilterDrawer()" class="quick-chip">⚡ Filter <span id="filterArrow">▼</span></button>
+      <span class="text-[11px] text-slate-500 shrink-0" id="activeFilterSummary"></span>
+    </div>
+
+    <div id="filterDrawer" class="hidden flex-col gap-3 p-3 mb-4 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl shadow-sm transition-all">
+          <div>
+            <span class="text-xs text-slate-600 dark:text-slate-400 font-semibold mb-1.5 block">Ernährung & Bestseller:</span>
+            <div class="flex gap-2 items-center overflow-x-auto text-xs">
+              <button onclick="toggleSpecialFilter('featured')" id="filterFeatured" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 flex items-center gap-1 whitespace-nowrap">⭐ TOP / Highlight</button>
+              <button onclick="toggleSpecialFilter('vegan')" id="filterVegan" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 whitespace-nowrap">🌱 Vegan</button>
+              <button onclick="toggleSpecialFilter('glutenfree')" id="filterGluten" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 whitespace-nowrap">🌾 Glutenfrei</button>
+              <button onclick="toggleSpecialFilter('lactosefree')" id="filterLactose" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 whitespace-nowrap">🥛 Laktosefrei</button>
+              <button onclick="toggleSpecialFilter('nonalcoholic')" id="filterNonAlc" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 whitespace-nowrap">🚫 Alkoholfrei</button>
+              <button onclick="toggleSpecialFilter('favorites')" id="filterFavs" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 whitespace-nowrap">❤️ Schicht-Favoriten</button>
+            </div>
+          </div>
+
+          <div>
+            <span class="text-xs text-slate-600 dark:text-slate-400 font-semibold mb-1.5 block">🍸 Nach Glas-Typ filtern:</span>
+            <div id="glassFilterContainer" class="flex gap-1.5 flex-wrap text-xs"></div>
+          </div>
+        </div>
+
+    <!-- Neues Getränk: am Handy runder ➕-Knopf unten rechts -->
+    <div id="addDrinkBtnContainer" class="hidden fab-wrap">
+      <button type="button" onclick="openAddDrinkModal()" class="fab-add" title="Neues Getränk hinzufügen">
+        <span class="fab-ico">➕</span><span class="fab-label">Neues Getränk hinzufügen</span>
+      </button>
+    </div>
+
+    <div id="drinksGrid">
+      <p id="loadingTxt" class="col-span-full text-slate-500 dark:text-slate-400">Lade Getränke aus der Datenbank...</p>
+    </div>
+
+    <footer class="mt-20 pt-6 border-t border-slate-300 dark:border-slate-800 text-center text-xs text-slate-500">
+      Salonplafond BAR App <span data-app-version>v3.1.04</span> • Erstellt von <span class="text-amber-600 dark:text-amber-400 font-semibold">© T0mc1k (Tomas Kardos)</span>
+    </footer>
+
+  </div>
+
+  <!-- Scroll-to-Top -->
+  <button id="scrollToTopBtn" onclick="scrollToTop()" class="hidden fixed bottom-20 right-5 z-40 bg-amber-500 hover:bg-amber-600 text-slate-950 p-3.5 rounded-full shadow-xl transition font-black text-base border-2 border-white dark:border-slate-900" title="Nach oben">
+    ⬆️
+  </button>
+
+  <!-- Bar Tray -->
+  <div id="barTrayBar" class="hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 border-t border-amber-500/40 backdrop-blur-md p-3 px-4 shadow-2xl flex items-center justify-between gap-3 max-w-5xl mx-auto rounded-t-2xl">
+    <div class="flex items-center gap-2 overflow-x-auto py-1 flex-1" id="barTrayItems"></div>
+    <div class="flex items-center gap-2 shrink-0 border-l border-slate-300 dark:border-slate-700 pl-3">
+      <button onclick="openMultiViewModal()" class="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs transition shadow flex items-center gap-1.5">
+        ⚡ Multi-View (<span id="trayCountBadge">0</span>)
+      </button>
+      <button onclick="clearBarTray()" class="px-2.5 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-xl text-xs transition border border-slate-300 dark:border-slate-700" title="Leeren">🗑️</button>
+    </div>
+  </div>
+
+  <!-- WORK SCHEDULE MODAL -->
+  <div id="workScheduleModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-[295]">
+    <div class="card max-w-2xl w-full p-6 relative flex flex-col gap-4 max-h-[85vh] overflow-y-auto border-amber-500/50 shadow-2xl">
+      <button onclick="closeWorkScheduleModal()" class="absolute top-4 right-4 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-2xl font-bold">&times;</button>
+      <div>
+        <h3 class="text-xl font-bold text-amber-600 dark:text-amber-400 flex items-center gap-2">📅 Mein Arbeitsplan</h3>
+        <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Übersicht deiner Schichten und Arbeitszeiten für die aktuelle Woche.</p>
+      </div>
+
+      <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-700 dark:text-amber-300 flex items-center gap-2.5">
+        <span class="text-base">⚠️</span>
+        <span><b>Testversion:</b> Dieser Arbeitsplan befindet sich noch im Testmodus und ist noch nicht vollständig verbindlich.</span>
+      </div>
+
+      <div id="workScheduleContentContainer" class="flex flex-col gap-2.5 custom-box p-4 rounded-xl border text-xs max-h-[50vh] overflow-y-auto">
+        <p class="text-slate-500 italic text-xs text-center py-4">Lade Arbeitsplan...</p>
+      </div>
+
+      <div class="flex justify-end pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeWorkScheduleModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-white rounded-xl text-xs transition">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEAM CHAT MODAL -->
+  <div id="teamChatModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-[280]">
+    <div class="card max-w-5xl w-full relative flex flex-col h-[90vh] max-h-[90vh] overflow-hidden p-0 border-amber-500/50 shadow-2xl">
+
+      <div class="ui-head !items-center">
+        <div class="min-w-0">
+          <h3 class="ui-head-title">💬 Team-Chat</h3>
+          <p class="ui-head-sub">🟢 Online: <span id="chatOnlineCountLabel" class="font-bold">0 Mitglieder</span> · Nachrichten sehen alle Kollegen</p>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button type="button" onclick="toggleChatSearch()" class="ui-btn-ghost" title="Im Chat suchen">🔍</button>
+          <button type="button" onclick="toggleChatSidebar()" class="ui-btn-ghost chat-side-toggle" title="Team anzeigen">👥</button>
+          <button type="button" onclick="closeTeamChatModal()" class="ui-close" aria-label="Schließen">&times;</button>
+        </div>
+      </div>
+
+      <div id="chatSearchBar" class="hidden ui-toolbar !flex-row !items-center">
+        <input type="search" id="chatSearchInput" oninput="onChatSearch(this.value)" placeholder="🔍 Nachrichten oder Namen suchen ..." class="ui-search flex-1">
+        <span id="chatSearchInfo" class="form-hint whitespace-nowrap"></span>
+      </div>
+
+      <div id="chatPinnedBanner" class="hidden chat-pinned"></div>
+
+      <div class="chat-body">
+
+        <aside id="chatSidebar" class="chat-side">
+          <div class="chat-side-title">Team</div>
+          <div id="chatSidebarUsersList" class="chat-side-list">
+            <span class="form-hint">Lade Mitglieder ...</span>
+          </div>
+        </aside>
+
+        <section class="chat-main">
+          <div class="chat-scroll-wrap">
+            <div id="chatMessagesContainer" class="chat-scroll" onscroll="onChatScroll()">
+              <p class="chat-empty">Lade Chat-Nachrichten ...</p>
+            </div>
+            <button type="button" id="chatJumpBtn" class="hidden chat-jump" onclick="scrollChatToBottom(true)">↓ Neue Nachrichten</button>
+          </div>
+
+          <div id="chatTypingIndicator" class="chat-typing"></div>
+
+          <div id="replyingIndicatorBox" class="hidden chat-indicator">
+            <div class="min-w-0">
+              <span class="chat-indicator-title">↩️ Antwort auf <span id="replyingAuthorName"></span></span>
+              <span id="replyingSnippetText" class="chat-indicator-text"></span>
+            </div>
+            <button type="button" onclick="cancelReply()" class="ui-close" aria-label="Antwort abbrechen">&times;</button>
+          </div>
+
+          <div id="editingIndicatorBox" class="hidden chat-indicator">
+            <div class="min-w-0">
+              <span class="chat-indicator-title">✏️ Nachricht bearbeiten</span>
+              <span class="chat-indicator-text">Ändere den Text und sende ihn erneut ab.</span>
+            </div>
+            <button type="button" onclick="cancelEdit()" class="ui-close" aria-label="Bearbeiten abbrechen">&times;</button>
+          </div>
+
+          <div id="chatImageChip" class="hidden chat-indicator">
+            <div class="min-w-0 flex items-center gap-2">
+              <img id="chatImageThumb" class="chat-thumb" alt="">
+              <span id="chatImageName" class="chat-indicator-text"></span>
+            </div>
+            <button type="button" onclick="clearChatImage()" class="ui-close" aria-label="Bild entfernen">&times;</button>
+          </div>
+
+          <form id="chatForm" onsubmit="handleSendChatMessage(event)" class="chat-composer">
+            <input type="hidden" id="replyingMessageId" value="">
+            <input type="file" id="chatImageFile" accept="image/*" class="hidden" onchange="onChatImagePicked(event)">
+
+            <div class="chat-toolbar">
+              <button type="button" onclick="applyTextStyling('**')" class="chat-tool" title="Fett (Strg+B)"><b>B</b></button>
+              <button type="button" onclick="applyTextStyling('*')" class="chat-tool" title="Kursiv (Strg+I)"><i>I</i></button>
+              <button type="button" onclick="applyTextStyling('~~')" class="chat-tool" title="Durchgestrichen"><s>S</s></button>
+              <button type="button" onclick="applyTextStyling('`')" class="chat-tool font-mono" title="Code">&lt;/&gt;</button>
+              <span class="chat-tool-sep"></span>
+              <button type="button" onclick="insertChatAt()" class="chat-tool" title="Kollegen erwähnen">@</button>
+              <button type="button" onclick="toggleChatEmojiPanel()" class="chat-tool" title="Emoji">😊</button>
+              <button type="button" onclick="document.getElementById('chatImageFile').click()" class="chat-tool" title="Foto senden">📷</button>
+            </div>
+            <div id="chatEmojiPanel" class="hidden chat-emoji-panel"></div>
+
+            <div class="chat-input-row">
+              <textarea id="chatMessageInput" rows="1" maxlength="2000" autocomplete="off" placeholder="Nachricht schreiben ... (@ erwähnt Kollegen)" title="Enter sendet, Shift+Enter macht eine neue Zeile" class="chat-input"></textarea>
+              <button type="submit" id="chatSendBtn" class="ui-btn-primary chat-send">Senden ➔</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- A3 Print Setup Modal -->
+  <div id="a3PrintSetupModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="card max-w-xl w-full p-6 relative flex flex-col gap-4 max-h-[85vh] overflow-y-auto border-amber-500/50 shadow-2xl">
+      <button onclick="closeA3PrintSetupModal()" class="absolute top-4 right-4 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-2xl font-bold">&times;</button>
+      <div>
+        <h3 class="text-xl font-bold text-amber-600 dark:text-amber-400 flex items-center gap-2">🖨️ Karten-Druck (A3 Format)</h3>
+        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Wähle die Saison, markiere <b>maximal 3 Getränke</b> und passe die Druckoptionen an.</p>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label class="text-xs font-semibold">Saison wählen:</label>
+        <select id="a3SeasonSelect" onchange="renderA3DrinkSelectionList()" class="p-2.5 rounded-lg border text-xs w-full"></select>
+      </div>
+
+      <div class="custom-box p-3.5 rounded-xl border flex flex-col gap-2">
+        <span class="text-xs font-bold text-amber-600 dark:text-amber-400">⚙️ Druck-Optionen:</span>
+        <div class="flex flex-wrap gap-4 text-xs">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="a3OptionImage" checked class="accent-amber-500 w-4 h-4">
+            <span class="font-semibold">Mit Bild drucken</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="a3OptionPrice" checked class="accent-amber-500 w-4 h-4">
+            <span class="font-semibold">Mit Preis drucken</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label class="text-xs font-semibold flex justify-between">
+          <span>Getränke auswählen (max. 3):</span>
+          <span id="a3SelectedCountBadge" class="text-amber-500 font-bold">0 / 3 gewählt</span>
+        </label>
+        <div id="a3DrinkCheckboxList" class="flex flex-col gap-2 max-h-[35vh] overflow-y-auto pr-1 custom-box p-3 rounded-xl border">
+          <p class="text-slate-500 italic text-xs text-center py-4">Bitte Saison wählen...</p>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="generateA3PrintPreview()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 font-bold text-slate-950 rounded-xl text-xs transition shadow flex items-center gap-2">
+          🖨️ A3 Vorschau & Drucken
+        </button>
+        <button onclick="closeA3PrintSetupModal()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-white rounded-xl text-xs transition">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- A3 Print Preview Modal -->
+  <div id="a3PrintPreviewModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-[300]">
+    <div class="card max-w-4xl w-full p-8 relative flex flex-col gap-6 max-h-[90vh] overflow-y-auto border-amber-500/50 shadow-2xl bg-white text-slate-900">
+      <button onclick="closeA3PrintPreviewModal()" class="no-print absolute top-4 right-4 text-slate-500 hover:text-slate-900 text-2xl font-bold">&times;</button>
+      
+      <div id="a3PrintContainer" class="flex flex-col gap-8 bg-white text-slate-900 p-4 relative">
+        <div id="a3PrintDrinksList" class="flex flex-col gap-8"></div>
+        <div class="print-watermark-footer">Salonplafond BAR App create Tomas Kardos</div>
+      </div>
+
+      <div class="no-print flex justify-end gap-2 pt-4 border-t border-slate-200 bg-white">
+        <button onclick="window.print()" class="px-6 py-3 bg-amber-500 hover:bg-amber-600 font-extrabold text-slate-950 rounded-xl text-xs transition shadow-lg flex items-center gap-2">
+          🖨️ Jetzt drucken
+        </button>
+        <button onclick="closeA3PrintPreviewModal()" class="px-5 py-3 bg-slate-200 hover:bg-slate-300 font-bold text-slate-800 rounded-xl text-xs transition">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shopping List / Inventory Modal -->
+  <div id="shoppingModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="card max-w-3xl w-full p-6 relative flex flex-col gap-4 max-h-[85vh] overflow-y-auto border-amber-500/50 shadow-2xl">
+      <button onclick="closeShoppingModal()" class="no-print absolute top-4 right-4 text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white text-2xl font-bold">&times;</button>
+      
+      <div>
+        <h3 class="text-xl font-bold text-amber-600 dark:text-amber-400 flex items-center gap-2">🛒 Einkaufsliste & Inventur</h3>
+        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Übersicht aller benötigten Zutaten für die aktive Saison: <span id="shoppingSeasonName" class="font-bold text-amber-600 dark:text-amber-300"></span></p>
+      </div>
+
+      <div class="no-print flex flex-wrap gap-2 pt-1 pb-2 border-b border-slate-200 dark:border-slate-800">
+        <button onclick="printShoppingList()" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs transition shadow flex items-center gap-1.5">
+          🖨️ Einkaufsliste drucken
+        </button>
+        <button onclick="exportShoppingListExcel()" class="px-3.5 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-400 font-bold rounded-xl text-xs transition border border-slate-300 dark:border-slate-700 flex items-center gap-1.5">
+          📗 Als Excel exportieren
+        </button>
+      </div>
+
+      <div id="shoppingListContainer" class="flex flex-col gap-2 mt-1 custom-box p-4 rounded-xl border text-xs max-h-[50vh] overflow-y-auto"></div>
+
+      <div class="no-print flex justify-end pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeShoppingModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-white rounded-xl text-xs transition">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unified Settings Modal -->
+  <div id="unifiedSettingsModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="card max-w-xl w-full relative flex flex-col max-h-[88vh] overflow-hidden p-0 border-amber-500/50 shadow-2xl">
+
+      <div class="ui-head">
+        <div>
+          <h3 class="ui-head-title">⚙️ Einstellungen & Zentrale</h3>
+          <p class="ui-head-sub">Gelten nur auf diesem Gerät und werden automatisch gespeichert.</p>
+        </div>
+        <button type="button" onclick="closeUnifiedSettingsModal()" class="ui-close" aria-label="Schließen">&times;</button>
+      </div>
+
+      <div id="settingsBody" class="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
+
+        <section class="set-card">
+          <h4 class="set-head">🎨 Darstellung</h4>
+
+          <div class="set-row">
+            <div class="set-text"><b>Design</b><small id="settingsThemeInfo">Hell ist augenschonend bei Tageslicht, Dunkel für die Bar am Abend.</small></div>
+            <div class="seg">
+              <button type="button" class="seg-btn" data-setting="theme" data-value="light" onclick="setSetting('theme','light')">☀️ Hell</button>
+              <button type="button" class="seg-btn" data-setting="theme" data-value="dark" onclick="setSetting('theme','dark')">🌙 Dunkel</button>
+              <button type="button" class="seg-btn" data-setting="theme" data-value="auto" onclick="setSetting('theme','auto')">🖥️ Auto</button>
+            </div>
+          </div>
+
+          <div class="set-row">
+            <div class="set-text"><b>Schriftgröße</b><small>Vergrößert alle Texte der App.</small></div>
+            <div class="seg">
+              <button type="button" class="seg-btn" data-setting="fontScale" data-value="90" onclick="setSetting('fontScale',90)">Klein</button>
+              <button type="button" class="seg-btn" data-setting="fontScale" data-value="100" onclick="setSetting('fontScale',100)">Normal</button>
+              <button type="button" class="seg-btn" data-setting="fontScale" data-value="112" onclick="setSetting('fontScale',112)">Groß</button>
+              <button type="button" class="seg-btn" data-setting="fontScale" data-value="125" onclick="setSetting('fontScale',125)">Sehr groß</button>
+            </div>
+          </div>
+
+          <div class="set-row">
+            <div class="set-text"><b>Weichzeichner (Blur)</b><small>Milchglas-Effekt in Dialogen, Menüs und Hinweisen. Auf schwächeren Geräten ausschalten.</small></div>
+            <label class="switch"><input type="checkbox" id="unifiedBlurCheck" onchange="setBlurEnabled(this.checked)"><span class="switch-track"></span></label>
+          </div>
+
+          <div class="set-row">
+            <div class="set-text"><b>Animationen reduzieren</b><small>Weniger Bewegung und Übergänge, ruhiger und akkusparender.</small></div>
+            <label class="switch"><input type="checkbox" data-setting-check="reduceMotion" onchange="setSetting('reduceMotion',this.checked)"><span class="switch-track"></span></label>
+          </div>
+        </section>
+
+        <section class="set-card">
+          <h4 class="set-head">🍸 Getränke</h4>
+
+          <div class="set-row">
+            <div class="set-text"><b>Ansicht</b><small>Karten mit Foto oder kompakte Liste.</small></div>
+            <div class="seg">
+              <button type="button" class="seg-btn" data-setting="viewMode" data-value="grid" onclick="setViewMode('grid')">▦ Karten</button>
+              <button type="button" class="seg-btn" data-setting="viewMode" data-value="list" onclick="setViewMode('list')">☰ Liste</button>
+            </div>
+          </div>
+
+          <div class="set-row">
+            <div class="set-text"><b>Sortierung</b><small>Reihenfolge der Getränke in der Liste.</small></div>
+            <select id="unifiedSortSelect" onchange="setSetting('sort',this.value)" class="ui-field set-select">
+              <option value="newest">Neueste zuerst</option>
+              <option value="name_asc">Name A – Z</option>
+              <option value="name_desc">Name Z – A</option>
+              <option value="price_asc">Preis aufsteigend</option>
+              <option value="price_desc">Preis absteigend</option>
+              <option value="favorites">Favoriten zuerst</option>
+            </select>
+          </div>
+
+          <div class="set-row">
+            <div class="set-text"><b>Preise anzeigen</b><small>Preis neben dem Namen auf Karten und im Detail.</small></div>
+            <label class="switch"><input type="checkbox" data-setting-check="showPrices" onchange="setSetting('showPrices',this.checked)"><span class="switch-track"></span></label>
+          </div>
+
+          <div class="set-row">
+            <div class="set-text"><b>Aktive Saison</b><small>Welche Karte gerade angezeigt wird.</small></div>
+            <select id="unifiedSeasonSelect" onchange="onUnifiedSeasonChange(this)" class="ui-field set-select"></select>
+          </div>
+        </section>
+
+        <section class="set-card">
+          <h4 class="set-head">🔔 Hinweise</h4>
+
+          <div class="set-row">
+            <div class="set-text"><b>Wenn sich ein Kollege anmeldet</b><small>Kurzer Hinweis oben rechts mit Foto.</small></div>
+            <label class="switch"><input type="checkbox" data-setting-check="loginToast" onchange="setSetting('loginToast',this.checked)"><span class="switch-track"></span></label>
+          </div>
+
+          <div class="set-row">
+            <div class="set-text"><b>Neue Chat-Nachricht</b><small>Hinweis, wenn der Chat gerade geschlossen ist.</small></div>
+            <label class="switch"><input type="checkbox" data-setting-check="chatToast" onchange="setSetting('chatToast',this.checked)"><span class="switch-track"></span></label>
+          </div>
+
+          <div class="set-row">
+            <div class="set-text"><b>Ton bei neuer Nachricht</b><small>Leiser Signalton im Chat.</small></div>
+            <label class="switch"><input type="checkbox" data-setting-check="chatSound" onchange="setSetting('chatSound',this.checked); if (this.checked) playChatSound();"><span class="switch-track"></span></label>
+          </div>
+        </section>
+
+        <section class="set-card" id="setGroupMode">
+          <h4 class="set-head">👤 Ansicht für Mitarbeiter mit Rechten</h4>
+          <div class="set-row">
+            <div class="set-text"><b>Ansichtsmodus</b><small>Kellner-Ansicht blendet Verwaltungs-Knöpfe aus.</small></div>
+            <div class="seg">
+              <button type="button" class="seg-btn" id="unifiedModeStaff" onclick="setAdminView(false)">Kellner</button>
+              <button type="button" class="seg-btn" id="unifiedModeAdmin" onclick="setAdminView(true)">Verwaltung</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="set-card" id="setInstall">
+          <h4 class="set-head">📲 App installieren</h4>
+          <div class="set-row">
+            <div class="set-text"><b>Auf dem Startbildschirm</b><small id="installStatus">Mit einem Symbol auf dem Startbildschirm startet die App wie eine normale App.</small></div>
+            <button type="button" id="installBtn" onclick="installApp()" class="ui-btn-primary">📲 So geht’s</button>
+          </div>
+          <div id="installSteps" class="install-steps hidden"></div>
+        </section>
+
+        <section class="set-card">
+          <h4 class="set-head">🧰 App</h4>
+          <div class="set-row">
+            <div class="set-text"><b>Version</b><small>Salonplafond BAR <span data-app-version>v3.1.04</span></small></div>
+            <button type="button" onclick="closeUnifiedSettingsModal(); openChangelogModal();" class="ui-btn-ghost">🚀 Was ist neu?</button>
+          </div>
+          <div class="set-row">
+            <div class="set-text"><b>App neu laden</b><small>Hilft, wenn etwas hängt oder alt aussieht.</small></div>
+            <button type="button" onclick="reloadApp()" class="ui-btn-ghost">🔄 Neu laden</button>
+          </div>
+          <div class="set-row">
+            <div class="set-text"><b>Einstellungen zurücksetzen</b><small>Setzt alle Einstellungen dieses Geräts auf Standard.</small></div>
+            <button type="button" onclick="resetSettings()" class="ui-btn-ghost set-danger">↩️ Zurücksetzen</button>
+          </div>
+        </section>
+
+      </div>
+
+      <div class="ui-foot">
+        <button type="button" onclick="closeUnifiedSettingsModal()" class="ui-btn-primary">Fertig</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Multi-View -->
+  <div id="multiViewModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="card max-w-7xl w-full max-h-[90vh] overflow-y-auto p-6 relative flex flex-col gap-4 border-amber-500/50 shadow-2xl">
+      <button onclick="closeMultiViewModal()" class="absolute top-4 right-4 text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white text-2xl font-bold">&times;</button>
+      <h3 class="text-xl font-bold text-amber-600 dark:text-amber-400">⚡ Multi-View: Rezepte im direkten Vergleich</h3>
+      <div id="multiViewContentContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2"></div>
+      <div class="flex justify-end pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeMultiViewModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-white rounded-xl text-xs transition border border-slate-300 dark:border-slate-700">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal pre Výber náhradného drinku v Multi-View -->
+  <div id="replaceDrinkModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-[270]">
+    <div class="card max-w-md w-full p-6 relative flex flex-col gap-4 border-amber-500/50 shadow-2xl max-h-[80vh] overflow-y-auto">
+      <button onclick="closeReplaceDrinkModal()" class="absolute top-4 right-4 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-2xl font-bold">&times;</button>
+      <h3 class="text-lg font-bold text-amber-600 dark:text-amber-400">🔄 Drink ersetzen</h3>
+      <p class="text-xs text-slate-600 dark:text-slate-400">Wähle einen neuen Drink aus der aktuellen Saison aus, der diesen ersetzen soll:</p>
+      <input type="hidden" id="replaceIndexTarget" value="">
+      <div id="replaceDrinkListContainer" class="flex flex-col gap-2 max-h-[50vh] overflow-y-auto pr-1"></div>
+    </div>
+  </div>
+
+  <!-- Modal pre Pridanie / Úpravu Drinku -->
+  <div id="adminModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="card max-w-2xl w-full relative flex flex-col max-h-[92vh] overflow-hidden p-0 border-amber-500/50 shadow-2xl">
+
+      <div class="ui-head">
+        <div>
+          <h2 id="formTitle" class="ui-head-title">➕ Neues Getränk hinzufügen</h2>
+          <p class="ui-head-sub">Pflichtfelder: Name und Kategorie. Alles andere kannst du auch später ergänzen.</p>
+        </div>
+        <button type="button" onclick="closeAdminModal()" class="ui-close" aria-label="Schließen">&times;</button>
+      </div>
+
+      <div id="adminFormBody" class="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
+        <input type="hidden" id="editingId" value="">
+        <input type="hidden" id="dCategory" value="">
+
+        <!-- 1 Grunddaten -->
+        <div class="form-section">
+          <div class="form-section-title">1 · Grunddaten</div>
+          <label class="form-label" for="dName">Name des Getränks *</label>
+          <input type="text" id="dName" autocomplete="off" placeholder="z. B. Strawberry Kiss" class="ui-field text-base font-bold">
+
+          <label class="form-label mt-3">Kategorie *</label>
+          <div id="categoryChips" class="flex flex-wrap gap-1.5"></div>
+          <div id="newCategoryRow" class="hidden mt-2 flex gap-2 items-center">
+            <input type="text" id="dNewCategory" maxlength="30" autocomplete="off" placeholder="Name der neuen Kategorie, z. B. Signature Drinks" onkeydown="if (event.key === 'Enter') { event.preventDefault(); addNewCategory(); }" class="ui-field flex-1">
+            <button type="button" onclick="addNewCategory()" class="ui-btn-primary">Anlegen</button>
+            <button type="button" onclick="toggleNewCategoryRow(false)" class="ui-btn-ghost">Abbrechen</button>
+          </div>
+          <p class="form-hint mt-1.5">Eine neue Kategorie erscheint nach dem Speichern dieses Getränks in der Kategorien-Leiste.</p>
+
+          <label class="form-label mt-3" for="dSeason">Saison / Zeitraum</label>
+          <select id="dSeason" onchange="handleSeasonSelectChange(this)" class="ui-field"></select>
+        </div>
+
+        <!-- 2 Zubereitung -->
+        <div class="form-section">
+          <div class="form-section-title">2 · Zubereitung</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="form-label" for="dGlass">🍸 Glas / Equipment</label>
+              <div class="flex flex-wrap gap-1.5 mb-1.5">
+                <button type="button" class="ui-chip" onclick="setQuickVal('dGlass', 'Coupette')">Coupette</button>
+                <button type="button" class="ui-chip" onclick="setQuickVal('dGlass', 'Highball')">Highball</button>
+                <button type="button" class="ui-chip" onclick="setQuickVal('dGlass', 'Tumbler')">Tumbler</button>
+                <button type="button" class="ui-chip" onclick="setQuickVal('dGlass', 'Rocks')">Rocks</button>
+                <button type="button" class="ui-chip" onclick="setQuickVal('dGlass', 'Martini')">Martini</button>
+              </div>
+              <input type="text" id="dGlass" autocomplete="off" placeholder="oder selbst eingeben ..." class="ui-field">
+            </div>
+            <div>
+              <label class="form-label" for="dIce">🧊 Eis</label>
+              <div class="flex flex-wrap gap-1.5 mb-1.5">
+                <button type="button" class="ui-chip" onclick="setQuickVal('dIce', 'Cubed')">Cubed</button>
+                <button type="button" class="ui-chip" onclick="setQuickVal('dIce', 'Crushed')">Crushed</button>
+                <button type="button" class="ui-chip" onclick="setQuickVal('dIce', 'Ice Ball')">Ice Ball</button>
+                <button type="button" class="ui-chip" onclick="setQuickVal('dIce', 'None')">None</button>
+              </div>
+              <input type="text" id="dIce" autocomplete="off" placeholder="oder selbst eingeben ..." class="ui-field">
+            </div>
+            <div>
+              <label class="form-label" for="dMethod">🥄 Methode</label>
+              <input type="text" id="dMethod" autocomplete="off" placeholder="z. B. Shake & fine strain, Stir, Build" class="ui-field">
+            </div>
+            <div>
+              <label class="form-label" for="dGarnish">🍋 Garnitur</label>
+              <input type="text" id="dGarnish" autocomplete="off" placeholder="z. B. Dried strawberry, Mint sprig" class="ui-field">
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 Zutaten -->
+        <div class="form-section">
+          <div class="flex justify-between items-center mb-2.5 gap-2">
+            <div class="form-section-title !mb-0">3 · Zutaten & Mengen</div>
+            <button type="button" onclick="addIngredientRow()" class="ui-btn-ghost">+ Zutat hinzufügen</button>
+          </div>
+          <div id="ingredientRowsContainer" class="flex flex-col gap-2"></div>
+        </div>
+
+        <!-- 4 Rezept -->
+        <div class="form-section">
+          <div class="form-section-title">4 · Zubereitung Schritt für Schritt (optional)</div>
+          <textarea id="dRecipe" placeholder="Detaillierte Zubereitung eingeben ..." class="ui-field" rows="4"></textarea>
+        </div>
+
+        <!-- 5 Eigenschaften -->
+        <div class="form-section">
+          <div class="form-section-title">5 · Eigenschaften & Allergene</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <label class="switch-row prop-row"><span>⭐ Bestseller / TOP</span><span class="switch"><input type="checkbox" id="dFeatured"><span class="switch-track"></span></span></label>
+            <label class="switch-row prop-row"><span>🌱 Vegan</span><span class="switch"><input type="checkbox" id="dVegan"><span class="switch-track"></span></span></label>
+            <label class="switch-row prop-row"><span>🌾 Glutenfrei</span><span class="switch"><input type="checkbox" id="dGlutenfree"><span class="switch-track"></span></span></label>
+            <label class="switch-row prop-row"><span>🥛 Laktosefrei</span><span class="switch"><input type="checkbox" id="dLactosefree"><span class="switch-track"></span></span></label>
+          </div>
+          <label class="form-label mt-3">Häufige Allergene</label>
+          <div class="flex flex-wrap gap-1.5">
+            <label class="alg-chip"><input type="checkbox" onchange="togglePresetAllergen('🍷 Sulfite', this.checked)" class="preset-alg"> 🍷 Sulfite</label>
+            <label class="alg-chip"><input type="checkbox" onchange="togglePresetAllergen('🌾 Gluten', this.checked)" class="preset-alg"> 🌾 Gluten</label>
+            <label class="alg-chip"><input type="checkbox" onchange="togglePresetAllergen('🥛 Laktose', this.checked)" class="preset-alg"> 🥛 Laktose</label>
+            <label class="alg-chip"><input type="checkbox" onchange="togglePresetAllergen('🥚 Ei', this.checked)" class="preset-alg"> 🥚 Ei</label>
+            <label class="alg-chip"><input type="checkbox" onchange="togglePresetAllergen('🥜 Nüsse', this.checked)" class="preset-alg"> 🥜 Nüsse</label>
+            <label class="alg-chip"><input type="checkbox" onchange="togglePresetAllergen('🫘 Soja', this.checked)" class="preset-alg"> 🫘 Soja</label>
+          </div>
+          <textarea id="dAllergens" placeholder="Allergene (z. B. Enthält Sulfite ...)" class="ui-field mt-2" rows="2" oninput="syncAllergenChecks()"></textarea>
+        </div>
+
+        <!-- 6 Preise -->
+        <div class="form-section">
+          <div class="form-section-title">6 · Preis & Wareneinsatz (optional)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="form-label" for="dCost">💶 Wareneinsatz (€)</label>
+              <input type="number" step="0.10" id="dCost" oninput="updateMarginPreview()" placeholder="0.00" class="ui-field">
+            </div>
+            <div>
+              <label class="form-label" for="dPrice">🏷️ Verkaufspreis (€)</label>
+              <input type="number" step="0.10" id="dPrice" oninput="updateMarginPreview()" placeholder="0.00" class="ui-field">
+            </div>
+          </div>
+          <p id="dMarginInfo" class="margin-info">Gib beide Preise ein, dann siehst du hier die Marge.</p>
+        </div>
+
+        <!-- 7 Fotos -->
+        <div class="form-section">
+          <div class="form-section-title">7 · Fotos (bis zu 3)</div>
+          <div id="photoSlots" class="photo-slots"></div>
+          <input type="file" id="imageFile" accept="image/*" multiple onchange="uploadImageToSupabase(event)" class="hidden">
+          <span id="uploadStatus" class="form-hint block mt-2"></span>
+          <div class="flex gap-2 mt-2">
+            <input type="text" id="dPhoto" autocomplete="off" placeholder="oder Bild-URL einfügen ..." onkeydown="if (event.key === 'Enter') { event.preventDefault(); addPhotoFromUrl(); }" class="ui-field flex-1">
+            <button type="button" onclick="addPhotoFromUrl()" class="ui-btn-ghost">Hinzufügen</button>
+          </div>
+          <p class="form-hint mt-1.5">Das erste Foto ist das Hauptfoto (Karte, Druck, Multi-View). Mit ⭐ machst du ein anderes zum Hauptfoto.</p>
+        </div>
+      </div>
+
+      <div class="ui-foot">
+        <button type="button" onclick="deleteDrinkFromForm()" id="deleteFormBtn" class="hidden px-4 py-2.5 bg-red-600 hover:bg-red-500 font-bold text-white rounded-xl text-xs transition">🗑️ Löschen</button>
+        <span class="flex-1"></span>
+        <button type="button" onclick="closeAdminModal()" class="ui-btn-ghost">Abbrechen</button>
+        <button type="button" onclick="saveDrink()" class="ui-btn-primary">💾 Getränk speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Detail View -->
+  <div id="drinkModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="card max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 relative flex flex-col justify-between shadow-2xl">
+      <div>
+        <button onclick="closeModal()" class="no-print absolute top-4 right-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-2xl font-bold">&times;</button>
+        <div id="modalContent"></div>
+        <div class="print-watermark-footer">Salonplafond BAR App create Tomas Kardos</div>
+      </div>
+      <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex gap-2 no-print items-center flex-wrap">
+        <button id="modalPhotoBtn" onclick="openPhotoPreviewFromModal()" class="hidden px-4 py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-700 dark:text-amber-400 font-bold rounded-xl transition text-sm flex items-center justify-center gap-2 border border-slate-300 dark:border-slate-700">
+          🖼️ Foto anzeigen
+        </button>
+        <button id="modalFavBtn" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-700 dark:text-amber-400 font-bold rounded-xl transition text-sm flex items-center justify-center gap-2 border border-slate-300 dark:border-slate-700">
+          ❤️ Schicht-Favorit
+        </button>
+        <button id="modalEditBtn" class="px-4 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-sm">
+          ✏️ Bearbeiten
+        </button>
+        <button id="modalDeleteBtn" class="px-4 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-sm">
+          🗑️ Löschen
+        </button>
+        <button onclick="openPrintOptionsModal()" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-700 dark:text-amber-400 font-bold rounded-xl transition text-sm flex items-center justify-center gap-2 border border-slate-300 dark:border-slate-700">
+          🖨️ Drucken / PDF
+        </button>
+        <button onclick="closeModal()" class="flex-1 py-3.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 active:scale-[0.99] text-amber-700 dark:text-amber-400 font-extrabold text-sm rounded-xl border-2 border-amber-500/50 transition shadow-sm tracking-wide">
+          ✕ Schließen
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Print Options Dialog Modal -->
+  <div id="printOptionsModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-[260]">
+    <div class="card max-w-sm w-full p-6 relative flex flex-col gap-4 text-center border-amber-500/50 shadow-2xl">
+      <button onclick="closePrintOptionsModal()" class="absolute top-4 right-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-2xl font-bold">&times;</button>
+      <div class="w-12 h-12 bg-amber-500/20 text-amber-600 dark:text-amber-400 rounded-xl mx-auto flex items-center justify-center text-2xl border border-amber-500/30">🖨️</div>
+      <h3 class="text-lg font-bold text-amber-600 dark:text-amber-400">Drucken-Optionen</h3>
+      <p class="text-xs text-slate-600 dark:text-slate-300">Wähle aus, wie das Rezept gedruckt werden soll:</p>
+      <div class="flex flex-col gap-2.5 mt-2">
+        <button onclick="executePrint(true)" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs transition shadow flex items-center justify-center gap-2">
+          🖼️ Mit Bild drucken
+        </button>
+        <button onclick="executePrint(false)" class="w-full py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold rounded-xl text-xs transition border border-slate-300 dark:border-slate-700 flex items-center justify-center gap-2">
+          📄 Ohne Bild drucken (Text pur)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Samostatný Modal pre náhľad fotky (Lightbox) -->
+  <div id="photoPreviewModal" class="fixed inset-0 bg-black/90 backdrop-blur-md hidden items-center justify-center p-4 z-[350]">
+    <div class="relative max-w-4xl w-full flex flex-col items-center">
+      <button onclick="closePhotoPreview()" class="absolute -top-12 right-0 text-slate-900 dark:text-white hover:text-amber-700 dark:hover:text-amber-400 text-3xl font-bold">&times;</button>
+      <img id="previewImageSrc" src="" class="max-h-[85vh] max-w-full rounded-2xl shadow-2xl object-contain border border-slate-300 dark:border-slate-700" alt="Detailansicht">
+    </div>
+  </div>
+
+  <!-- Changelog (Was ist neu?) -->
+  <div id="changelogModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-[280]">
+    <div class="card max-w-3xl w-full relative flex flex-col max-h-[88vh] overflow-hidden p-0 border-amber-500/50 shadow-2xl">
+
+      <div class="ui-head">
+        <div>
+          <h3 class="ui-head-title">🚀 Was ist neu?</h3>
+          <p class="ui-head-sub">Aktuelle Version <span id="changelogVersionBadge" class="cl-ver">v3.1.04</span></p>
+        </div>
+        <button type="button" onclick="closeChangelogModal()" class="ui-close" aria-label="Schließen">&times;</button>
+      </div>
+
+      <div class="ui-tabs" role="tablist">
+        <button type="button" id="clTab_current" onclick="setChangelogTab('current')" class="ui-tab active" role="tab" aria-selected="true">✨ Neu in dieser Version</button>
+        <button type="button" id="clTab_all" onclick="setChangelogTab('all')" class="ui-tab" role="tab" aria-selected="false">📜 Alle Versionen <span id="clAllCount" class="ui-count">0</span></button>
+        <button type="button" id="clTab_news" onclick="setChangelogTab('news')" class="ui-tab" role="tab" aria-selected="false">📣 Team-News <span id="clNewsCount" class="ui-count">0</span></button>
+      </div>
+
+      <div id="clBody" class="flex-1 overflow-y-auto p-5">
+
+        <div id="clPanel_current">
+          <div id="clCurrentContent"></div>
+        </div>
+
+        <div id="clPanel_all" class="hidden">
+          <div class="cl-toolbar">
+            <input type="search" id="clSearch" oninput="onChangelogSearch(this.value)" placeholder="🔍 Version oder Stichwort suchen..." class="ui-search">
+            <div class="flex gap-1.5 flex-wrap items-center">
+              <button type="button" id="clChip_all" onclick="setChangelogFilter('all')" class="ui-chip active">Alle</button>
+              <button type="button" id="clChip_new" onclick="setChangelogFilter('new')" class="ui-chip">✨ Neu</button>
+              <button type="button" id="clChip_improved" onclick="setChangelogFilter('improved')" class="ui-chip">🔧 Verbessert</button>
+              <button type="button" id="clChip_fixed" onclick="setChangelogFilter('fixed')" class="ui-chip">🐞 Behoben</button>
+              <button type="button" id="clChip_security" onclick="setChangelogFilter('security')" class="ui-chip">🔒 Sicherheit</button>
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <span id="clResultInfo" class="cl-result-info"></span>
+              <span class="flex gap-3">
+                <button type="button" onclick="toggleAllChangelogItems(true)" class="ui-link-btn">Alle aufklappen</button>
+                <button type="button" onclick="toggleAllChangelogItems(false)" class="ui-link-btn">Alle zuklappen</button>
+              </span>
+            </div>
+          </div>
+          <div id="clAllList" class="flex flex-col gap-2"></div>
+        </div>
+
+        <div id="clPanel_news" class="hidden">
+          <div id="adminChangelogFormContainer" class="hidden">
+            <div class="cl-form">
+              <label class="form-label" for="newChangelogText">➕ Neue Team-News veröffentlichen</label>
+              <textarea id="newChangelogText" rows="3" placeholder="z. B. Ab Freitag gibt es eine neue Sommerkarte ..." class="ui-field"></textarea>
+              <div class="flex justify-end">
+                <button type="button" onclick="submitNewChangelog()" class="ui-btn-primary">📣 Veröffentlichen</button>
+              </div>
+            </div>
+          </div>
+          <div id="clNewsList" class="flex flex-col gap-2.5"></div>
+        </div>
+
+      </div>
+
+      <div class="ui-foot">
+        <button type="button" onclick="closeChangelogModal()" class="ui-btn-ghost">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Jednotný Import & Export Dialog Modal s dvoma záložkami (Drinky vs Pracovný plán) -->
+  <div id="importExportModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="card max-w-2xl w-full relative flex flex-col max-h-[90vh] overflow-hidden p-0 border-amber-500/50 shadow-2xl">
+
+      <!-- Hlavička Modalu -->
+      <div class="ui-head">
+        <div>
+          <h3 class="ui-head-title">📊 Import & Export (Zentrale)</h3>
+          <p class="ui-head-sub">Verwaltung von Rezepten und monatlichem Arbeitsplan (DPL).</p>
+        </div>
+        <button type="button" onclick="closeImportExportModal()" class="ui-close" aria-label="Schließen">&times;</button>
+      </div>
+
+      <!-- Prepínač Záložiek (Tab-Leiste) -->
+      <div class="flex border-b border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900/50 p-1 gap-1">
+        <button type="button" onclick="switchImportTab('drinks')" id="tabBtnDrinks" class="flex-1 py-2 px-3 text-xs font-bold rounded-lg transition bg-amber-500 text-slate-950 shadow-sm">🍸 Getränke Import / Export</button>
+        <button type="button" onclick="switchImportTab('schedule')" id="tabBtnSchedule" class="flex-1 py-2 px-3 text-xs font-bold rounded-lg transition text-slate-600 dark:text-slate-400 hover:text-amber-500">📅 Arbeitsplan Import (DPL)</button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-5 flex flex-col gap-5">
+
+        <!-- KARTA 1: GETRÄNKE IMPORT & EXPORT -->
+        <div id="importSectionDrinks" class="flex flex-col gap-5">
+
+          <!-- Export Sekcia -->
+          <div class="custom-box p-4 rounded-xl border flex flex-col gap-3">
+            <h4 class="text-sm font-bold flex items-center gap-1.5 text-amber-600 dark:text-amber-400">📤 Getränke exportieren</h4>
+            <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+              Wähle die gewünschte Saison aus und exportiere die Rezepte in dein bevorzugtes Format (Excel oder CSV).
+            </p>
+            
+            <div class="flex flex-col gap-1.5 mt-1">
+              <label class="text-[11px] font-semibold">Saison für Export wählen:</label>
+              <select id="exportSeasonSelect" class="p-2.5 rounded-lg border text-xs w-full bg-slate-100 dark:bg-slate-900 border-slate-300 dark:border-slate-700"></select>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+              <button onclick="exportToExcel()" class="py-2.5 px-3 custom-box hover:bg-slate-200 dark:hover:bg-slate-800 text-amber-700 dark:text-amber-400 font-bold rounded-lg text-xs border transition flex items-center justify-center gap-1.5">
+                📗 Excel (.xlsx) exportieren
+              </button>
+              <button onclick="exportToCSV()" class="py-2.5 px-3 custom-box hover:bg-slate-200 dark:hover:bg-slate-800 text-amber-700 dark:text-amber-400 font-bold rounded-lg text-xs border transition flex items-center justify-center gap-1.5">
+                📊 CSV-Tabelle exportieren
+              </button>
+            </div>
+          </div>
+
+          <!-- Import Sekcia pre Drinky -->
+          <div class="custom-box p-4 rounded-xl border flex flex-col gap-3">
+            <h4 class="text-sm font-bold flex items-center gap-1.5 text-amber-600 dark:text-amber-400">📥 Getränke importieren (Assistent)</h4>
+            <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+              Lade eine strukturierte Excel-Datei (.xlsx, .xls) hoch, um neue Rezepte direkt in eine gewählte Saison einzuspielen.
+            </p>
+            
+            <div class="flex flex-col gap-2.5 mt-1">
+              <div>
+                <label class="text-[11px] font-semibold mb-1 block">1. Excel-Datei auswählen:</label>
+                <input type="file" id="wizardExcelFile" accept=".xlsx, .xls" class="text-xs file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-600 cursor-pointer w-full custom-box p-2 rounded-lg border">
+              </div>
+              <div>
+                <label class="text-[11px] font-semibold mb-1 block">2. Ziel-Saison für den Import:</label>
+                <select id="wizardSeasonSelect" onchange="handleWizardSeasonChange(this)" class="p-2.5 rounded-lg border text-xs w-full bg-slate-100 dark:bg-slate-900 border-slate-300 dark:border-slate-700"></select>
+              </div>
+            </div>
+
+            <div id="wizardStatus" class="text-xs text-amber-600 dark:text-amber-400 font-medium text-center"></div>
+
+            <button onclick="executeWizardImport()" class="py-3 bg-amber-500 hover:bg-amber-600 font-bold text-slate-950 rounded-xl text-xs transition shadow-lg mt-1">
+              🚀 Getränke-Import starten
+            </button>
+          </div>
+
+        </div>
+
+        <!-- KARTA 2: ARBEITSPLAN IMPORT (DPL MA) -->
+        <div id="importSectionSchedule" class="hidden flex-col gap-5">
+          <div class="custom-box p-4 rounded-xl border flex flex-col gap-3 border-amber-500/30">
+            <h4 class="text-sm font-bold flex items-center gap-1.5 text-amber-600 dark:text-amber-400">📅 Monatlichen Arbeitsplan importieren (DPL MA)</h4>
+            <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+              Importieren Sie den monatlichen Arbeitsplan im offiziellen Formular-Format (z. B. <i>DPL MA. NOVEMOBER 2026.xlsx</i>). Der Parser verarbeitet automatisch zweizeilige Mitarbeiter-Schichten sowie Teilschichten (Früh- und Spätschicht an einem Tag).
+            </p>
+
+            <div class="flex flex-col gap-3 mt-1">
+              <div>
+                <label class="text-[11px] font-semibold mb-1 block">1. Excel-Arbeitsplan-Datei wählen (.xlsx):</label>
+                <input type="file" id="scheduleExcelFile" accept=".xlsx, .xls" class="text-xs file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-600 cursor-pointer w-full custom-box p-2 rounded-lg border">
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[11px] font-semibold mb-1 block">2. Monat wählen:</label>
+                  <select id="scheduleMonthSelect" class="p-2.5 rounded-lg border text-xs w-full bg-slate-100 dark:bg-slate-900 border-slate-300 dark:border-slate-700">
+                    <option value="1">Januar</option>
+                    <option value="2">Februar</option>
+                    <option value="3">März</option>
+                    <option value="4">April</option>
+                    <option value="5">Mai</option>
+                    <option value="6">Juni</option>
+                    <option value="7">Juli</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">Oktober</option>
+                    <option value="11" selected>November</option>
+                    <option value="12">Dezember</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-[11px] font-semibold mb-1 block">3. Jahr wählen:</label>
+                  <input type="number" id="scheduleYearInput" value="2026" min="2024" max="2035" class="p-2.5 rounded-lg border text-xs w-full bg-slate-100 dark:bg-slate-900 border-slate-300 dark:border-slate-700 font-bold">
+                </div>
+              </div>
+            </div>
+
+            <div id="scheduleStatus" class="text-xs text-amber-600 dark:text-amber-400 font-medium text-center"></div>
+
+            <button onclick="executeScheduleImport()" class="py-3 bg-amber-500 hover:bg-amber-600 font-bold text-slate-950 rounded-xl text-xs transition shadow-lg mt-1">
+              🗓️ Arbeitsplan importieren & speichern
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="ui-foot">
+        <button type="button" onclick="closeImportExportModal()" class="ui-btn-ghost">Schließen</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Motivation Modal -->
+  <div id="motivationModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="card max-w-md w-full border-amber-500/50 p-6 relative flex flex-col gap-4 text-center shadow-2xl">
+      <button onclick="closeMotivationModal()" class="absolute top-4 right-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-2xl font-bold">&times;</button>
+      <div class="w-16 h-16 bg-amber-500/20 text-amber-600 dark:text-amber-400 rounded-2xl mx-auto flex items-center justify-center text-3xl border border-amber-500/30">🍸</div>
+      <h3 class="text-xl font-bold text-amber-600 dark:text-amber-400">Salonplafond Osterei 🐣</h3>
+      <div id="motivationTextContainer" class="custom-box p-4 rounded-xl border text-sm italic min-h-[90px] flex items-center justify-center"></div>
+      <div class="flex gap-2 mt-2">
+        <button onclick="showRandomMotivation()" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 font-bold text-slate-950 rounded-lg text-xs transition">🔄 Noch ein Spruch</button>
+        <button onclick="closeMotivationModal()" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-white rounded-lg text-xs transition">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Season Selection Modal Dialog -->
+  <div id="seasonModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="card max-w-md w-full p-6 relative flex flex-col gap-4 shadow-2xl border-amber-500/50">
+      <button onclick="closeSeasonModal()" class="absolute top-4 right-4 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-2xl font-bold z-10">&times;</button>
+      
+      <div class="flex items-center justify-between pr-8">
+        <h3 class="text-xl font-bold text-amber-600 dark:text-amber-400">📅 Saison & Archiv wählen</h3>
+      </div>
+
+      <div class="flex items-center justify-between gap-2">
+        <p class="text-xs text-slate-600 dark:text-slate-300">Wähle die aktive Saison oder verwalte die Einträge:</p>
+        <button onclick="createNewSeasonPrompt()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg text-xs transition shadow flex items-center gap-1 shrink-0">
+          ➕ Neue Saison
+        </button>
+      </div>
+      
+      <div id="seasonModalList" class="flex flex-col gap-2.5 mt-1 max-h-[50vh] overflow-y-auto pr-1"></div>
+      
+      <div class="mt-2 pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+        <button onclick="closeSeasonModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-white rounded-lg text-xs transition">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Support & Tickets Modal -->
+  <div id="supportModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="card max-w-2xl w-full p-6 relative flex flex-col gap-4 max-h-[85vh] overflow-y-auto border-amber-500/50 shadow-2xl">
+      <button onclick="closeSupportModal()" class="absolute top-4 right-4 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-2xl font-bold">&times;</button>
+      
+      <div class="flex flex-col gap-4">
+        <div>
+          <h3 class="text-xl font-bold text-amber-600 dark:text-amber-400">💬 Bar-Tickets & Anfragen</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Schreibe eine Anfrage oder einen Änderungswunsch als <b id="ticketAuthorDisplay" class="text-amber-600 dark:text-amber-300"></b>.</p>
+        </div>
+
+        <div class="custom-box p-4 rounded-xl border flex flex-col gap-2.5">
+          <label class="text-xs font-semibold">Neue Anfrage / Anliegen:</label>
+          <textarea id="newTicketMessage" rows="3" placeholder="z. B. Rezept für Strawberry Kiss anpassen..." class="p-3 rounded-lg border text-xs focus:outline-none focus:border-amber-500"></textarea>
+          <button onclick="submitNewTicket()" class="py-2.5 px-4 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg text-xs transition shadow">Absenden</button>
+        </div>
+
+        <div class="flex flex-col gap-2 mt-2">
+          <h4 class="text-xs font-bold uppercase tracking-wider">Aktive & gelöste Anfragen:</h4>
+          <div id="ticketsListContainer" class="flex flex-col gap-2 max-h-[35vh] overflow-y-auto pr-1">
+            <p class="text-slate-500 italic text-xs text-center py-4">Lade Anfragen...</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="closeSupportModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-white rounded-xl text-xs transition">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js?v=3.1.04"></script>
+  <script src="js/ui.js?v=3.1.04"></script>
+  <script src="js/settings.js?v=3.1.04"></script>
+  <script src="js/pwa.js?v=3.1.04"></script>
+  <script src="js/auth.js?v=3.1.04"></script>
+  <script src="js/profile.js?v=3.1.04"></script>
+  <script src="js/staff-admin.js?v=3.1.04"></script>
+  <script src="js/chat.js?v=3.1.04"></script>
+  <script src="js/tickets.js?v=3.1.04"></script>
+  <script src="js/changelog.js?v=3.1.04"></script>
+  <script src="js/schedule.js?v=3.1.04"></script>
+  <script src="js/seasons.js?v=3.1.04"></script>
+  <script src="js/drinks.js?v=3.1.04"></script>
+  <script src="js/drink-admin.js?v=3.1.04"></script>
+  <script src="js/tray.js?v=3.1.04"></script>
+  <script src="js/shopping.js?v=3.1.04"></script>
+  <script src="js/import-export.js?v=3.1.04"></script>
+  <script src="js/print-a3.js?v=3.1.04"></script>
+  <script src="js/app.js?v=3.1.04"></script>
+</body>
+</html>
