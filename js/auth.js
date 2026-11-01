@@ -128,13 +128,12 @@
 
     async function finalizeAppStartForStaff(staffRecord) {
       document.getElementById('authContainer').classList.add('hidden');
-      document.getElementById('appContainer').classList.remove('hidden');
-
+      
       currentWaiterAvatar = staffRecord.avatar_url || "";
       updateHeaderAvatarUI();
 
       currentStaffRole = staffRecord.role || 'staff';
-      userIsAdmin = (currentStaffRole === 'manager' || currentStaffRole === 'developer'); // Developer aj Manager majú manažérske práva
+      userIsAdmin = (currentStaffRole === 'manager' || currentStaffRole === 'developer'); // Developer aj Manager majú manažérske práva[cite: 4]
       userCanEdit = userIsAdmin || staffRecord.can_edit_drinks === true;
       isAdmin = userIsAdmin || userCanEdit;   
       applyRoleUI();
@@ -149,7 +148,7 @@
     }
 
     /**
-     * Nová funkcia: Prepínanie medzi Manažérskym a Personálnym Dashboardom
+     * Prepínanie medzi Manažérskym a Personálnym Dashboardom
      */
     function routeUserDashboardByRole(staffRecord) {
       const role = staffRecord.role || 'staff';
@@ -159,19 +158,37 @@
         console.log('Otváram Manažérsky Dashboard pre:', staffRecord.name, `(Rola: ${role})`);
         renderManagerDashboardView(staffRecord);
       } else {
-        // Pre bežný personál -> otváram personálny dashboard
+        // Pre bežný personál -> otváram personálny dashboard / štandardný pohľad
         console.log('Otváram Personálny Dashboard pre:', staffRecord.name);
         renderStaffDashboardView(staffRecord);
       }
     }
 
     function renderManagerDashboardView(staffRecord) {
-      // Tu v ďalšom kroku prepojíme vykreslenie manažérskych dlaždíc
-      // (zatial necháme bežať štandardný init, príp. tu prepneme viditeľnosť špeciálnych sekcií)
+      // Skryjeme štandardný kontajner aplikácie a zobrazíme manažérsky portál s dlaždicami
+      const appContainer = document.getElementById('appContainer');
+      if (appContainer) appContainer.classList.add('hidden');
+
+      const mgrDashboard = document.getElementById('managerDashboardView');
+      if (mgrDashboard) {
+        mgrDashboard.classList.remove('hidden');
+      }
+
+      // Nastavenie mena a roly v hlavičke manažérskeho dashboardu
+      const nameLabel = document.getElementById('managerHeaderName');
+      if (nameLabel) {
+        const roleText = staffRecord.role === 'developer' ? 'Developer' : 'Manager';
+        nameLabel.textContent = `${staffRecord.name} (${roleText})`;
+      }
     }
 
     function renderStaffDashboardView(staffRecord) {
-      // Tu v ďalšom kroku prepojíme vykreslenie personálnych dlaždíc
+      // Skryjeme manažérsky dashboard a zobrazíme štandardný appContainer pre personál
+      const mgrDashboard = document.getElementById('managerDashboardView');
+      if (mgrDashboard) mgrDashboard.classList.add('hidden');
+
+      const appContainer = document.getElementById('appContainer');
+      if (appContainer) appContainer.classList.remove('hidden');
     }
 
     // ---------- Hinweis, wenn sich ein Kollege anmeldet ----------
@@ -260,6 +277,9 @@
       selectedWaiterForPin = "";
       updatePinDisplay();
       resetWaiterSelection();
+      
+      // Skryjeme obidva dashboardy a vrátime sa na prihlásenie
+      document.getElementById('managerDashboardView')?.classList.add('hidden');
       document.getElementById('appContainer').classList.add('hidden');
       document.getElementById('authContainer').classList.remove('hidden');
       await loadStaffPresenceRecordsForLogin();
