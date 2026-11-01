@@ -127,8 +127,9 @@
     }
 
     async function finalizeAppStartForStaff(staffRecord) {
+      // Skryjeme iba prihlasovaciu obrazovku (neotvárame appContainer natvrdo)
       document.getElementById('authContainer').classList.add('hidden');
-      
+
       currentWaiterAvatar = staffRecord.avatar_url || "";
       updateHeaderAvatarUI();
 
@@ -158,14 +159,14 @@
         console.log('Otváram Manažérsky Dashboard pre:', staffRecord.name, `(Rola: ${role})`);
         renderManagerDashboardView(staffRecord);
       } else {
-        // Pre bežný personál -> otváram personálny dashboard / štandardný pohľad
+        // Pre bežný personál -> otváram personálny dashboard
         console.log('Otváram Personálny Dashboard pre:', staffRecord.name);
         renderStaffDashboardView(staffRecord);
       }
     }
 
     function renderManagerDashboardView(staffRecord) {
-      // Skryjeme štandardný kontajner aplikácie a zobrazíme manažérsky portál s dlaždicami
+      // Skryjeme štandardný zoznam drinkov a zobrazíme manažérsky dlaždicový portál
       const appContainer = document.getElementById('appContainer');
       if (appContainer) appContainer.classList.add('hidden');
 
@@ -183,7 +184,7 @@
     }
 
     function renderStaffDashboardView(staffRecord) {
-      // Skryjeme manažérsky dashboard a zobrazíme štandardný appContainer pre personál
+      // Skryjeme manažérsky dashboard a zobrazíme štandardný pohľad pre personál
       const mgrDashboard = document.getElementById('managerDashboardView');
       if (mgrDashboard) mgrDashboard.classList.add('hidden');
 
