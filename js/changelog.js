@@ -10,9 +10,16 @@
    Änderungs-Typen: 'new' Neu, 'improved' Verbessert, 'fixed' Behoben,
                     'security' Sicherheit, 'info' Allgemein
    ============================================================ */
-    const APP_VERSION = '3.2.01';
+    const APP_VERSION = '3.2.02';
 
     const CHANGELOG = [
+  { version: '3.2.02', range: '', date: 'November 2026', title: 'Einfachere, kompakte Anmeldung',
+    changes: [
+      ['improved', 'Anmeldung komplett vereinfacht: alles passt auf einen Bildschirm, ein kleiner Kopf statt großem Logo, alle Namen in einer kompakten Liste (A–Z) mit Suche und den letzten 3 Anmeldungen als schnelle Knöpfe.'],
+      ['improved', 'PIN-Eingabe übersichtlicher: gewählter Name mit Foto und „Ändern“, PIN als Punkte, kleinere Zahlentasten. Am Computer geht die Eingabe auch mit der Tastatur (Enter = Anmelden, Esc = Name ändern).'],
+      ['improved', 'Leitung (Manager/Developer) steht nicht mehr in einem eigenen Bereich, sondern ist in der Liste klein beschriftet.'],
+      ['info', 'Die „klassische Ansicht“ der Anmeldung entfällt, weil die neue Liste sie ersetzt.']
+    ] },
   { version: '3.2.01', range: '', date: 'November 2026', title: 'Dashboard als Startseite & Team-Arbeitsplan',
     changes: [
       ['new', 'Dashboard als Startseite: Nach dem Login siehst du zuerst übersichtliche Kacheln statt direkt der Getränkeliste. Manager und Developer bekommen vier Bereiche (Bar & Betrieb, Team & Personal, Sicherheit & System, Support & Infos), Kellner ihre vier wichtigsten Kacheln: Getränke & Rezepte, Mein Arbeitsplan, Team-Chat und Was ist neu?.'],

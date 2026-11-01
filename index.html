@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Salonplafond">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>Salonplafond BAR v3.2.01</title>
+  <title>Salonplafond BAR v3.2.02</title>
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- SheetJS pre Excel Import & Export -->
@@ -34,79 +34,76 @@
       window.__salonDark = dark;
     } catch (e) { document.documentElement.classList.add('dark'); window.__salonDark = true; }
   </script>
-  <link rel="stylesheet" href="css/style.css?v=3.2.01">
+  <link rel="stylesheet" href="css/style.css?v=3.2.02">
 </head>
 <body class="dark-mode p-3 pt-0 md:p-8 max-w-6xl mx-auto pb-32" onclick="closeDropdowns(event)">
   <script>if (window.__salonDark === false) { document.body.classList.remove('dark-mode'); document.body.classList.add('light-mode'); }</script>
 
-  <!-- 1. PRIHLASOVACIA OBRAZOVKA -->
-  <div id="authContainer" class="fixed inset-0 z-[200] bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center p-4 md:p-6 text-center overflow-y-auto">
-    <div class="flex flex-col items-center gap-4 w-full max-w-lg my-auto">
-      
-      <div class="login-logo-advanced w-16 h-16 bg-amber-400 rounded-2xl flex flex-col items-center justify-center shadow-2xl p-1 text-slate-950 font-bold select-none border-2 border-amber-300 mx-auto">
-        <div class="logo-bar-login"></div>
-        <div class="text-2xl font-black leading-none my-0">O</div>
-        <div class="text-[10px] font-black leading-none mt-0.5">•</div>
-      </div>
+  <!-- 1. ANMELDUNG (kompakt, ein Bildschirm) -->
+  <div id="authContainer" class="login-screen fixed inset-0 z-[200] bg-slate-100 dark:bg-slate-950 overflow-y-auto">
+    <div class="login-shell">
 
-      <div>
-        <h1 class="text-lg md:text-xl font-black tracking-wider text-slate-900 dark:text-white uppercase">Anmeldung</h1>
-        <h2 class="text-xl md:text-2xl font-extrabold text-amber-700 dark:text-amber-400 tracking-tight mt-1">Salonplafond BAR</h2>
-        <span class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-0.5 block"><span data-app-version>v3.2.01</span> • Touch-Grid PIN-Login</span>
-      </div>
+      <header class="login-head">
+        <div class="login-logo-advanced login-logo bg-amber-400 shadow-2xl text-slate-950 font-bold select-none border-2 border-amber-300">
+          <div class="logo-bar-login"></div>
+          <div class="login-logo-o">O</div>
+          <div class="login-logo-dot">•</div>
+        </div>
+        <div class="login-head-text">
+          <h1>Salonplafond BAR</h1>
+          <span><span data-app-version>v3.2.02</span> · Anmeldung</span>
+        </div>
+      </header>
 
-      <div id="pinLoginForm" class="w-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 p-5 rounded-2xl shadow-2xl space-y-4 text-left mt-1">
-        <div>
-          <label class="block text-xs font-semibold uppercase mb-2 text-slate-700 dark:text-slate-300 flex items-center justify-between">
-            <span>1. Wer bist du? (Personal wählen)</span>
-            <span id="selectedWaiterLabel" class="text-amber-700 dark:text-amber-400 font-bold"></span>
-          </label>
-          <div id="loginPickerWrap">
-            <div id="loginSearchRow" class="hidden mb-3">
-              <input type="search" id="loginSearchInput" oninput="renderLoginGrid()" onkeydown="if (event.key === 'Enter') { event.preventDefault(); loginPickFirstMatch(); }" autocomplete="off" placeholder="🔍 Name suchen ..." class="ui-search">
-            </div>
-            <div id="waiterGridContainer" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
-              <p class="col-span-full text-slate-500 italic text-xs text-center py-4">Personal wird geladen...</p>
-            </div>
-            <div class="login-view-toggle">
-              <button type="button" id="loginViewToggleBtn" onclick="toggleLoginView()"></button>
-            </div>
+      <div id="pinLoginForm" class="login-card">
+
+        <!-- Schritt 1: Name wählen -->
+        <div id="loginPickerWrap">
+          <p class="login-step">Wer bist du?</p>
+          <div id="loginSearchRow" class="hidden">
+            <input type="search" id="loginSearchInput" oninput="renderLoginGrid()" onkeydown="if (event.key === 'Enter') { event.preventDefault(); loginPickFirstMatch(); }" autocomplete="off" placeholder="🔍 Name suchen ..." class="login-search">
+          </div>
+          <div id="loginRecentRow" class="login-recent"></div>
+          <div id="waiterGridContainer" class="login-list">
+            <p class="login-empty">Personal wird geladen ...</p>
           </div>
         </div>
 
-        <div id="pinInputSection" class="hidden border-t border-slate-300 dark:border-slate-800 pt-3">
-          <div class="flex items-center justify-between mb-1">
-            <label class="block text-xs font-semibold uppercase text-slate-700 dark:text-slate-300">2. PIN-Code eingeben</label>
-            <button type="button" onclick="resetWaiterSelection()" class="text-[11px] text-amber-700 dark:text-amber-400 hover:underline">← Anderen Namen wählen</button>
-          </div>
-          <div class="relative mb-2">
-            <input type="password" id="loginPinInput" readonly placeholder="••••" class="w-full p-2.5 text-center tracking-widest text-base rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-amber-700 dark:text-amber-400 font-black focus:outline-none focus:border-amber-400">
+        <!-- Schritt 2: PIN eingeben -->
+        <div id="pinInputSection" class="hidden">
+          <div class="login-who">
+            <span id="selectedWaiterAvatar" class="login-av lg"></span>
+            <div class="login-who-text">
+              <b id="selectedWaiterLabel"></b>
+              <small>PIN eingeben</small>
+            </div>
+            <button type="button" onclick="resetWaiterSelection()" class="login-change">Ändern</button>
           </div>
 
-          <div class="grid grid-cols-3 gap-1.5">
-            <button type="button" onclick="appendPinNum('1')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">1</button>
-            <button type="button" onclick="appendPinNum('2')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">2</button>
-            <button type="button" onclick="appendPinNum('3')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">3</button>
-            <button type="button" onclick="appendPinNum('4')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">4</button>
-            <button type="button" onclick="appendPinNum('5')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">5</button>
-            <button type="button" onclick="appendPinNum('6')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">6</button>
-            <button type="button" onclick="appendPinNum('7')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">7</button>
-            <button type="button" onclick="appendPinNum('8')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">8</button>
-            <button type="button" onclick="appendPinNum('9')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">9</button>
-            <button type="button" onclick="clearPinInput()" class="p-2.5 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 text-red-700 dark:text-red-400 text-xs font-bold rounded-xl transition">C</button>
-            <button type="button" onclick="appendPinNum('0')" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-sm font-bold rounded-xl transition">0</button>
-            <button type="button" onclick="backspacePinInput()" class="p-2.5 bg-slate-100 dark:bg-slate-950 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-300 dark:border-slate-800 text-amber-700 dark:text-amber-400 text-xs font-bold rounded-xl transition">⌫</button>
+          <div id="loginPinDots" class="login-dots" aria-label="PIN-Eingabe"></div>
+          <input type="password" id="loginPinInput" readonly tabindex="-1" class="hidden">
+
+          <div class="login-keypad">
+            <button type="button" onclick="appendPinNum('1')" class="login-key">1</button>
+            <button type="button" onclick="appendPinNum('2')" class="login-key">2</button>
+            <button type="button" onclick="appendPinNum('3')" class="login-key">3</button>
+            <button type="button" onclick="appendPinNum('4')" class="login-key">4</button>
+            <button type="button" onclick="appendPinNum('5')" class="login-key">5</button>
+            <button type="button" onclick="appendPinNum('6')" class="login-key">6</button>
+            <button type="button" onclick="appendPinNum('7')" class="login-key">7</button>
+            <button type="button" onclick="appendPinNum('8')" class="login-key">8</button>
+            <button type="button" onclick="appendPinNum('9')" class="login-key">9</button>
+            <button type="button" onclick="clearPinInput()" class="login-key login-key-c" aria-label="Löschen">C</button>
+            <button type="button" onclick="appendPinNum('0')" class="login-key">0</button>
+            <button type="button" onclick="backspacePinInput()" class="login-key login-key-b" aria-label="Zurück">⌫</button>
           </div>
-          <button type="button" id="pinSubmitBtn" onclick="submitPinLogin()" class="w-full mt-2 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold rounded-xl text-sm transition shadow-lg">🔓 Anmelden</button>
+          <button type="button" id="pinSubmitBtn" onclick="submitPinLogin()" class="login-submit">Anmelden</button>
         </div>
 
-        <div id="pinAuthError" class="text-xs text-red-700 dark:text-red-400 hidden font-medium text-center"></div>
-
+        <div id="pinAuthError" class="login-error hidden"></div>
       </div>
 
-      <div class="mt-2 flex flex-col items-center gap-1">
-        <span class="text-xs text-slate-700 dark:text-slate-300 font-extrabold block">Erstellt von © T0mc1k (Tomas Kardos)</span>
-      </div>
+      <p class="login-credit">Erstellt von © T0mc1k (Tomas Kardos)</p>
     </div>
   </div>
 
@@ -388,7 +385,7 @@
 
         <div class="flex flex-col justify-center min-w-0">
           <h1 class="text-lg md:text-3xl font-bold tracking-tight text-amber-700 dark:text-amber-400 leading-none whitespace-nowrap">Salonplafond BAR</h1>
-          <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium block mt-0.5" data-app-version>v3.2.01</span>
+          <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium block mt-0.5" data-app-version>v3.2.02</span>
         </div>
       </div>
 
@@ -506,7 +503,7 @@
             </button>
             <button type="button" onclick="openChangelogModal()" class="menu-item">
               <span class="menu-ico">🚀</span>
-              <span class="menu-text"><span class="menu-label">Was ist neu?</span><span class="menu-sub">Neuigkeiten in <span data-app-version>v3.2.01</span></span></span>
+              <span class="menu-text"><span class="menu-label">Was ist neu?</span><span class="menu-sub">Neuigkeiten in <span data-app-version>v3.2.02</span></span></span>
             </button>
             <button type="button" onclick="openSupportModal()" class="menu-item">
               <span class="menu-ico">🛟<span id="menuDropdownTicketDot" class="hidden menu-dot pulse-badge-dot"></span></span>
@@ -622,7 +619,7 @@
     </div><!-- /drinksView -->
 
     <footer class="mt-20 pt-6 border-t border-slate-300 dark:border-slate-800 text-center text-xs text-slate-500">
-      Salonplafond BAR App <span data-app-version>v3.2.01</span> • Erstellt von <span class="text-amber-600 dark:text-amber-400 font-semibold">© T0mc1k (Tomas Kardos)</span>
+      Salonplafond BAR App <span data-app-version>v3.2.02</span> • Erstellt von <span class="text-amber-600 dark:text-amber-400 font-semibold">© T0mc1k (Tomas Kardos)</span>
     </footer>
 
   </div>
@@ -1059,7 +1056,7 @@
         <section class="set-card">
           <h4 class="set-head">🧰 App</h4>
           <div class="set-row">
-            <div class="set-text"><b>Version</b><small>Salonplafond BAR <span data-app-version>v3.2.01</span></small></div>
+            <div class="set-text"><b>Version</b><small>Salonplafond BAR <span data-app-version>v3.2.02</span></small></div>
             <button type="button" onclick="closeUnifiedSettingsModal(); openChangelogModal();" class="ui-btn-ghost">🚀 Was ist neu?</button>
           </div>
           <div class="set-row">
@@ -1313,7 +1310,7 @@
       <div class="ui-head">
         <div>
           <h3 class="ui-head-title">🚀 Was ist neu?</h3>
-          <p class="ui-head-sub">Aktuelle Version <span id="changelogVersionBadge" class="cl-ver">v3.2.01</span></p>
+          <p class="ui-head-sub">Aktuelle Version <span id="changelogVersionBadge" class="cl-ver">v3.2.02</span></p>
         </div>
         <button type="button" onclick="closeChangelogModal()" class="ui-close" aria-label="Schließen">&times;</button>
       </div>
@@ -1570,26 +1567,26 @@
     </div>
   </div>
 
-  <script src="js/config.js?v=3.2.01"></script>
-  <script src="js/ui.js?v=3.2.01"></script>
-  <script src="js/settings.js?v=3.2.01"></script>
-  <script src="js/pwa.js?v=3.2.01"></script>
-  <script src="js/auth.js?v=3.2.01"></script>
-  <script src="js/profile.js?v=3.2.01"></script>
-  <script src="js/staff-admin.js?v=3.2.01"></script>
-  <script src="js/chat.js?v=3.2.01"></script>
-  <script src="js/tickets.js?v=3.2.01"></script>
-  <script src="js/changelog.js?v=3.2.01"></script>
-  <script src="js/schedule.js?v=3.2.01"></script>
-  <script src="js/team-plan.js?v=3.2.01"></script>
-  <script src="js/seasons.js?v=3.2.01"></script>
-  <script src="js/drinks.js?v=3.2.01"></script>
-  <script src="js/drink-admin.js?v=3.2.01"></script>
-  <script src="js/tray.js?v=3.2.01"></script>
-  <script src="js/shopping.js?v=3.2.01"></script>
-  <script src="js/import-export.js?v=3.2.01"></script>
-  <script src="js/print-a3.js?v=3.2.01"></script>
-  <script src="js/dashboard.js?v=3.2.01"></script>
-  <script src="js/app.js?v=3.2.01"></script>
+  <script src="js/config.js?v=3.2.02"></script>
+  <script src="js/ui.js?v=3.2.02"></script>
+  <script src="js/settings.js?v=3.2.02"></script>
+  <script src="js/pwa.js?v=3.2.02"></script>
+  <script src="js/auth.js?v=3.2.02"></script>
+  <script src="js/profile.js?v=3.2.02"></script>
+  <script src="js/staff-admin.js?v=3.2.02"></script>
+  <script src="js/chat.js?v=3.2.02"></script>
+  <script src="js/tickets.js?v=3.2.02"></script>
+  <script src="js/changelog.js?v=3.2.02"></script>
+  <script src="js/schedule.js?v=3.2.02"></script>
+  <script src="js/team-plan.js?v=3.2.02"></script>
+  <script src="js/seasons.js?v=3.2.02"></script>
+  <script src="js/drinks.js?v=3.2.02"></script>
+  <script src="js/drink-admin.js?v=3.2.02"></script>
+  <script src="js/tray.js?v=3.2.02"></script>
+  <script src="js/shopping.js?v=3.2.02"></script>
+  <script src="js/import-export.js?v=3.2.02"></script>
+  <script src="js/print-a3.js?v=3.2.02"></script>
+  <script src="js/dashboard.js?v=3.2.02"></script>
+  <script src="js/app.js?v=3.2.02"></script>
 </body>
 </html>
