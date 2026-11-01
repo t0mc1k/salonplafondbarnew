@@ -110,95 +110,112 @@
     </div>
   </div>
 
-  <!-- MANAŽÉRSKY DASHBOARD (NOVÉ DLAŽDICOVÉ ROZHRANIE) -->
-  <div id="managerDashboardView" class="hidden min-h-screen bg-slate-950 text-white p-4 md:p-8">
-    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-6 mb-8 border-b border-slate-800 gap-4">
-      <div>
-        <h1 class="text-2xl md:text-3xl font-black text-amber-500 tracking-tight">Manažérsky Portál</h1>
-        <p class="text-xs md:text-sm text-slate-400 mt-0.5">Správa prevádzky, týmu a rezervačných systémov</p>
+  <!-- MANAŽÉRSKY DASHBOARD (Dlaždicové rozhranie) -->
+  <div id="managerDashboardView" class="hidden min-h-screen flex flex-col">
+    
+    <!-- Rovnaká štandardná hlavička ako na hlavnej stránke -->
+    <header id="managerAppBar" class="app-bar">
+      <div class="flex items-center gap-2.5 md:gap-3 min-w-0">
+        <div class="header-logo-container" onclick="showRandomMotivation(event)" title="Klick mich für Osterei-Motivation! 🍸">
+          <span class="logo-macron" id="headerLogoMacronManager"></span>
+          <span class="logo-main-char" id="headerLogoCharManager">O</span>
+          <span class="logo-dot" id="headerLogoDotManager">•</span>
+        </div>
+        <div class="flex flex-col justify-center min-w-0">
+          <h1 class="text-lg md:text-3xl font-bold tracking-tight text-amber-700 dark:text-amber-400 leading-none whitespace-nowrap">Salonplafond BAR</h1>
+          <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium block mt-0.5" data-app-version>v3.1.04</span>
+        </div>
       </div>
-      <div class="flex items-center gap-3">
-        <span id="managerHeaderName" class="text-xs md:text-sm font-bold px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-amber-400"></span>
-        <button onclick="handleLogout()" class="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-bold rounded-xl transition flex items-center gap-1.5">
-          🚪 Odhlásiť sa
+
+      <div class="flex items-center gap-2 shrink-0">
+        <button onclick="handleLogout()" class="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/30 rounded-lg text-xs font-bold transition items-center gap-1.5 shadow-sm" title="Benutzer wechseln">
+          🚪 Abmelden
         </button>
       </div>
     </header>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-      <!-- Dlaždica: Databáza Drinkov -->
-      <div onclick="openDrinkAdminSection()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
-        <div>
-          <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
-            🍹
-          </div>
-          <h3 class="text-lg font-bold text-white mb-1">Databáza Nápojov</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">Správa receptúr, úprava nápojov, nastavenie cien a zmena aktívnej sezónnej karty.</p>
-        </div>
-        <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Otvoriť nápoje &rarr;</span>
+    <!-- Obsah dashboardu s dlaždicami -->
+    <div class="p-4 md:p-8 max-w-6xl mx-auto w-full flex-1">
+      <div class="mb-8">
+        <h1 class="text-2xl md:text-3xl font-black text-amber-500 tracking-tight">Manažérsky Portál</h1>
+        <p class="text-xs md:text-sm text-slate-400 mt-0.5">Správa prevádzky, týmu a rezervačných systémov (<span id="managerHeaderName" class="text-amber-400 font-bold"></span>)</p>
       </div>
 
-      <!-- Dlaždica: Rozpis Zmien & Tím -->
-      <div onclick="openWorkScheduleModal()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
-        <div>
-          <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
-            📅
-          </div>
-          <h3 class="text-lg font-bold text-white mb-1">Rozpis Zmien &amp; Tím</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">Prehľad týždenných a mesačných zmien, evidencia služieb a prítomnosti personálu.</p>
-        </div>
-        <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Otvoriť plánovač &rarr;</span>
-      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-      <!-- Dlaždica: Správa Zamestnancov -->
-      <div onclick="openStaffPinModalFromMenu()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
-        <div>
-          <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
-            👥
+        <!-- Dlaždica: Databáza Nápojov (Prepnutie do správy drinkov) -->
+        <div onclick="switchToDrinkDatabaseView()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
+          <div>
+            <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
+              🍹
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Databáza Nápojov</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">Prepnúť do zoznamu nápojov, správa receptúr, ceny a aktívna sezónna karta.</p>
           </div>
-          <h3 class="text-lg font-bold text-white mb-1">Správa Zamestnancov</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">Pridávanie kolegov, priraďovanie rolí (Manager/Staff), práva na úpravu a generovanie PIN kódov.</p>
+          <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Prepnúť na nápoje &rarr;</span>
         </div>
-        <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Spravovať personál &rarr;</span>
-      </div>
 
-      <!-- Dlaždica: Bezpečnostný Log -->
-      <div onclick="openLoginHistoryModal()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
-        <div>
-          <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
-            📜
+        <!-- Dlaždica: Rozpis Zmien & Tím -->
+        <div onclick="openWorkScheduleModal()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
+          <div>
+            <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
+              📅
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Rozpis Zmien &amp; Tím</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">Prehľad týždenných a mesačných zmien, evidencia služieb a prítomnosti personálu.</p>
           </div>
-          <h3 class="text-lg font-bold text-white mb-1">Bezpečnostný Log</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">História prihlásení zamestnancov do systému a prehľad kolegov aktívnych v posledných minútach.</p>
+          <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Otvoriť plánovač &rarr;</span>
         </div>
-        <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Zobraziť logy &rarr;</span>
-      </div>
 
-      <!-- Dlaždica: Import / Export Dát -->
-      <div onclick="openImportExportModal()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
-        <div>
-          <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
-            📊
+        <!-- Dlaždica: Správa Zamestnancov -->
+        <div onclick="openStaffPinModalFromMenu()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
+          <div>
+            <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
+              👥
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Správa Zamestnancov</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">Pridávanie kolegov, priraďovanie rolí (Manager/Staff), práva na úpravu a generovanie PIN kódov.</p>
           </div>
-          <h3 class="text-lg font-bold text-white mb-1">Import / Export Dát</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">Hromadný import nápojov a rozpisu zmien z Excel súborov, zálohy a exporty dát do CSV.</p>
+          <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Spravovať personál &rarr;</span>
         </div>
-        <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Správa dát &rarr;</span>
-      </div>
 
-      <!-- Dlaždica: Team Chat & Oznámenia -->
-      <div onclick="openTeamChatModal()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
-        <div>
-          <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
-            💬
+        <!-- Dlaždica: Bezpečnostný Log -->
+        <div onclick="openLoginHistoryModal()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
+          <div>
+            <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
+              📜
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Bezpečnostný Log</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">História prihlásení zamestnancov do systému a prehľad kolegov aktívnych v posledných minútach.</p>
           </div>
-          <h3 class="text-lg font-bold text-white mb-1">Team Chat &amp; Oznámenia</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">Komunikácia s tímom v reálnom čase, odosielanie správ a oznámení celému personálu.</p>
+          <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Zobraziť logy &rarr;</span>
         </div>
-        <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Otvoriť chat &rarr;</span>
-      </div>
 
+        <!-- Dlaždica: Import / Export Dát -->
+        <div onclick="openImportExportModal()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
+          <div>
+            <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
+              📊
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Import / Export Dát</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">Hromadný import nápojov a rozpisu zmien z Excel súborov, zálohy a exporty dát do CSV.</p>
+          </div>
+          <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Správa dát &rarr;</span>
+        </div>
+
+        <!-- Dlaždica: Team Chat & Oznámenia -->
+        <div onclick="openTeamChatModal()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
+          <div>
+            <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
+              💬
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Team Chat &amp; Oznámenia</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">Komunikácia s tímom v reálnom čase, odosielanie správ a oznámení celému personálu.</p>
+          </div>
+          <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Otvoriť chat &rarr;</span>
+        </div>
+
+      </div>
     </div>
   </div>
 
