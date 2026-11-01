@@ -107,7 +107,7 @@
       const row = Array.isArray(data) ? data[0] : data;
       if (!row) {
         errDiv.innerText = "Falscher PIN-Code!";
-        errDiv.classList.remove('hidden');
+        errDiv.classList.add('hidden');
         currentEnteredPin = "";
         updatePinDisplay();
         return;
@@ -127,19 +127,18 @@
     }
 
     async function finalizeAppStartForStaff(staffRecord) {
-      // Skryjeme iba prihlasovaciu obrazovku (neotvárame appContainer natvrdo)
       document.getElementById('authContainer').classList.add('hidden');
 
       currentWaiterAvatar = staffRecord.avatar_url || "";
       updateHeaderAvatarUI();
 
       currentStaffRole = staffRecord.role || 'staff';
-      userIsAdmin = (currentStaffRole === 'manager' || currentStaffRole === 'developer'); // Developer aj Manager majú manažérske práva[cite: 4]
+      userIsAdmin = (currentStaffRole === 'manager' || currentStaffRole === 'developer'); 
       userCanEdit = userIsAdmin || staffRecord.can_edit_drinks === true;
       isAdmin = userIsAdmin || userCanEdit;   
       applyRoleUI();
 
-      // Rozcestník pre zobrazenie správneho Dashboardu (Manažérsky vs. Personálny)
+      // Rozcestník pre zobrazenie správneho Dashboardu
       routeUserDashboardByRole(staffRecord);
 
       await loadDrinks();
@@ -148,34 +147,29 @@
       startLoginWatcher();
     }
 
-    /**
-     * Prepínanie medzi Manažérskym a Personálnym Dashboardom
-     */
     function routeUserDashboardByRole(staffRecord) {
       const role = staffRecord.role || 'staff';
 
-      // Ak je to manager alebo developer -> aktivujeme manažérsky dlaždicový portál
       if (role === 'manager' || role === 'developer') {
         console.log('Otváram Manažérsky Dashboard pre:', staffRecord.name, `(Rola: ${role})`);
         renderManagerDashboardView(staffRecord);
       } else {
-        // Pre bežný personál -> otváram personálny dashboard
         console.log('Otváram Personálny Dashboard pre:', staffRecord.name);
         renderStaffDashboardView(staffRecord);
       }
     }
 
     function renderManagerDashboardView(staffRecord) {
-      // Skryjeme štandardný zoznam drinkov a zobrazíme manažérsky dlaždicový portál
       const appContainer = document.getElementById('appContainer');
       if (appContainer) appContainer.classList.add('hidden');
 
       const mgrDashboard = document.getElementById('managerDashboardView');
       if (mgrDashboard) {
         mgrDashboard.classList.remove('hidden');
+        // Pridané explicitné nastavenie flex zobrazenia pre správne vykreslenie Tailwind gridu
+        mgrDashboard.style.display = 'block'; 
       }
 
-      // Nastavenie mena a roly v hlavičke manažérskeho dashboardu
       const nameLabel = document.getElementById('managerHeaderName');
       if (nameLabel) {
         const roleText = staffRecord.role === 'developer' ? 'Developer' : 'Manager';
@@ -184,17 +178,18 @@
     }
 
     function renderStaffDashboardView(staffRecord) {
-      // Skryjeme manažérsky dashboard a zobrazíme štandardný pohľad pre personál
       const mgrDashboard = document.getElementById('managerDashboardView');
-      if (mgrDashboard) mgrDashboard.classList.add('hidden');
+      if (mgrDashboard) {
+        mgrDashboard.classList.add('hidden');
+        mgrDashboard.style.display = 'none';
+      }
 
       const appContainer = document.getElementById('appContainer');
       if (appContainer) appContainer.classList.remove('hidden');
     }
 
-    // ---------- Hinweis, wenn sich ein Kollege anmeldet ----------
     let loginWatchTimer = null;
-    let loginWatchBaseline = null;   // Map: Name -> letzter Login (ms)
+    let loginWatchBaseline = null;   
 
     async function pollLoginWatcher() {
       if (document.hidden || !currentWaiterName) return;
@@ -279,8 +274,11 @@
       updatePinDisplay();
       resetWaiterSelection();
       
-      // Skryjeme obidva dashboardy a vrátime sa na prihlásenie
-      document.getElementById('managerDashboardView')?.classList.add('hidden');
+      const mgrDashboard = document.getElementById('managerDashboardView');
+      if (mgrDashboard) {
+        mgrDashboard.classList.add('hidden');
+        mgrDashboard.style.display = 'none';
+      }
       document.getElementById('appContainer').classList.add('hidden');
       document.getElementById('authContainer').classList.remove('hidden');
       await loadStaffPresenceRecordsForLogin();
