@@ -9,145 +9,35 @@
       return { data: rec || null, error: rec ? null : { message: 'nicht gefunden' } };
     }
 
-    // ---------- Anmeldung: Namen wählen ----------
-    // Ansicht „neu“ (Standard): zuletzt benutzt, Suche, Team und Leitung getrennt, kompakt.
-    // Ansicht „klassisch“: das bisherige Raster. Umschalten mit dem Link unter der Liste.
-  function getLoginView() {
-  try { return localStorage.getItem('salon_login_view') === 'new' ? 'new' : 'classic'; } catch (e) { return 'classic'; }
-   }
-
-    function toggleLoginView() {
-      try { localStorage.setItem('salon_login_view', getLoginView() === 'classic' ? 'new' : 'classic'); } catch (e) {}
-      const s = document.getElementById('loginSearchInput');
-      if (s) s.value = '';
-      renderLoginGrid();
-    }
-
-    function getRecentLogins() {
-      try {
-        const list = JSON.parse(localStorage.getItem('salon_recent_logins') || '[]');
-        return Array.isArray(list) ? list.filter(n => typeof n === 'string') : [];
-      } catch (e) { return []; }
-    }
-
-    function rememberRecentLogin(name) {
-      try {
-        const list = getRecentLogins().filter(n => n.toLowerCase() !== String(name).toLowerCase());
-        list.unshift(name);
-        localStorage.setItem('salon_recent_logins', JSON.stringify(list.slice(0, 3)));
-      } catch (e) {}
-    }
-
-    function loginAvatarHtml(staff, size) {
-      return staff.avatar_url
-        ? `<img src="${escapeHtml(staff.avatar_url)}" class="login-av ${size || ''}" alt="">`
-        : `<span class="login-av ${size || ''}">${escapeHtml(String(staff.name).charAt(0).toUpperCase())}</span>`;
-    }
-
-    function loginTileHtml(staff, showRole) {
-      const role = ({ developer: 'Developer', manager: 'Manager' }[staff.role]) || '';
-      return `
-        <button type="button" onclick="selectWaiterForLogin(${jsArg(staff.name)})" class="login-tile" title="${escapeHtml(staff.name)}">
-          ${loginAvatarHtml(staff)}
-          <span class="login-name">${escapeHtml(staff.name)}</span>
-          ${showRole && role ? `<span class="login-role">${escapeHtml(role)}</span>` : ''}
-        </button>`;
-    }
-
-    function sortedStaff(list) {
-      return list.slice().sort((a, b) => String(a.name).localeCompare(String(b.name), 'de', { sensitivity: 'base' }));
-    }
-
-    function renderLoginGrid() {
-      const container = document.getElementById('waiterGridContainer');
-      const searchRow = document.getElementById('loginSearchRow');
-      const toggleBtn = document.getElementById('loginViewToggleBtn');
-      if (!container) return;
-      const data = staffDatabaseRecords || [];
-      const view = getLoginView();
-      if (toggleBtn) toggleBtn.textContent = view === 'classic' ? '✨ Neue Ansicht verwenden' : '☰ Zur klassischen Ansicht wechseln';
-
-      if (!data.length) {
-        container.className = 'grid grid-cols-2 sm:grid-cols-3 gap-2';
-        container.innerHTML = `<p class="col-span-full text-slate-500 italic text-xs text-center py-4">Kein Personal in Datenbank gefunden</p>`;
-        if (searchRow) searchRow.classList.add('hidden');
-        return;
-      }
-
-      if (view === 'classic') {
-        if (searchRow) searchRow.classList.add('hidden');
-        container.className = 'grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1';
-        container.innerHTML = data.map(staff => `
-          <button type="button" onclick="selectWaiterForLogin(${jsArg(staff.name)})" class="p-3 bg-slate-100 dark:bg-slate-950 hover:bg-amber-500/20 hover:border-amber-500 border border-slate-300 dark:border-slate-800 rounded-xl flex flex-col items-center justify-center gap-1.5 transition group">
-            ${staff.avatar_url
-              ? `<img src="${escapeHtml(staff.avatar_url)}" class="w-12 h-12 rounded-full object-cover border border-amber-500/50 shadow" alt="${escapeHtml(staff.name)}">`
-              : `<div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-amber-700 dark:text-amber-400 font-black flex items-center justify-center border border-slate-300 dark:border-slate-700 text-sm">${escapeHtml(staff.name.charAt(0).toUpperCase())}</div>`}
-            <span class="text-xs font-black text-slate-900 dark:text-white truncate w-full">${escapeHtml(staff.name)}</span>
-            <span class="text-[9px] text-slate-600 dark:text-slate-400 uppercase tracking-wider">${escapeHtml(staff.role || 'staff')}</span>
-          </button>`).join('');
-        return;
-      }
-
-      // ----- neue Ansicht -----
-      const q = ((document.getElementById('loginSearchInput') || {}).value || '').trim().toLowerCase();
-      if (searchRow) searchRow.classList.toggle('hidden', data.length < 7);
-      container.className = 'login-groups';
-
-      const isLeader = s => s.role === 'manager' || s.role === 'developer';
-      const match = s => !q || String(s.name).toLowerCase().indexOf(q) !== -1;
-      const team = sortedStaff(data.filter(s => !isLeader(s) && match(s)));
-      const leaders = sortedStaff(data.filter(s => isLeader(s) && match(s)));
-
-      let html = '';
-      if (!q) {
-        const recent = getRecentLogins().map(n => data.find(s => String(s.name).toLowerCase() === n.toLowerCase())).filter(Boolean);
-        if (recent.length) {
-          html += `<section class="login-section">
-            <div class="login-section-title">⏱ Zuletzt auf diesem Gerät</div>
-            <div class="login-recent">${recent.map(s => `
-              <button type="button" onclick="selectWaiterForLogin(${jsArg(s.name)})" class="login-recent-btn">
-                ${loginAvatarHtml(s, 'lg')}
-                <span class="login-recent-text"><b>${escapeHtml(s.name)}</b><small>Tippen zum Anmelden</small></span>
-              </button>`).join('')}</div>
-          </section>`;
-        }
-      }
-      if (team.length) {
-        html += `<section class="login-section">
-          <div class="login-section-title">🍹 Team <span class="login-count">${team.length}</span></div>
-          <div class="login-grid">${team.map(s => loginTileHtml(s, false)).join('')}</div>
-        </section>`;
-      }
-      if (leaders.length) {
-        html += `<section class="login-section login-leaders">
-          <div class="login-section-title">🧑‍💼 Leitung & Entwicklung <span class="login-count">${leaders.length}</span></div>
-          <div class="login-grid">${leaders.map(s => loginTileHtml(s, true)).join('')}</div>
-        </section>`;
-      }
-      if (!html) html = `<p class="text-slate-500 italic text-xs text-center py-4">Kein Name gefunden. Prüfe die Schreibweise.</p>`;
-      container.innerHTML = html;
-    }
-
-    function loginPickFirstMatch() {
-      const first = document.querySelector('#waiterGridContainer .login-tile');
-      if (first) first.click();
-    }
-
     async function loadStaffPresenceRecordsForLogin() {
       const { data, error } = await _supabase.rpc('list_staff');
+      const gridContainer = document.getElementById('waiterGridContainer');
       if (error || !data || data.length === 0) {
+        gridContainer.innerHTML = `<p class="col-span-full text-slate-500 italic text-xs text-center py-4">Kein Personal in Datenbank gefunden</p>`;
         staffDatabaseRecords = [];
-        renderLoginGrid();
         return;
       }
       staffDatabaseRecords = data;
-      renderLoginGrid();
+      
+      gridContainer.innerHTML = data.map(staff => {
+        let avatarHtml = staff.avatar_url 
+          ? `<img src="${escapeHtml(staff.avatar_url)}" class="w-12 h-12 rounded-full object-cover border border-amber-500/50 shadow" alt="${escapeHtml(staff.name)}">` 
+          : `<div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-amber-700 dark:text-amber-400 font-black flex items-center justify-center border border-slate-300 dark:border-slate-700 text-sm">${escapeHtml(staff.name.charAt(0).toUpperCase())}</div>`;
+
+        return `
+          <button type="button" onclick="selectWaiterForLogin(${jsArg(staff.name)})" class="p-3 bg-slate-100 dark:bg-slate-950 hover:bg-amber-500/20 hover:border-amber-500 border border-slate-300 dark:border-slate-800 rounded-xl flex flex-col items-center justify-center gap-1.5 transition group">
+            ${avatarHtml}
+            <span class="text-xs font-black text-slate-900 dark:text-white group-hover:text-amber-400 truncate w-full">${escapeHtml(staff.name)}</span>
+            <span class="text-[9px] text-slate-600 dark:text-slate-400 uppercase tracking-wider">${escapeHtml(staff.role || 'staff')}</span>
+          </button>
+        `;
+      }).join('');
     }
 
     function selectWaiterForLogin(name) {
       selectedWaiterForPin = name;
       document.getElementById('selectedWaiterLabel').innerText = `👤 ${name}`;
-      document.getElementById('loginPickerWrap').classList.add('hidden');
+      document.getElementById('waiterGridContainer').classList.add('hidden');
       document.getElementById('pinInputSection').classList.remove('hidden');
       currentEnteredPin = "";
       updatePinDisplay();
@@ -158,7 +48,7 @@
       selectedWaiterForPin = "";
       document.getElementById('selectedWaiterLabel').innerText = "";
       document.getElementById('pinInputSection').classList.add('hidden');
-      document.getElementById('loginPickerWrap').classList.remove('hidden');
+      document.getElementById('waiterGridContainer').classList.remove('hidden');
       currentEnteredPin = "";
       updatePinDisplay();
       document.getElementById('pinAuthError').classList.add('hidden');
@@ -224,7 +114,6 @@
       }
 
       setStaffSession(row.out_token);
-      rememberRecentLogin(row.out_name);
       currentWaiterName = row.out_name;
       sessionStorage.setItem('salon_waiter_name', currentWaiterName);
       currentEnteredPin = "";
