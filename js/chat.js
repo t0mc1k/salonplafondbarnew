@@ -769,4 +769,5 @@
       if (dot) dot.classList.toggle('hidden', count <= 0);
       const mb = chatEl('menuChatBadge');
       if (mb) { mb.textContent = count > 99 ? '99+' : String(count); mb.classList.toggle('hidden', count <= 0); }
+      if (typeof refreshDashboardBadges === 'function') refreshDashboardBadges();
     }

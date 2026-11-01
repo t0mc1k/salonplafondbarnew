@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Salonplafond">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>Salonplafond BAR v3.1.04</title>
+  <title>Salonplafond BAR v3.2.01</title>
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- SheetJS pre Excel Import & Export -->
@@ -34,7 +34,7 @@
       window.__salonDark = dark;
     } catch (e) { document.documentElement.classList.add('dark'); window.__salonDark = true; }
   </script>
-  <link rel="stylesheet" href="css/style.css?v=3.1.04">
+  <link rel="stylesheet" href="css/style.css?v=3.2.01">
 </head>
 <body class="dark-mode p-3 pt-0 md:p-8 max-w-6xl mx-auto pb-32" onclick="closeDropdowns(event)">
   <script>if (window.__salonDark === false) { document.body.classList.remove('dark-mode'); document.body.classList.add('light-mode'); }</script>
@@ -52,7 +52,7 @@
       <div>
         <h1 class="text-lg md:text-xl font-black tracking-wider text-slate-900 dark:text-white uppercase">Anmeldung</h1>
         <h2 class="text-xl md:text-2xl font-extrabold text-amber-700 dark:text-amber-400 tracking-tight mt-1">Salonplafond BAR</h2>
-        <span class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-0.5 block"><span data-app-version>v3.1.04</span> • Touch-Grid PIN-Login</span>
+        <span class="text-xs text-slate-600 dark:text-slate-400 font-medium mt-0.5 block"><span data-app-version>v3.2.01</span> • Touch-Grid PIN-Login</span>
       </div>
 
       <div id="pinLoginForm" class="w-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 p-5 rounded-2xl shadow-2xl space-y-4 text-left mt-1">
@@ -106,115 +106,6 @@
 
       <div class="mt-2 flex flex-col items-center gap-1">
         <span class="text-xs text-slate-700 dark:text-slate-300 font-extrabold block">Erstellt von © T0mc1k (Tomas Kardos)</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- MANAŽÉRSKY DASHBOARD (Dlaždicové rozhranie) -->
-  <div id="managerDashboardView" class="hidden min-h-screen flex flex-col">
-    
-    <!-- Rovnaká štandardná hlavička ako na hlavnej stránke -->
-    <header id="managerAppBar" class="app-bar">
-      <div class="flex items-center gap-2.5 md:gap-3 min-w-0">
-        <div class="header-logo-container" onclick="showRandomMotivation(event)" title="Klick mich für Osterei-Motivation! 🍸">
-          <span class="logo-macron" id="headerLogoMacronManager"></span>
-          <span class="logo-main-char" id="headerLogoCharManager">O</span>
-          <span class="logo-dot" id="headerLogoDotManager">•</span>
-        </div>
-        <div class="flex flex-col justify-center min-w-0">
-          <h1 class="text-lg md:text-3xl font-bold tracking-tight text-amber-700 dark:text-amber-400 leading-none whitespace-nowrap">Salonplafond BAR</h1>
-          <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium block mt-0.5" data-app-version>v3.1.04</span>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2 shrink-0">
-        <button onclick="handleLogout()" class="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/30 rounded-lg text-xs font-bold transition items-center gap-1.5 shadow-sm" title="Benutzer wechseln">
-          🚪 Abmelden
-        </button>
-      </div>
-    </header>
-
-    <!-- Obsah dashboardu s dlaždicami -->
-    <div class="p-4 md:p-8 max-w-6xl mx-auto w-full flex-1">
-      <div class="mb-8">
-        <h1 class="text-2xl md:text-3xl font-black text-amber-500 tracking-tight">Manažérsky Portál</h1>
-        <p class="text-xs md:text-sm text-slate-400 mt-0.5">Správa prevádzky, týmu a rezervačných systémov (<span id="managerHeaderName" class="text-amber-400 font-bold"></span>)</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-        <!-- Dlaždica: Databáza Nápojov (Prepnutie do správy drinkov) -->
-        <div onclick="switchToDrinkDatabaseView()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
-          <div>
-            <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
-              🍹
-            </div>
-            <h3 class="text-lg font-bold text-white mb-1">Databáza Nápojov</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">Prepnúť do zoznamu nápojov, správa receptúr, ceny a aktívna sezónna karta.</p>
-          </div>
-          <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Prepnúť na nápoje &rarr;</span>
-        </div>
-
-        <!-- Dlaždica: Rozpis Zmien & Tím -->
-        <div onclick="openWorkScheduleModal()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
-          <div>
-            <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
-              📅
-            </div>
-            <h3 class="text-lg font-bold text-white mb-1">Rozpis Zmien &amp; Tím</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">Prehľad týždenných a mesačných zmien, evidencia služieb a prítomnosti personálu.</p>
-          </div>
-          <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Otvoriť plánovač &rarr;</span>
-        </div>
-
-        <!-- Dlaždica: Správa Zamestnancov -->
-        <div onclick="openStaffPinModalFromMenu()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
-          <div>
-            <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
-              👥
-            </div>
-            <h3 class="text-lg font-bold text-white mb-1">Správa Zamestnancov</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">Pridávanie kolegov, priraďovanie rolí (Manager/Staff), práva na úpravu a generovanie PIN kódov.</p>
-          </div>
-          <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Spravovať personál &rarr;</span>
-        </div>
-
-        <!-- Dlaždica: Bezpečnostný Log -->
-        <div onclick="openLoginHistoryModal()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
-          <div>
-            <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
-              📜
-            </div>
-            <h3 class="text-lg font-bold text-white mb-1">Bezpečnostný Log</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">História prihlásení zamestnancov do systému a prehľad kolegov aktívnych v posledných minútach.</p>
-          </div>
-          <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Zobraziť logy &rarr;</span>
-        </div>
-
-        <!-- Dlaždica: Import / Export Dát -->
-        <div onclick="openImportExportModal()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
-          <div>
-            <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
-              📊
-            </div>
-            <h3 class="text-lg font-bold text-white mb-1">Import / Export Dát</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">Hromadný import nápojov a rozpisu zmien z Excel súborov, zálohy a exporty dát do CSV.</p>
-          </div>
-          <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Správa dát &rarr;</span>
-        </div>
-
-        <!-- Dlaždica: Team Chat & Oznámenia -->
-        <div onclick="openTeamChatModal()" class="p-6 bg-slate-900/80 hover:bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-2xl cursor-pointer transition-all duration-200 flex flex-col justify-between group shadow-xl">
-          <div>
-            <div class="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center mb-4 text-2xl group-hover:scale-110 transition-transform">
-              💬
-            </div>
-            <h3 class="text-lg font-bold text-white mb-1">Team Chat &amp; Oznámenia</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">Komunikácia s tímom v reálnom čase, odosielanie správ a oznámení celému personálu.</p>
-          </div>
-          <span class="mt-6 text-xs font-bold text-amber-500 flex items-center gap-1">Otvoriť chat &rarr;</span>
-        </div>
-
       </div>
     </div>
   </div>
@@ -497,7 +388,7 @@
 
         <div class="flex flex-col justify-center min-w-0">
           <h1 class="text-lg md:text-3xl font-bold tracking-tight text-amber-700 dark:text-amber-400 leading-none whitespace-nowrap">Salonplafond BAR</h1>
-          <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium block mt-0.5" data-app-version>v3.1.04</span>
+          <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium block mt-0.5" data-app-version>v3.2.01</span>
         </div>
       </div>
 
@@ -534,6 +425,15 @@
                 <span class="menu-role block" id="menuUserRole">Profil bearbeiten</span>
               </span>
               <span class="menu-arrow">›</span>
+            </button>
+
+            <button type="button" onclick="closeSettingsMenu(); showDashboard();" class="menu-item mt-1">
+              <span class="menu-ico">🏠</span>
+              <span class="menu-text"><span class="menu-label">Dashboard</span><span class="menu-sub">Zurück zur Startseite</span></span>
+            </button>
+            <button type="button" onclick="closeSettingsMenu(); openDrinksView();" class="menu-item">
+              <span class="menu-ico">🍸</span>
+              <span class="menu-text"><span class="menu-label">Getränke & Rezepte</span><span class="menu-sub">Datenbank öffnen</span></span>
             </button>
 
             <button type="button" onclick="openAddDrinkModalFromMenu()" id="menuAddDrinkBtn" class="hidden menu-primary mt-1">
@@ -576,6 +476,10 @@
 
             <div id="menuAdminSection" class="hidden flex-col gap-0.5">
               <div class="menu-section">Verwaltung</div>
+              <button type="button" onclick="openTeamPlanModal()" class="menu-item">
+                <span class="menu-ico">📆</span>
+                <span class="menu-text"><span class="menu-label">Team & Arbeitsplan</span><span class="menu-sub">Monatsraster, Stunden, Schichten</span></span>
+              </button>
               <button type="button" onclick="openStaffPinModalFromMenu()" id="menuStaffPinBtn" class="menu-item">
                 <span class="menu-ico">👤</span>
                 <span class="menu-text"><span class="menu-label">Personal & PINs</span><span class="menu-sub">Mitarbeiter, Rollen und Rechte</span></span>
@@ -602,7 +506,7 @@
             </button>
             <button type="button" onclick="openChangelogModal()" class="menu-item">
               <span class="menu-ico">🚀</span>
-              <span class="menu-text"><span class="menu-label">Was ist neu?</span><span class="menu-sub">Neuigkeiten in <span data-app-version>v3.1.04</span></span></span>
+              <span class="menu-text"><span class="menu-label">Was ist neu?</span><span class="menu-sub">Neuigkeiten in <span data-app-version>v3.2.01</span></span></span>
             </button>
             <button type="button" onclick="openSupportModal()" class="menu-item">
               <span class="menu-ico">🛟<span id="menuDropdownTicketDot" class="hidden menu-dot pulse-badge-dot"></span></span>
@@ -641,6 +545,25 @@
         <span class="text-xs text-slate-800 dark:text-slate-200 font-bold">Angemeldet: <span id="currentUserEmail" class="text-amber-700 dark:text-amber-300"></span></span>
       </div>
     </div>
+
+    <!-- ===== DASHBOARD (Startseite nach dem Login) ===== -->
+    <main id="dashboardView">
+      <section class="dash-hero">
+        <div class="min-w-0">
+          <h2 class="dash-hello" id="dashHello">Hallo!</h2>
+          <p class="dash-date" id="dashDate"></p>
+        </div>
+        <span id="dashRolePill" class="staff-pill pill-staff"></span>
+      </section>
+      <div id="dashGroups" class="dash-groups"></div>
+    </main>
+
+    <!-- ===== GETRÄNKE-DATENBANK ===== -->
+    <div id="drinksView" class="hidden">
+      <div class="dash-back-bar">
+        <button type="button" onclick="showDashboard()" class="dash-back-btn" title="Zurück zum Dashboard">← Dashboard</button>
+        <span class="dash-back-title">🍸 Getränke & Rezepte</span>
+      </div>
 
     <!-- Suche -->
     <div class="mb-3 md:mb-4">
@@ -696,8 +619,10 @@
       <p id="loadingTxt" class="col-span-full text-slate-500 dark:text-slate-400">Lade Getränke aus der Datenbank...</p>
     </div>
 
+    </div><!-- /drinksView -->
+
     <footer class="mt-20 pt-6 border-t border-slate-300 dark:border-slate-800 text-center text-xs text-slate-500">
-      Salonplafond BAR App <span data-app-version>v3.1.04</span> • Erstellt von <span class="text-amber-600 dark:text-amber-400 font-semibold">© T0mc1k (Tomas Kardos)</span>
+      Salonplafond BAR App <span data-app-version>v3.2.01</span> • Erstellt von <span class="text-amber-600 dark:text-amber-400 font-semibold">© T0mc1k (Tomas Kardos)</span>
     </footer>
 
   </div>
@@ -738,6 +663,90 @@
 
       <div class="flex justify-end pt-3 border-t border-slate-200 dark:border-slate-800">
         <button onclick="closeWorkScheduleModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-white rounded-xl text-xs transition">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEAM & ARBEITSPLAN (Monatsraster, Manager/Developer) -->
+  <div id="teamPlanModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-2 sm:p-4 z-[295]">
+    <div class="card w-full max-w-[98vw] relative flex flex-col h-[94vh] max-h-[94vh] overflow-hidden p-0 border-amber-500/50 shadow-2xl">
+      <div class="ui-head !items-center">
+        <div class="min-w-0">
+          <h3 class="ui-head-title">📆 Team & Arbeitsplan</h3>
+          <p class="ui-head-sub">Monatsübersicht für das ganze Team: Schichten, Stunden und Planung. Tippe auf ein Feld, um die Schicht zu ändern.</p>
+        </div>
+        <button type="button" onclick="closeTeamPlanModal()" class="ui-close" aria-label="Schließen">&times;</button>
+      </div>
+
+      <div class="ui-toolbar">
+        <div class="flex gap-2 flex-wrap items-center">
+          <div class="tp-monthnav">
+            <button type="button" onclick="teamPlanShiftMonth(-1)" class="ui-btn-ghost" aria-label="Vorheriger Monat">‹</button>
+            <b id="tpMonthLabel" class="tp-month-label">–</b>
+            <button type="button" onclick="teamPlanShiftMonth(1)" class="ui-btn-ghost" aria-label="Nächster Monat">›</button>
+          </div>
+          <button type="button" onclick="teamPlanToday()" class="ui-btn-ghost">Heute</button>
+          <input type="search" id="tpSearch" oninput="onTeamPlanSearch(this.value)" placeholder="🔍 Mitarbeiter ..." class="ui-search flex-1 min-w-[9rem]">
+          <select id="tpAddEmployee" onchange="teamPlanAddEmployee(this)" class="ui-field tp-add-select"></select>
+          <button type="button" onclick="exportTeamPlanExcel()" class="ui-btn-ghost">📗 Excel</button>
+          <button type="button" id="tpImportBtn" onclick="closeTeamPlanModal(); openImportExportModal(); switchImportTab('schedule');" class="ui-btn-ghost">📥 Plan importieren</button>
+        </div>
+        <div id="tpSummary" class="tp-summary"></div>
+      </div>
+
+      <div id="tpGridWrap" class="tp-wrap flex-1 min-h-0">
+        <p class="staff-empty">Lade Arbeitsplan ...</p>
+      </div>
+
+      <div class="ui-foot !justify-between flex-wrap">
+        <span class="tp-legend"><i class="tp-dot tp-dot-work"></i>Schicht <i class="tp-dot tp-dot-free"></i>Frei (X) <i class="tp-dot tp-dot-special"></i>U / K / Sonstiges <i class="tp-dot tp-dot-today"></i>Heute</span>
+        <button type="button" onclick="closeTeamPlanModal()" class="ui-btn-primary">Fertig</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Schicht bearbeiten (aus dem Monatsraster) -->
+  <div id="tpCellModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-[310]">
+    <div class="card max-w-md w-full relative flex flex-col max-h-[90vh] overflow-hidden p-0 border-amber-500/50 shadow-2xl">
+      <div class="ui-head">
+        <div class="min-w-0">
+          <h3 class="ui-head-title" id="tpCellTitle">Schicht</h3>
+          <p class="ui-head-sub" id="tpCellSub"></p>
+        </div>
+        <button type="button" onclick="closeTeamPlanCell()" class="ui-close" aria-label="Schließen">&times;</button>
+      </div>
+      <div class="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
+        <div class="flex gap-1.5 flex-wrap">
+          <button type="button" class="ui-chip" onclick="tpCellPreset('X')">Frei (X)</button>
+          <button type="button" class="ui-chip" onclick="tpCellPreset('U')">Urlaub (U)</button>
+          <button type="button" class="ui-chip" onclick="tpCellPreset('K')">Krank (K)</button>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">Schicht 1</div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="form-label" for="tpS1Start">Beginn</label><input type="time" id="tpS1Start" class="ui-field"></div>
+            <div><label class="form-label" for="tpS1End">Ende</label><input type="time" id="tpS1End" class="ui-field"></div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-title">Schicht 2 (optional, geteilter Dienst)</div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="form-label" for="tpS2Start">Beginn</label><input type="time" id="tpS2Start" class="ui-field"></div>
+            <div><label class="form-label" for="tpS2End">Ende</label><input type="time" id="tpS2End" class="ui-field"></div>
+          </div>
+        </div>
+        <div>
+          <label class="form-label" for="tpStation">Station</label>
+          <input type="text" id="tpStation" maxlength="30" autocomplete="off" placeholder="z. B. Bar, Service" class="ui-field">
+        </div>
+        <p id="tpCellHours" class="form-hint"></p>
+        <input type="hidden" id="tpCellPresetCode" value="">
+      </div>
+      <div class="ui-foot">
+        <button type="button" id="tpCellDeleteBtn" onclick="deleteTeamPlanCell()" class="hidden px-4 py-2.5 bg-red-600 hover:bg-red-500 font-bold text-white rounded-xl text-xs transition">🗑️ Leeren</button>
+        <span class="flex-1"></span>
+        <button type="button" onclick="closeTeamPlanCell()" class="ui-btn-ghost">Abbrechen</button>
+        <button type="button" onclick="saveTeamPlanCell()" class="ui-btn-primary">💾 Speichern</button>
       </div>
     </div>
   </div>
@@ -1050,7 +1059,7 @@
         <section class="set-card">
           <h4 class="set-head">🧰 App</h4>
           <div class="set-row">
-            <div class="set-text"><b>Version</b><small>Salonplafond BAR <span data-app-version>v3.1.04</span></small></div>
+            <div class="set-text"><b>Version</b><small>Salonplafond BAR <span data-app-version>v3.2.01</span></small></div>
             <button type="button" onclick="closeUnifiedSettingsModal(); openChangelogModal();" class="ui-btn-ghost">🚀 Was ist neu?</button>
           </div>
           <div class="set-row">
@@ -1304,7 +1313,7 @@
       <div class="ui-head">
         <div>
           <h3 class="ui-head-title">🚀 Was ist neu?</h3>
-          <p class="ui-head-sub">Aktuelle Version <span id="changelogVersionBadge" class="cl-ver">v3.1.04</span></p>
+          <p class="ui-head-sub">Aktuelle Version <span id="changelogVersionBadge" class="cl-ver">v3.2.01</span></p>
         </div>
         <button type="button" onclick="closeChangelogModal()" class="ui-close" aria-label="Schließen">&times;</button>
       </div>
@@ -1561,24 +1570,26 @@
     </div>
   </div>
 
-  <script src="js/config.js?v=3.1.04"></script>
-  <script src="js/ui.js?v=3.1.04"></script>
-  <script src="js/settings.js?v=3.1.04"></script>
-  <script src="js/pwa.js?v=3.1.04"></script>
-  <script src="js/auth.js?v=3.1.04"></script>
-  <script src="js/profile.js?v=3.1.04"></script>
-  <script src="js/staff-admin.js?v=3.1.04"></script>
-  <script src="js/chat.js?v=3.1.04"></script>
-  <script src="js/tickets.js?v=3.1.04"></script>
-  <script src="js/changelog.js?v=3.1.04"></script>
-  <script src="js/schedule.js?v=3.1.04"></script>
-  <script src="js/seasons.js?v=3.1.04"></script>
-  <script src="js/drinks.js?v=3.1.04"></script>
-  <script src="js/drink-admin.js?v=3.1.04"></script>
-  <script src="js/tray.js?v=3.1.04"></script>
-  <script src="js/shopping.js?v=3.1.04"></script>
-  <script src="js/import-export.js?v=3.1.04"></script>
-  <script src="js/print-a3.js?v=3.1.04"></script>
-  <script src="js/app.js?v=3.1.04"></script>
+  <script src="js/config.js?v=3.2.01"></script>
+  <script src="js/ui.js?v=3.2.01"></script>
+  <script src="js/settings.js?v=3.2.01"></script>
+  <script src="js/pwa.js?v=3.2.01"></script>
+  <script src="js/auth.js?v=3.2.01"></script>
+  <script src="js/profile.js?v=3.2.01"></script>
+  <script src="js/staff-admin.js?v=3.2.01"></script>
+  <script src="js/chat.js?v=3.2.01"></script>
+  <script src="js/tickets.js?v=3.2.01"></script>
+  <script src="js/changelog.js?v=3.2.01"></script>
+  <script src="js/schedule.js?v=3.2.01"></script>
+  <script src="js/team-plan.js?v=3.2.01"></script>
+  <script src="js/seasons.js?v=3.2.01"></script>
+  <script src="js/drinks.js?v=3.2.01"></script>
+  <script src="js/drink-admin.js?v=3.2.01"></script>
+  <script src="js/tray.js?v=3.2.01"></script>
+  <script src="js/shopping.js?v=3.2.01"></script>
+  <script src="js/import-export.js?v=3.2.01"></script>
+  <script src="js/print-a3.js?v=3.2.01"></script>
+  <script src="js/dashboard.js?v=3.2.01"></script>
+  <script src="js/app.js?v=3.2.01"></script>
 </body>
 </html>

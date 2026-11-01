@@ -52,9 +52,9 @@
             <button onclick="switchScheduleView('personal')" class="px-3 py-1 text-xs font-bold rounded transition ${currentScheduleView === 'personal' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-white'}">
               👤 Mein Plan
             </button>
-            <button onclick="switchScheduleView('team')" class="px-3 py-1 text-xs font-bold rounded transition ${currentScheduleView === 'team' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-white'}">
+            ${userIsAdmin ? `<button onclick="switchScheduleView('team')" class="px-3 py-1 text-xs font-bold rounded transition ${currentScheduleView === 'team' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-white'}">
               👥 Team-Ansicht (Manager)
-            </button>
+            </button>` : ''}
           </div>
           <span class="text-[10px] uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold">Live DB</span>
         </div>
@@ -207,9 +207,9 @@
             <button onclick="switchScheduleView('personal')" class="px-3 py-1 text-xs font-bold rounded transition ${currentScheduleView === 'personal' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-white'}">
               👤 Mein Plan
             </button>
-            <button onclick="switchScheduleView('team')" class="px-3 py-1 text-xs font-bold rounded transition ${currentScheduleView === 'team' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-white'}">
+            ${userIsAdmin ? `<button onclick="switchScheduleView('team')" class="px-3 py-1 text-xs font-bold rounded transition ${currentScheduleView === 'team' ? 'bg-amber-500 text-slate-950 shadow' : 'text-slate-400 hover:text-white'}">
               👥 Team-Ansicht (Manager)
-            </button>
+            </button>` : ''}
           </div>
           <span class="text-[10px] uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold">Live DB</span>
         </div>

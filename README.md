@@ -22,6 +22,8 @@ js/                 Logik, in Themen aufgeteilt (siehe unten)
 | Support-Tickets                                         | js/tickets.js        |
 | Version, Changelog („Was ist neu?“), Team-News          | js/changelog.js      |
 | Arbeitsplan                                             | js/schedule.js       |
+| Dashboard (Startseite, Kacheln je Rolle, Wechsel Dashboard ↔ Getränke) | js/dashboard.js |
+| Team & Arbeitsplan (Monatsraster, Stunden, Schichten planen) | js/team-plan.js |
 | Saisons                                                 | js/seasons.js        |
 | Getränkeliste, Filter, Detail-Fenster, Rezept drucken   | js/drinks.js         |
 | Getränk anlegen/ändern/löschen, Zutaten, Fotos (bis 3)  | js/drink-admin.js    |

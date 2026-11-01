@@ -10,9 +10,17 @@
    Änderungs-Typen: 'new' Neu, 'improved' Verbessert, 'fixed' Behoben,
                     'security' Sicherheit, 'info' Allgemein
    ============================================================ */
-    const APP_VERSION = '3.1.04';
+    const APP_VERSION = '3.2.01';
 
     const CHANGELOG = [
+  { version: '3.2.01', range: '', date: 'November 2026', title: 'Dashboard als Startseite & Team-Arbeitsplan',
+    changes: [
+      ['new', 'Dashboard als Startseite: Nach dem Login siehst du zuerst übersichtliche Kacheln statt direkt der Getränkeliste. Manager und Developer bekommen vier Bereiche (Bar & Betrieb, Team & Personal, Sicherheit & System, Support & Infos), Kellner ihre vier wichtigsten Kacheln: Getränke & Rezepte, Mein Arbeitsplan, Team-Chat und Was ist neu?.'],
+      ['new', 'Team & Arbeitsplan (Manager/Developer): Monatsraster für das ganze Team mit Schichten pro Tag, Stunden pro Mitarbeiter, Besetzung pro Tag, Monatswechsel und Excel-Export. Schichten lassen sich per Tipp auf ein Feld ändern (auch Frei, Urlaub, Krank).'],
+      ['new', 'Zähler auf den Kacheln: ungelesene Chat-Nachrichten und offene Support-Tickets.'],
+      ['improved', 'In der Getränke-Datenbank gibt es oben „← Dashboard“; auch der Zurück-Knopf am Handy führt zurück zum Dashboard. Im Menü stehen „Dashboard“ und „Getränke & Rezepte“ ganz oben.'],
+      ['improved', 'Die Team-Ansicht im alten Arbeitsplan-Fenster sehen jetzt nur noch Manager und Developer; Kellner sehen weiterhin ihren eigenen Plan.']
+    ] },
   { version: '3.1.04', range: '', date: 'Oktober 2026', title: 'Schnellere Anmeldung, mehrere Fotos & klarere Handy-Ansicht',
     changes: [
       ['new', 'Bis zu 3 Fotos pro Getränk: Hauptfoto festlegen, Fotos entfernen, direkt vom Handy aufnehmen oder hochladen. Im Detail gibt es eine kleine Galerie. Fotos werden vor dem Hochladen automatisch verkleinert.'],
