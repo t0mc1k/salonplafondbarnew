@@ -10,9 +10,20 @@
    Änderungs-Typen: 'new' Neu, 'improved' Verbessert, 'fixed' Behoben,
                     'security' Sicherheit, 'info' Allgemein
    ============================================================ */
-    const APP_VERSION = '3.2.02';
+    const APP_VERSION = '3.2.03';
 
     const CHANGELOG = [
+  { version: '3.2.03', range: '', date: 'November 2026', title: 'Checklisten, Schichttausch, Stunden, Speisekarte & mehr',
+    changes: [
+      ['new', 'Checklisten & Standards: Aufgaben für Öffnung, Laufend und Schließung, getrennt nach Bar, Service und Terrasse. Eine gemeinsame Liste pro Tag: Wer abhakt, steht mit Name und Uhrzeit dabei. Manager/Developer legen die Aufgaben selbst an und ändern sie. Für das Team heißt die Kachel „Meine Schicht“.'],
+      ['new', 'Schichttausch: Anfrage direkt an einen Kollegen oder in die Börse für alle. Wer die Schicht übernimmt, bestätigt; am Ende entscheidet immer der Manager. Erst dann wird der Arbeitsplan geändert.'],
+      ['new', 'Mein Arbeitsplan: Monatskalender mit deinen Schichten, Pausen (Minuten) und Tausch-Anfrage pro Tag.'],
+      ['new', 'Stunden & Lohn (Manager/Developer): Monatsstunden pro Person (geplant − Pause + Korrektur), Korrekturen pro Tag und Excel-Export für die Lohnverrechnung. Ohne Zuschläge.'],
+      ['new', 'Speisekarte & Allergene: Speisekarte pro Saison mit Allergenen A–R (Österreich), Suche, Ausblenden nach Allergen und Einfügen aus Excel. Die Getränke sind ebenfalls nach Allergenen durchsuchbar.'],
+      ['new', 'Störungen melden (mit Foto und Dringlichkeit), Fundsachen und Verluste & Bruch: drei getrennte Funktionen für das ganze Team. Störungen und Verluste sehen Manager/Developer, Fundsachen alle.'],
+      ['improved', 'Das Dashboard hat neue Kacheln und Zähler (Tausch-Anfragen, neue Störungen).'],
+      ['info', 'Wichtig für den Betrieb: Den Arbeitsplan können nur noch Manager und Developer ändern (auch der Excel-Import).']
+    ] },
   { version: '3.2.02', range: '', date: 'November 2026', title: 'Einfachere, kompakte Anmeldung',
     changes: [
       ['improved', 'Anmeldung komplett vereinfacht: alles passt auf einen Bildschirm, ein kleiner Kopf statt großem Logo, alle Namen in einer kompakten Liste (A–Z) mit Suche und den letzten 3 Anmeldungen als schnelle Knöpfe.'],

@@ -14,19 +14,27 @@
       const seasonSub = (typeof currentSeasonFilter !== 'undefined' && currentSeasonFilter)
         ? 'Aktiv: ' + currentSeasonFilter : 'Aktive Karte wählen';
       const drinkCount = (typeof allDrinks !== 'undefined' && allDrinks.length) ? allDrinks.length + ' Getränke · ' : '';
+      const adm = !!userIsAdmin;
       return {
         drinks:   { icon: '🍸', title: 'Getränke & Rezepte', sub: drinkCount + 'Datenbank öffnen', run: 'openDrinksView', need: 'all', primary: true },
+        allergens:{ icon: '🍽️', title: 'Speisekarte & Allergene', sub: 'Gerichte, Allergene A–R', run: 'openAllergenModal', need: 'all' },
         season:   { icon: '📅', title: 'Saison wählen', sub: seasonSub, run: 'openSeasonModal', need: 'admin' },
         print:    { icon: '🖨️', title: 'Karte drucken / PDF', sub: 'A3-Getränkekarte', run: 'openA3PrintSetupModal', need: 'admin' },
         impexp:   { icon: '📊', title: 'Import & Export', sub: 'Excel oder CSV', run: 'openImportExportModal', need: 'edit' },
+        checklist:{ icon: '✅', title: adm ? 'Checklisten & Standards' : 'Meine Schicht', sub: adm ? 'Öffnung, Schließung, Aufgaben' : 'Aufgaben für heute', run: 'openChecklistModal', need: 'all' },
+        maint:    { icon: '🛠️', title: adm ? 'Störungen' : 'Störung melden', sub: adm ? 'Gemeldete Defekte' : 'Etwas kaputt?', run: 'openMaintenanceModal', need: 'all', badge: 'dashMaintBadge' },
+        found:    { icon: '🧳', title: 'Fundsachen', sub: 'Vergessene Dinge der Gäste', run: 'openFoundModal', need: 'all' },
+        loss:     { icon: '🔨', title: adm ? 'Verluste & Bruch' : 'Bruch melden', sub: adm ? 'Übersicht & Export' : 'Gläser, Verschüttetes', run: 'openLossModal', need: 'all' },
         teamplan: { icon: '📆', title: 'Team & Arbeitsplan', sub: 'Monatsraster, Stunden, Schichten', run: 'openTeamPlanModal', need: 'admin' },
+        swaps:    { icon: '🔄', title: 'Schichttausch', sub: adm ? 'Anfragen genehmigen' : 'Tauschen & Börse', run: 'openSwapModal', need: 'all', badge: 'dashSwapBadge' },
+        payroll:  { icon: '💶', title: 'Stunden & Lohn', sub: 'Monatsstunden, Excel', run: 'openPayrollModal', need: 'admin' },
         staff:    { icon: '👤', title: 'Personal & PINs', sub: 'Mitarbeiter, Rollen, Rechte', run: 'openStaffPinModal', need: 'admin' },
         chat:     { icon: '💬', title: 'Team-Chat', sub: 'Nachrichten ans Team', run: 'openTeamChatModal', need: 'all', badge: 'dashChatBadge' },
-        myplan:   { icon: '🗓️', title: 'Mein Arbeitsplan', sub: 'Deine Schichten', run: 'openWorkScheduleModal', need: 'all' },
+        myplan:   { icon: '🗓️', title: 'Mein Arbeitsplan', sub: 'Schichten, Pausen, Tausch', run: 'openMyPlanModal', need: 'all' },
         login:    { icon: '🔐', title: 'Login-Protokoll', sub: 'Wer war wann online', run: 'openLoginHistoryModal', need: 'admin' },
         settings: { icon: '⚙️', title: 'Einstellungen', sub: 'Design, Schrift, Hinweise', run: 'openUnifiedSettingsModal', need: 'admin' },
         news:     { icon: '🚀', title: 'Was ist neu?', sub: 'Neuigkeiten & Team-News', run: 'openChangelogModal', need: 'all' },
-        support:  { icon: '🛟', title: 'Support & Tickets', sub: 'Fehler melden, Anfragen', run: 'openSupportModal', need: 'admin', badge: 'dashTicketBadge' }
+        support:  { icon: '🛟', title: 'Support & Tickets', sub: 'App-Fehler melden', run: 'openSupportModal', need: 'admin', badge: 'dashTicketBadge' }
       };
     }
 
@@ -34,16 +42,20 @@
     function dashLayoutFor() {
       if (userIsAdmin) {
         return [
-          { title: '🍸 Bar & Betrieb',          ids: ['drinks', 'season', 'print', 'impexp'] },
-          { title: '👥 Team & Personal',        ids: ['teamplan', 'staff', 'chat'] },
+          { title: '🍸 Bar & Betrieb',          ids: ['drinks', 'allergens', 'season', 'print', 'impexp'] },
+          { title: '✅ Standards & Betrieb',    ids: ['checklist', 'maint', 'found', 'loss'] },
+          { title: '👥 Team & Personal',        ids: ['teamplan', 'swaps', 'payroll', 'staff', 'chat'] },
           { title: '🔐 Sicherheit & System',    ids: ['login', 'settings'] },
           { title: '💡 Support & Infos',        ids: ['news', 'support'] }
         ];
       }
-      // Kellner: Datenbank, eigener Plan, Chat, Neuigkeiten (+ Import, falls Getränke-Recht)
-      const ids = ['drinks', 'myplan', 'chat', 'news'];
-      if (userCanEdit) ids.splice(1, 0, 'impexp');
-      return [{ title: '', ids }];
+      // Kellner/Barkeeper (+ Import, falls Getränke-Recht)
+      const bar = ['drinks', 'allergens', 'maint', 'found', 'loss', 'news'];
+      if (userCanEdit) bar.splice(1, 0, 'impexp');
+      return [
+        { title: '🕒 Meine Schicht',  ids: ['checklist', 'myplan', 'swaps', 'chat'] },
+        { title: '🍸 Bar & Service',  ids: bar }
+      ];
     }
 
     // ---------- Anzeigen ----------
@@ -85,6 +97,7 @@
       }).join('');
 
       refreshDashboardBadges();
+      loadDashboardCounts();
     }
 
     // Kachel antippen: Funktion aufrufen (nur bekannte Funktionen, nie beliebigen Text ausführen)
@@ -95,20 +108,45 @@
       if (typeof fn === 'function') fn();
     }
 
-    // Zähler auf den Kacheln (Chat ungelesen, offene Tickets)
+    // Zähler auf den Kacheln (Chat ungelesen, offene Tickets, Tausch, Störungen)
     function refreshDashboardBadges() {
-      const chat = document.getElementById('dashChatBadge');
-      if (chat) {
-        const n = (typeof chatUnreadCount !== 'undefined') ? chatUnreadCount : 0;
-        chat.textContent = n > 99 ? '99+' : String(n);
-        chat.classList.toggle('hidden', n <= 0);
-      }
-      const ticket = document.getElementById('dashTicketBadge');
-      if (ticket) {
-        const n = window.dashPendingTickets || 0;
-        ticket.textContent = String(n);
-        ticket.classList.toggle('hidden', n <= 0);
-      }
+      const set = (id, n) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = n > 99 ? '99+' : String(n);
+        el.classList.toggle('hidden', !(n > 0));
+      };
+      set('dashChatBadge', (typeof chatUnreadCount !== 'undefined') ? chatUnreadCount : 0);
+      set('dashTicketBadge', window.dashPendingTickets || 0);
+      set('dashSwapBadge', window.dashSwapCount || 0);
+      set('dashMaintBadge', window.dashMaintCount || 0);
+    }
+
+    // Zähler für Tausch-Anfragen und Störungen laden (höchstens alle 20 Sekunden)
+    let dashCountsAt = 0;
+    async function loadDashboardCounts(force) {
+      if (!currentWaiterName) return;
+      if (!force && Date.now() - dashCountsAt < 20000) return;
+      dashCountsAt = Date.now();
+      const me = String(currentWaiterName).toLowerCase();
+      try {
+        const today = fmIso(new Date(Date.now() - 86400000));
+        const sw = await _supabase.from('shift_swaps').select('status, kind, requester, target_name, work_date')
+          .in('status', ['open', 'awaiting_manager']).gte('work_date', today);
+        if (!sw.error) {
+          let n = 0;
+          (sw.data || []).forEach(s => {
+            if (s.status === 'awaiting_manager') { if (userIsAdmin) n++; }
+            else if (s.kind === 'pool' ? String(s.requester).toLowerCase() !== me : String(s.target_name || '').toLowerCase() === me) n++;
+          });
+          window.dashSwapCount = n;
+        }
+        if (userIsAdmin) {
+          const mt = await _supabase.from('maintenance_reports').select('id').eq('status', 'neu');
+          if (!mt.error) window.dashMaintCount = (mt.data || []).length;
+        }
+      } catch (e) {}
+      refreshDashboardBadges();
     }
 
     // ---------- Wechsel Dashboard <-> Getränke-Datenbank ----------

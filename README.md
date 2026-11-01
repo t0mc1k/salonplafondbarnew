@@ -24,6 +24,12 @@ js/                 Logik, in Themen aufgeteilt (siehe unten)
 | Arbeitsplan                                             | js/schedule.js       |
 | Dashboard (Startseite, Kacheln je Rolle, Wechsel Dashboard ↔ Getränke) | js/dashboard.js |
 | Team & Arbeitsplan (Monatsraster, Stunden, Schichten planen) | js/team-plan.js |
+| Gemeinsame Hilfen der Betriebs-Module (Fenster, Datum, Foto-Upload) | js/feature-ui.js |
+| Checklisten & Standards (Öffnung/Laufend/Schließung) | js/checklists.js |
+| Mein Arbeitsplan + Schichttausch (direkt/Börse, Manager genehmigt) | js/shift-swap.js |
+| Stunden & Lohn (Pausen, Korrekturen, Excel) | js/payroll.js |
+| Speisekarte & Allergene A–R | js/menu-allergens.js |
+| Störungen, Fundsachen, Verluste & Bruch | js/reports.js |
 | Saisons                                                 | js/seasons.js        |
 | Getränkeliste, Filter, Detail-Fenster, Rezept drucken   | js/drinks.js         |
 | Getränk anlegen/ändern/löschen, Zutaten, Fotos (bis 3)  | js/drink-admin.js    |
