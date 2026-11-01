@@ -90,10 +90,12 @@
 
     function handleScrollPosition() {
       const scrollBtn = document.getElementById('scrollToTopBtn');
-      if (window.scrollY > 300) {
-        scrollBtn.classList.remove('hidden');
-      } else {
-        scrollBtn.classList.add('hidden');
+      if (scrollBtn) {
+        if (window.scrollY > 300) {
+          scrollBtn.classList.remove('hidden');
+        } else {
+          scrollBtn.classList.add('hidden');
+        }
       }
     }
 
@@ -195,6 +197,20 @@
       if (currentPhotoPreviewUrl) {
         openPhotoPreview(currentPhotoPreviewUrl);
       }
+    }
+
+    // ---------- Prepojenie dlaždíc Manažérskeho Dashboardu ----------
+    function openDrinkAdminSection() {
+      // Skryjeme manažérsky dashboard a otvoríme štandardný pohľad aplikácie s otvoreným adminom pre drinky
+      document.getElementById('managerDashboardView').classList.add('hidden');
+      document.getElementById('appContainer').classList.remove('hidden');
+      if (typeof openAddDrinkModal === 'function') openAddDrinkModal();
+    }
+
+    function openImportExportSection() {
+      document.getElementById('managerDashboardView').classList.add('hidden');
+      document.getElementById('appContainer').classList.remove('hidden');
+      if (typeof openImportExportModal === 'function') openImportExportModal();
     }
 
     // ---------- kurzer Signalton (ohne Audio-Datei) ----------
