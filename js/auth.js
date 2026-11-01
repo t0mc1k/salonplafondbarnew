@@ -134,15 +134,44 @@
       updateHeaderAvatarUI();
 
       currentStaffRole = staffRecord.role || 'staff';
-      userIsAdmin = (currentStaffRole === 'manager' || currentStaffRole === 'developer');
+      userIsAdmin = (currentStaffRole === 'manager' || currentStaffRole === 'developer'); // Developer aj Manager majú manažérske práva
       userCanEdit = userIsAdmin || staffRecord.can_edit_drinks === true;
-      isAdmin = userIsAdmin || userCanEdit;   // Verwaltungsansicht standardmäßig an
+      isAdmin = userIsAdmin || userCanEdit;   
       applyRoleUI();
+
+      // Rozcestník pre zobrazenie správneho Dashboardu (Manažérsky vs. Personálny)
+      routeUserDashboardByRole(staffRecord);
 
       await loadDrinks();
       await checkPendingTicketsBadge();
       setupChatRealtimeListener();
       startLoginWatcher();
+    }
+
+    /**
+     * Nová funkcia: Prepínanie medzi Manažérskym a Personálnym Dashboardom
+     */
+    function routeUserDashboardByRole(staffRecord) {
+      const role = staffRecord.role || 'staff';
+
+      // Ak je to manager alebo developer -> aktivujeme manažérsky dlaždicový portál
+      if (role === 'manager' || role === 'developer') {
+        console.log('Otváram Manažérsky Dashboard pre:', staffRecord.name, `(Rola: ${role})`);
+        renderManagerDashboardView(staffRecord);
+      } else {
+        // Pre bežný personál -> otváram personálny dashboard
+        console.log('Otváram Personálny Dashboard pre:', staffRecord.name);
+        renderStaffDashboardView(staffRecord);
+      }
+    }
+
+    function renderManagerDashboardView(staffRecord) {
+      // Tu v ďalšom kroku prepojíme vykreslenie manažérskych dlaždíc
+      // (zatial necháme bežať štandardný init, príp. tu prepneme viditeľnosť špeciálnych sekcií)
+    }
+
+    function renderStaffDashboardView(staffRecord) {
+      // Tu v ďalšom kroku prepojíme vykreslenie personálnych dlaždíc
     }
 
     // ---------- Hinweis, wenn sich ein Kollege anmeldet ----------
@@ -173,7 +202,7 @@
         });
       }
       loginWatchBaseline = fresh;
-      staffDatabaseRecords = data;   // aktuelle Fotos/Namen für Chat und @-Vorschläge
+      staffDatabaseRecords = data;   
     }
 
     function startLoginWatcher() {
