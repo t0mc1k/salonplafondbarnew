@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Salonplafond">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>Salonplafond NeXuS · BAR v4.0.00</title>
+  <title>Salonplafond NeXuS · BAR v4.0.01</title>
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- SheetJS pre Excel Import & Export -->
@@ -34,7 +34,7 @@
       window.__salonDark = dark;
     } catch (e) { document.documentElement.classList.add('dark'); window.__salonDark = true; }
   </script>
-  <link rel="stylesheet" href="css/style.css?v=4.0.00">
+  <link rel="stylesheet" href="css/style.css?v=4.0.01">
 </head>
 <body class="dark-mode p-3 pt-0 md:p-8 max-w-6xl mx-auto pb-32" onclick="closeDropdowns(event)">
   <script>if (window.__salonDark === false) { document.body.classList.remove('dark-mode'); document.body.classList.add('light-mode'); }</script>
@@ -42,6 +42,10 @@
   <!-- 1. ANMELDUNG (kompakt, ein Bildschirm) -->
   <div id="authContainer" class="login-screen fixed inset-0 z-[200] bg-slate-100 dark:bg-slate-950 overflow-y-auto">
     <div class="login-shell">
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" data-lang="de" onclick="setLanguage('de')">DE</button>
+        <button type="button" data-lang="en" onclick="setLanguage('en')">EN</button>
+      </div>
 
       <header class="login-head">
         <div class="login-logo-advanced login-logo bg-amber-400 shadow-2xl text-slate-950 font-bold select-none border-2 border-amber-300">
@@ -51,7 +55,7 @@
         </div>
         <div class="login-head-text">
           <h1>Salonplafond NeXuS</h1>
-          <span><span data-brand-header>BAR v4.0.00</span> · Anmeldung</span>
+          <span><span data-brand-header>BAR v4.0.01</span> · <span data-i18n="login.title">Anmeldung</span></span>
         </div>
       </header>
 
@@ -59,13 +63,13 @@
 
         <!-- Schritt 1: Name wählen -->
         <div id="loginPickerWrap">
-          <p class="login-step">Wer bist du?</p>
+          <p class="login-step" data-i18n="login.who">Wer bist du?</p>
           <div id="loginSearchRow" class="hidden">
-            <input type="search" id="loginSearchInput" oninput="renderLoginGrid()" onkeydown="if (event.key === 'Enter') { event.preventDefault(); loginPickFirstMatch(); }" autocomplete="off" placeholder="🔍 Name suchen ..." class="login-search">
+            <input type="search" id="loginSearchInput" oninput="renderLoginGrid()" onkeydown="if (event.key === 'Enter') { event.preventDefault(); loginPickFirstMatch(); }" autocomplete="off" placeholder="🔍 Name suchen ..." data-i18n-ph="login.search" class="login-search">
           </div>
           <div id="loginRecentRow" class="login-recent"></div>
           <div id="waiterGridContainer" class="login-list">
-            <p class="login-empty">Personal wird geladen ...</p>
+            <p class="login-empty" data-i18n="login.loading">Personal wird geladen ...</p>
           </div>
         </div>
 
@@ -75,9 +79,9 @@
             <span id="selectedWaiterAvatar" class="login-av lg"></span>
             <div class="login-who-text">
               <b id="selectedWaiterLabel"></b>
-              <small>PIN eingeben</small>
+              <small data-i18n="login.enterPin">PIN eingeben</small>
             </div>
-            <button type="button" onclick="resetWaiterSelection()" class="login-change">Ändern</button>
+            <button type="button" onclick="resetWaiterSelection()" class="login-change" data-i18n="login.change">Ändern</button>
           </div>
 
           <div id="loginPinDots" class="login-dots" aria-label="PIN-Eingabe"></div>
@@ -97,13 +101,13 @@
             <button type="button" onclick="appendPinNum('0')" class="login-key">0</button>
             <button type="button" onclick="backspacePinInput()" class="login-key login-key-b" aria-label="Zurück">⌫</button>
           </div>
-          <button type="button" id="pinSubmitBtn" onclick="submitPinLogin()" class="login-submit">Anmelden</button>
+          <button type="button" id="pinSubmitBtn" onclick="submitPinLogin()" class="login-submit" data-i18n="login.submit">Anmelden</button>
         </div>
 
         <div id="pinAuthError" class="login-error hidden"></div>
       </div>
 
-      <p class="login-credit">Salonplafond NeXuS • BAR v<span data-app-number>4.0.00</span> • Developed by Tomas Kardos © 2026</p>
+      <p class="login-credit">Salonplafond NeXuS • BAR v<span data-app-number>4.0.01</span> • Developed by Tomas Kardos © 2026</p>
     </div>
   </div>
 
@@ -296,7 +300,7 @@
         </div>
 
         <!-- Arbeitsplan -->
-        <button type="button" onclick="closeUserProfileModal(); openWorkScheduleModal();" class="profile-link">
+        <button type="button" onclick="closeUserProfileModal(); openMyPlanModal();" class="profile-link">
           <span class="profile-link-ico">🗓️</span>
           <span class="min-w-0 flex-1 text-left"><b class="block text-sm">Mein Arbeitsplan</b><small class="block text-xs profile-link-sub">Deine Schichten dieser Woche ansehen</small></span>
           <span class="menu-arrow">›</span>
@@ -385,12 +389,12 @@
 
         <div class="flex flex-col justify-center min-w-0">
           <h1 class="text-lg md:text-3xl font-bold tracking-tight text-amber-700 dark:text-amber-400 leading-none whitespace-nowrap">Salonplafond NeXuS</h1>
-          <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium block mt-0.5" data-brand-header>BAR v4.0.00</span>
+          <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium block mt-0.5" data-brand-header>BAR v4.0.01</span>
         </div>
       </div>
 
       <div class="flex items-center gap-2 shrink-0">
-        <button onclick="handleLogout()" class="hidden md:inline-flex px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/30 rounded-lg text-xs font-bold transition items-center gap-1.5 shadow-sm" title="Benutzer wechseln">
+        <button onclick="handleLogout()" class="hidden md:inline-flex px-3 py-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/30 rounded-lg text-xs font-bold transition items-center gap-1.5 shadow-sm" title="Benutzer wechseln" data-i18n="hdr.switch">
           🚪 Benutzer wechseln
         </button>
 
@@ -399,13 +403,13 @@
           <span id="headerChatBadgeDot" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-slate-950 pulse-badge-dot"></span>
         </button>
 
-        <button onclick="toggleFullscreen()" class="hidden md:inline-flex px-3 py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg text-xs font-semibold border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-300 items-center gap-1 transition">
+        <button onclick="toggleFullscreen()" class="hidden md:inline-flex px-3 py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg text-xs font-semibold border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-300 items-center gap-1 transition" data-i18n="hdr.fullscreen">
           ⛶ Vollbild
         </button>
 
         <div class="relative">
           <button onclick="toggleSettingsMenu(event)" class="w-10 h-10 md:w-auto md:h-auto md:px-3 md:py-1.5 justify-center bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl md:rounded-lg text-base md:text-xs flex items-center gap-1 shadow-md transition relative" title="Menü" aria-label="Menü">
-            <span class="md:hidden">⚙️</span><span class="hidden md:inline">☰ Menü</span>
+            <span class="md:hidden">⚙️</span><span class="hidden md:inline" data-i18n="hdr.menu">☰ Menü</span>
             <span id="menuNotificationDot" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-amber-500 dark:bg-amber-400 rounded-full border-2 border-white dark:border-slate-950 pulse-badge-dot"></span>
           </button>
 
@@ -426,49 +430,49 @@
 
             <button type="button" onclick="closeSettingsMenu(); showDashboard();" class="menu-item mt-1">
               <span class="menu-ico">🏠</span>
-              <span class="menu-text"><span class="menu-label">Dashboard</span><span class="menu-sub">Zurück zur Startseite</span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.dashboard">Dashboard</span><span class="menu-sub" data-i18n="menu.dashboardSub">Zurück zur Startseite</span></span>
             </button>
             <button type="button" onclick="closeSettingsMenu(); openDrinksView();" class="menu-item">
               <span class="menu-ico">🍸</span>
-              <span class="menu-text"><span class="menu-label">Getränke & Rezepte</span><span class="menu-sub">Datenbank öffnen</span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.drinks">Getränke & Rezepte</span><span class="menu-sub" data-i18n="menu.drinksSub">Datenbank öffnen</span></span>
             </button>
 
-            <button type="button" onclick="openAddDrinkModalFromMenu()" id="menuAddDrinkBtn" class="hidden menu-primary mt-1">
+            <button type="button" onclick="openAddDrinkModalFromMenu()" id="menuAddDrinkBtn" class="hidden menu-primary mt-1" data-i18n="menu.addDrink">
               ➕ Neues Getränk hinzufügen
             </button>
 
-            <div class="menu-section">Getränke & Karte</div>
+            <div class="menu-section" data-i18n="menu.secDrinks">Getränke & Karte</div>
 
             <button type="button" onclick="openSeasonModal()" class="menu-item">
               <span class="menu-ico">📅</span>
-              <span class="menu-text"><span class="menu-label">Saison wählen</span><span class="menu-sub" id="menuSeasonSub">Aktive Karte wechseln</span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.season">Saison wählen</span><span class="menu-sub" id="menuSeasonSub" data-i18n="menu.seasonSub">Aktive Karte wechseln</span></span>
             </button>
             <button type="button" onclick="createNewSeasonPrompt()" id="menuNewSeasonBtn" class="hidden menu-item">
               <span class="menu-ico">➕</span>
-              <span class="menu-text"><span class="menu-label">Neue Saison erstellen</span><span class="menu-sub">Neue Karte anlegen</span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.newSeason">Neue Saison erstellen</span><span class="menu-sub" data-i18n="menu.newSeasonSub">Neue Karte anlegen</span></span>
             </button>
             <button type="button" onclick="openShoppingModal()" class="menu-item">
               <span class="menu-ico">🛒</span>
-              <span class="menu-text"><span class="menu-label">Einkaufsliste / Inventur</span><span class="menu-sub">Zutaten der Saison zusammenrechnen</span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.shopping">Einkaufsliste / Inventur</span><span class="menu-sub" data-i18n="menu.shoppingSub">Zutaten der Saison zusammenrechnen</span></span>
             </button>
             <button type="button" onclick="openA3PrintSetupModal()" class="menu-item">
               <span class="menu-ico">🖨️</span>
-              <span class="menu-text"><span class="menu-label">Karten-Druck (A3)</span><span class="menu-sub">Getränkekarte zum Ausdrucken</span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.print">Karten-Druck (A3)</span><span class="menu-sub" data-i18n="menu.printSub">Getränkekarte zum Ausdrucken</span></span>
             </button>
             <button type="button" onclick="openImportExportModal()" id="btnMenuImportExport" class="hidden menu-item">
               <span class="menu-ico">📊</span>
-              <span class="menu-text"><span class="menu-label">Import & Export</span><span class="menu-sub">Excel oder CSV</span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.impexp">Import & Export</span><span class="menu-sub" data-i18n="menu.impexpSub">Excel oder CSV</span></span>
             </button>
 
-            <div class="menu-section">Team & Arbeit</div>
+            <div class="menu-section" data-i18n="menu.secTeam">Team & Arbeit</div>
 
             <button type="button" onclick="openTeamChatModal()" class="menu-item">
               <span class="menu-ico">💬<span id="menuChatBadge" class="hidden menu-count">0</span></span>
-              <span class="menu-text"><span class="menu-label">Team-Chat</span><span class="menu-sub">Nachrichten an das ganze Team</span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.chat">Team-Chat</span><span class="menu-sub" data-i18n="menu.chatSub">Nachrichten an das ganze Team</span></span>
             </button>
-            <button type="button" onclick="openWorkScheduleModal()" class="menu-item">
+            <button type="button" onclick="openMyPlanModal()" class="menu-item">
               <span class="menu-ico">🗓️</span>
-              <span class="menu-text"><span class="menu-label">Mein Arbeitsplan</span><span class="menu-sub">Deine Schichten</span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.myplan">Mein Arbeitsplan</span><span class="menu-sub" data-i18n="menu.myplanSub">Deine Schichten</span></span>
             </button>
 
             <div id="menuAdminSection" class="hidden flex-col gap-0.5">
@@ -483,38 +487,42 @@
               </button>
             </div>
 
-            <div class="menu-section">App</div>
+            <div class="menu-section" data-i18n="menu.secApp">App</div>
 
             <button type="button" onclick="openUnifiedSettingsModal()" class="menu-item">
               <span class="menu-ico">⚙️</span>
-              <span class="menu-text"><span class="menu-label">Einstellungen & Zentrale</span><span class="menu-sub">Design, Schrift, Hinweise, Sortierung</span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.settings">Einstellungen & Zentrale</span><span class="menu-sub" data-i18n="menu.settingsSub">Design, Schrift, Hinweise, Sortierung</span></span>
             </button>
             <button type="button" onclick="refreshData()" class="menu-item">
               <span class="menu-ico">🔄</span>
-              <span class="menu-text"><span class="menu-label">Daten aktualisieren</span><span class="menu-sub">Getränke neu laden</span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.refresh">Daten aktualisieren</span><span class="menu-sub" data-i18n="menu.refreshSub">Getränke neu laden</span></span>
             </button>
             <button type="button" onclick="openInstallSettings()" id="menuInstallBtn" class="hidden menu-item">
               <span class="menu-ico">📲</span>
-              <span class="menu-text"><span class="menu-label">App installieren</span><span class="menu-sub">Symbol auf dem Startbildschirm</span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.install">App installieren</span><span class="menu-sub" data-i18n="menu.installSub">Symbol auf dem Startbildschirm</span></span>
             </button>
             <button type="button" onclick="toggleFullscreen(); closeSettingsMenu();" class="menu-item menu-mobile-only">
               <span class="menu-ico">⛶</span>
-              <span class="menu-text"><span class="menu-label">Vollbild</span><span class="menu-sub">Ganzer Bildschirm ein/aus</span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.fullscreen">Vollbild</span><span class="menu-sub" data-i18n="menu.fullscreenSub">Ganzer Bildschirm ein/aus</span></span>
+            </button>
+            <button type="button" onclick="closeSettingsMenu(); openHelpModal();" class="menu-item">
+              <span class="menu-ico">📖</span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.help">Hilfe & Anleitung</span><span class="menu-sub" data-i18n="menu.helpSub">So funktioniert die App</span></span>
             </button>
             <button type="button" onclick="openChangelogModal()" class="menu-item">
               <span class="menu-ico">🚀</span>
-              <span class="menu-text"><span class="menu-label">Was ist neu?</span><span class="menu-sub">Neuigkeiten in <span data-app-version>v4.0.00</span></span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.news">Was ist neu?</span><span class="menu-sub"><span data-i18n="menu.newsSub">Neuigkeiten in </span><span data-app-version>v4.0.01</span></span></span>
             </button>
             <button type="button" onclick="openSupportModal()" class="menu-item">
               <span class="menu-ico">🛟<span id="menuDropdownTicketDot" class="hidden menu-dot pulse-badge-dot"></span></span>
-              <span class="menu-text"><span class="menu-label">Support & Tickets</span><span class="menu-sub">Fehler melden oder Fragen stellen</span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.support">Support & Tickets</span><span class="menu-sub" data-i18n="menu.supportSub">Fehler melden oder Fragen stellen</span></span>
             </button>
 
             <div class="menu-divider"></div>
 
             <button type="button" onclick="handleLogout()" class="menu-item menu-item-danger">
               <span class="menu-ico">🚪</span>
-              <span class="menu-text"><span class="menu-label">Benutzer wechseln</span><span class="menu-sub">Abmelden</span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.logout">Benutzer wechseln</span><span class="menu-sub" data-i18n="menu.logoutSub">Abmelden</span></span>
             </button>
 
           </div>
@@ -559,7 +567,7 @@
     <div id="drinksView" class="hidden">
       <div class="dash-back-bar">
         <button type="button" onclick="showDashboard()" class="dash-back-btn" title="Zurück zum Dashboard">← Dashboard</button>
-        <span class="dash-back-title">🍸 Getränke & Rezepte</span>
+        <span class="dash-back-title" data-i18n="dv.title">🍸 Getränke & Rezepte</span>
       </div>
 
     <!-- Suche -->
@@ -572,35 +580,35 @@
 
     <!-- Kategorien (wischbar) -->
     <div class="cat-bar mb-2 md:mb-3">
-      <span class="hidden md:inline text-xs text-slate-600 dark:text-slate-400 font-semibold mr-1 shrink-0">Kategorie:</span>
+      <span class="hidden md:inline text-xs text-slate-600 dark:text-slate-400 font-semibold mr-1 shrink-0" data-i18n="dv.category">Kategorie:</span>
       <div id="categories" class="flex gap-2"></div>
     </div>
 
     <!-- Schnellzugriff: Saison, Arbeitsplan, Filter -->
     <div class="quick-row mb-3 md:mb-5">
       <div id="activeSeasonBadge" onclick="openSeasonModal()" title="Klicken, um Saison zu wechseln" class="hidden quick-chip quick-chip-amber">
-        <span>📅<span class="hidden sm:inline"> Saison:</span></span> <span id="activeSeasonName"></span>
+        <span>📅<span class="hidden sm:inline" data-i18n="dv.season"> Saison:</span></span> <span id="activeSeasonName"></span>
       </div>
-      <button type="button" onclick="openWorkScheduleModal()" class="quick-chip desktop-only">🗓️ Arbeitsplan</button>
+      <button type="button" onclick="openMyPlanModal()" class="quick-chip desktop-only" data-i18n="dv.schedule">🗓️ Arbeitsplan</button>
       <button type="button" onclick="toggleFilterDrawer()" class="quick-chip">⚡ Filter <span id="filterArrow">▼</span></button>
       <span class="text-[11px] text-slate-500 shrink-0" id="activeFilterSummary"></span>
     </div>
 
     <div id="filterDrawer" class="hidden flex-col gap-3 p-3 mb-4 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-xl shadow-sm transition-all">
           <div>
-            <span class="text-xs text-slate-600 dark:text-slate-400 font-semibold mb-1.5 block">Ernährung & Bestseller:</span>
+            <span class="text-xs text-slate-600 dark:text-slate-400 font-semibold mb-1.5 block" data-i18n="dv.diet">Ernährung & Bestseller:</span>
             <div class="flex gap-2 items-center overflow-x-auto text-xs">
-              <button onclick="toggleSpecialFilter('featured')" id="filterFeatured" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 flex items-center gap-1 whitespace-nowrap">⭐ TOP / Highlight</button>
-              <button onclick="toggleSpecialFilter('vegan')" id="filterVegan" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 whitespace-nowrap">🌱 Vegan</button>
-              <button onclick="toggleSpecialFilter('glutenfree')" id="filterGluten" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 whitespace-nowrap">🌾 Glutenfrei</button>
-              <button onclick="toggleSpecialFilter('lactosefree')" id="filterLactose" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 whitespace-nowrap">🥛 Laktosefrei</button>
-              <button onclick="toggleSpecialFilter('nonalcoholic')" id="filterNonAlc" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 whitespace-nowrap">🚫 Alkoholfrei</button>
-              <button onclick="toggleSpecialFilter('favorites')" id="filterFavs" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 whitespace-nowrap">❤️ Schicht-Favoriten</button>
+              <button onclick="toggleSpecialFilter('featured')" id="filterFeatured" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 flex items-center gap-1 whitespace-nowrap" data-i18n="dv.top">⭐ TOP / Highlight</button>
+              <button onclick="toggleSpecialFilter('vegan')" id="filterVegan" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 whitespace-nowrap" data-i18n="dv.vegan">🌱 Vegan</button>
+              <button onclick="toggleSpecialFilter('glutenfree')" id="filterGluten" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 whitespace-nowrap" data-i18n="dv.gluten">🌾 Glutenfrei</button>
+              <button onclick="toggleSpecialFilter('lactosefree')" id="filterLactose" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 whitespace-nowrap" data-i18n="dv.lactose">🥛 Laktosefrei</button>
+              <button onclick="toggleSpecialFilter('nonalcoholic')" id="filterNonAlc" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 whitespace-nowrap" data-i18n="dv.noalc">🚫 Alkoholfrei</button>
+              <button onclick="toggleSpecialFilter('favorites')" id="filterFavs" class="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 hover:border-amber-500 whitespace-nowrap" data-i18n="dv.fav">❤️ Schicht-Favoriten</button>
             </div>
           </div>
 
           <div>
-            <span class="text-xs text-slate-600 dark:text-slate-400 font-semibold mb-1.5 block">🍸 Nach Glas-Typ filtern:</span>
+            <span class="text-xs text-slate-600 dark:text-slate-400 font-semibold mb-1.5 block" data-i18n="dv.glass">🍸 Nach Glas-Typ filtern:</span>
             <div id="glassFilterContainer" class="flex gap-1.5 flex-wrap text-xs"></div>
           </div>
         </div>
@@ -619,7 +627,7 @@
     </div><!-- /drinksView -->
 
     <footer class="mt-20 pt-6 border-t border-slate-300 dark:border-slate-800 text-center text-xs text-slate-500">
-      Salonplafond NeXuS • BAR v<span data-app-number>4.0.00</span> • Developed by <span class="text-amber-600 dark:text-amber-400 font-semibold">Tomas Kardos © 2026</span>
+      Salonplafond NeXuS • BAR v<span data-app-number>4.0.01</span> • Developed by <span class="text-amber-600 dark:text-amber-400 font-semibold">Tomas Kardos © 2026</span>
     </footer>
 
   </div>
@@ -939,8 +947,8 @@
 
       <div class="ui-head">
         <div>
-          <h3 class="ui-head-title">⚙️ Einstellungen & Zentrale</h3>
-          <p class="ui-head-sub">Gelten nur auf diesem Gerät und werden automatisch gespeichert.</p>
+          <h3 class="ui-head-title" data-i18n="set.title">⚙️ Einstellungen & Zentrale</h3>
+          <p class="ui-head-sub" data-i18n="set.sub">Gelten nur auf diesem Gerät und werden automatisch gespeichert.</p>
         </div>
         <button type="button" onclick="closeUnifiedSettingsModal()" class="ui-close" aria-label="Schließen">&times;</button>
       </div>
@@ -948,131 +956,139 @@
       <div id="settingsBody" class="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
 
         <section class="set-card">
-          <h4 class="set-head">🎨 Darstellung</h4>
+          <h4 class="set-head" data-i18n="set.appearance">🎨 Darstellung</h4>
 
           <div class="set-row">
-            <div class="set-text"><b>Design</b><small id="settingsThemeInfo">Hell ist augenschonend bei Tageslicht, Dunkel für die Bar am Abend.</small></div>
+            <div class="set-text"><b data-i18n="set.langTitle">Sprache / Language</b><small data-i18n="set.langSub">Gilt für Anmeldung, Dashboard, Menü, Einstellungen und Hilfe.</small></div>
             <div class="seg">
-              <button type="button" class="seg-btn" data-setting="theme" data-value="light" onclick="setSetting('theme','light')">☀️ Hell</button>
-              <button type="button" class="seg-btn" data-setting="theme" data-value="dark" onclick="setSetting('theme','dark')">🌙 Dunkel</button>
+              <button type="button" class="seg-btn" data-lang="de" onclick="setLanguage('de')">Deutsch</button>
+              <button type="button" class="seg-btn" data-lang="en" onclick="setLanguage('en')">English</button>
+            </div>
+          </div>
+
+          <div class="set-row">
+            <div class="set-text"><b data-i18n="set.theme">Design</b><small id="settingsThemeInfo">Hell ist augenschonend bei Tageslicht, Dunkel für die Bar am Abend.</small></div>
+            <div class="seg">
+              <button type="button" class="seg-btn" data-setting="theme" data-value="light" onclick="setSetting('theme','light')" data-i18n="set.light">☀️ Hell</button>
+              <button type="button" class="seg-btn" data-setting="theme" data-value="dark" onclick="setSetting('theme','dark')" data-i18n="set.dark">🌙 Dunkel</button>
               <button type="button" class="seg-btn" data-setting="theme" data-value="auto" onclick="setSetting('theme','auto')">🖥️ Auto</button>
             </div>
           </div>
 
           <div class="set-row">
-            <div class="set-text"><b>Schriftgröße</b><small>Vergrößert alle Texte der App.</small></div>
+            <div class="set-text"><b data-i18n="set.font">Schriftgröße</b><small data-i18n="set.fontSub">Vergrößert alle Texte der App.</small></div>
             <div class="seg">
-              <button type="button" class="seg-btn" data-setting="fontScale" data-value="90" onclick="setSetting('fontScale',90)">Klein</button>
-              <button type="button" class="seg-btn" data-setting="fontScale" data-value="100" onclick="setSetting('fontScale',100)">Normal</button>
-              <button type="button" class="seg-btn" data-setting="fontScale" data-value="112" onclick="setSetting('fontScale',112)">Groß</button>
-              <button type="button" class="seg-btn" data-setting="fontScale" data-value="125" onclick="setSetting('fontScale',125)">Sehr groß</button>
+              <button type="button" class="seg-btn" data-setting="fontScale" data-value="90" onclick="setSetting('fontScale',90)" data-i18n="set.fs90">Klein</button>
+              <button type="button" class="seg-btn" data-setting="fontScale" data-value="100" onclick="setSetting('fontScale',100)" data-i18n="set.fs100">Normal</button>
+              <button type="button" class="seg-btn" data-setting="fontScale" data-value="112" onclick="setSetting('fontScale',112)" data-i18n="set.fs112">Groß</button>
+              <button type="button" class="seg-btn" data-setting="fontScale" data-value="125" onclick="setSetting('fontScale',125)" data-i18n="set.fs125">Sehr groß</button>
             </div>
           </div>
 
           <div class="set-row">
-            <div class="set-text"><b>Weichzeichner (Blur)</b><small>Milchglas-Effekt in Dialogen, Menüs und Hinweisen. Auf schwächeren Geräten ausschalten.</small></div>
+            <div class="set-text"><b data-i18n="set.blur">Weichzeichner (Blur)</b><small data-i18n="set.blurSub">Milchglas-Effekt in Dialogen, Menüs und Hinweisen. Auf schwächeren Geräten ausschalten.</small></div>
             <label class="switch"><input type="checkbox" id="unifiedBlurCheck" onchange="setBlurEnabled(this.checked)"><span class="switch-track"></span></label>
           </div>
 
           <div class="set-row">
-            <div class="set-text"><b>Animationen reduzieren</b><small>Weniger Bewegung und Übergänge, ruhiger und akkusparender.</small></div>
+            <div class="set-text"><b data-i18n="set.motion">Animationen reduzieren</b><small data-i18n="set.motionSub">Weniger Bewegung und Übergänge, ruhiger und akkusparender.</small></div>
             <label class="switch"><input type="checkbox" data-setting-check="reduceMotion" onchange="setSetting('reduceMotion',this.checked)"><span class="switch-track"></span></label>
           </div>
         </section>
 
         <section class="set-card">
-          <h4 class="set-head">🍸 Getränke</h4>
+          <h4 class="set-head" data-i18n="set.drinks">🍸 Getränke</h4>
 
           <div class="set-row">
-            <div class="set-text"><b>Ansicht</b><small>Karten mit Foto oder kompakte Liste.</small></div>
+            <div class="set-text"><b data-i18n="set.view">Ansicht</b><small data-i18n="set.viewSub">Karten mit Foto oder kompakte Liste.</small></div>
             <div class="seg">
-              <button type="button" class="seg-btn" data-setting="viewMode" data-value="grid" onclick="setViewMode('grid')">▦ Karten</button>
-              <button type="button" class="seg-btn" data-setting="viewMode" data-value="list" onclick="setViewMode('list')">☰ Liste</button>
+              <button type="button" class="seg-btn" data-setting="viewMode" data-value="grid" onclick="setViewMode('grid')" data-i18n="set.cards">▦ Karten</button>
+              <button type="button" class="seg-btn" data-setting="viewMode" data-value="list" onclick="setViewMode('list')" data-i18n="set.list">☰ Liste</button>
             </div>
           </div>
 
           <div class="set-row">
-            <div class="set-text"><b>Sortierung</b><small>Reihenfolge der Getränke in der Liste.</small></div>
+            <div class="set-text"><b data-i18n="set.sort">Sortierung</b><small data-i18n="set.sortSub">Reihenfolge der Getränke in der Liste.</small></div>
             <select id="unifiedSortSelect" onchange="setSetting('sort',this.value)" class="ui-field set-select">
-              <option value="newest">Neueste zuerst</option>
-              <option value="name_asc">Name A – Z</option>
+              <option value="newest" data-i18n="set.sortNew">Neueste zuerst</option>
+              <option value="name_asc" data-i18n="set.sortName">Name A – Z</option>
               <option value="name_desc">Name Z – A</option>
-              <option value="price_asc">Preis aufsteigend</option>
-              <option value="price_desc">Preis absteigend</option>
-              <option value="favorites">Favoriten zuerst</option>
+              <option value="price_asc" data-i18n="set.sortPA">Preis aufsteigend</option>
+              <option value="price_desc" data-i18n="set.sortPD">Preis absteigend</option>
+              <option value="favorites" data-i18n="set.sortFav">Favoriten zuerst</option>
             </select>
           </div>
 
           <div class="set-row">
-            <div class="set-text"><b>Preise anzeigen</b><small>Preis neben dem Namen auf Karten und im Detail.</small></div>
+            <div class="set-text"><b data-i18n="set.prices">Preise anzeigen</b><small data-i18n="set.pricesSub">Preis neben dem Namen auf Karten und im Detail.</small></div>
             <label class="switch"><input type="checkbox" data-setting-check="showPrices" onchange="setSetting('showPrices',this.checked)"><span class="switch-track"></span></label>
           </div>
 
           <div class="set-row">
-            <div class="set-text"><b>Aktive Saison</b><small>Welche Karte gerade angezeigt wird.</small></div>
+            <div class="set-text"><b data-i18n="set.season">Aktive Saison</b><small data-i18n="set.seasonSub">Welche Karte gerade angezeigt wird.</small></div>
             <select id="unifiedSeasonSelect" onchange="onUnifiedSeasonChange(this)" class="ui-field set-select"></select>
           </div>
         </section>
 
         <section class="set-card">
-          <h4 class="set-head">🔔 Hinweise</h4>
+          <h4 class="set-head" data-i18n="set.notif">🔔 Hinweise</h4>
 
           <div class="set-row">
-            <div class="set-text"><b>Wenn sich ein Kollege anmeldet</b><small>Kurzer Hinweis oben rechts mit Foto.</small></div>
+            <div class="set-text"><b data-i18n="set.nLogin">Wenn sich ein Kollege anmeldet</b><small data-i18n="set.nLoginSub">Kurzer Hinweis oben rechts mit Foto.</small></div>
             <label class="switch"><input type="checkbox" data-setting-check="loginToast" onchange="setSetting('loginToast',this.checked)"><span class="switch-track"></span></label>
           </div>
 
           <div class="set-row">
-            <div class="set-text"><b>Neue Chat-Nachricht</b><small>Hinweis, wenn der Chat gerade geschlossen ist.</small></div>
+            <div class="set-text"><b data-i18n="set.nChat">Neue Chat-Nachricht</b><small data-i18n="set.nChatSub">Hinweis, wenn der Chat gerade geschlossen ist.</small></div>
             <label class="switch"><input type="checkbox" data-setting-check="chatToast" onchange="setSetting('chatToast',this.checked)"><span class="switch-track"></span></label>
           </div>
 
           <div class="set-row">
-            <div class="set-text"><b>Ton bei neuer Nachricht</b><small>Leiser Signalton im Chat.</small></div>
+            <div class="set-text"><b data-i18n="set.nSound">Ton bei neuer Nachricht</b><small data-i18n="set.nSoundSub">Leiser Signalton im Chat.</small></div>
             <label class="switch"><input type="checkbox" data-setting-check="chatSound" onchange="setSetting('chatSound',this.checked); if (this.checked) playChatSound();"><span class="switch-track"></span></label>
           </div>
         </section>
 
         <section class="set-card" id="setGroupMode">
-          <h4 class="set-head">👤 Ansicht für Mitarbeiter mit Rechten</h4>
+          <h4 class="set-head" data-i18n="set.rights">👤 Ansicht für Mitarbeiter mit Rechten</h4>
           <div class="set-row">
-            <div class="set-text"><b>Ansichtsmodus</b><small>Kellner-Ansicht blendet Verwaltungs-Knöpfe aus.</small></div>
+            <div class="set-text"><b data-i18n="set.mode">Ansichtsmodus</b><small data-i18n="set.modeSub">Kellner-Ansicht blendet Verwaltungs-Knöpfe aus.</small></div>
             <div class="seg">
-              <button type="button" class="seg-btn" id="unifiedModeStaff" onclick="setAdminView(false)">Kellner</button>
-              <button type="button" class="seg-btn" id="unifiedModeAdmin" onclick="setAdminView(true)">Verwaltung</button>
+              <button type="button" class="seg-btn" id="unifiedModeStaff" onclick="setAdminView(false)" data-i18n="set.modeStaff">Kellner</button>
+              <button type="button" class="seg-btn" id="unifiedModeAdmin" onclick="setAdminView(true)" data-i18n="set.modeAdmin">Verwaltung</button>
             </div>
           </div>
         </section>
 
         <section class="set-card" id="setInstall">
-          <h4 class="set-head">📲 App installieren</h4>
+          <h4 class="set-head" data-i18n="set.install">📲 App installieren</h4>
           <div class="set-row">
-            <div class="set-text"><b>Auf dem Startbildschirm</b><small id="installStatus">Mit einem Symbol auf dem Startbildschirm startet die App wie eine normale App.</small></div>
-            <button type="button" id="installBtn" onclick="installApp()" class="ui-btn-primary">📲 So geht’s</button>
+            <div class="set-text"><b data-i18n="set.installOn">Auf dem Startbildschirm</b><small id="installStatus" data-i18n="set.installSub">Mit einem Symbol auf dem Startbildschirm startet die App wie eine normale App.</small></div>
+            <button type="button" id="installBtn" onclick="installApp()" class="ui-btn-primary" data-i18n="set.installBtn">📲 So geht’s</button>
           </div>
           <div id="installSteps" class="install-steps hidden"></div>
         </section>
 
         <section class="set-card">
-          <h4 class="set-head">🧰 App</h4>
+          <h4 class="set-head" data-i18n="set.app">🧰 App</h4>
           <div class="set-row">
-            <div class="set-text"><b>Version</b><small>Salonplafond NeXuS • BAR v<span data-app-number>4.0.00</span></small></div>
-            <button type="button" onclick="closeUnifiedSettingsModal(); openChangelogModal();" class="ui-btn-ghost">🚀 Was ist neu?</button>
+            <div class="set-text"><b data-i18n="set.version">Version</b><small>Salonplafond NeXuS • BAR v<span data-app-number>4.0.01</span></small></div>
+            <button type="button" onclick="closeUnifiedSettingsModal(); openChangelogModal();" class="ui-btn-ghost" data-i18n="set.news">🚀 Was ist neu?</button>
           </div>
           <div class="set-row">
-            <div class="set-text"><b>App neu laden</b><small>Hilft, wenn etwas hängt oder alt aussieht.</small></div>
-            <button type="button" onclick="reloadApp()" class="ui-btn-ghost">🔄 Neu laden</button>
+            <div class="set-text"><b data-i18n="set.reload">App neu laden</b><small data-i18n="set.reloadSub">Hilft, wenn etwas hängt oder alt aussieht.</small></div>
+            <button type="button" onclick="reloadApp()" class="ui-btn-ghost" data-i18n="set.reloadBtn">🔄 Neu laden</button>
           </div>
           <div class="set-row">
-            <div class="set-text"><b>Einstellungen zurücksetzen</b><small>Setzt alle Einstellungen dieses Geräts auf Standard.</small></div>
-            <button type="button" onclick="resetSettings()" class="ui-btn-ghost set-danger">↩️ Zurücksetzen</button>
+            <div class="set-text"><b data-i18n="set.reset">Einstellungen zurücksetzen</b><small data-i18n="set.resetSub">Setzt alle Einstellungen dieses Geräts auf Standard.</small></div>
+            <button type="button" onclick="resetSettings()" class="ui-btn-ghost set-danger" data-i18n="set.resetBtn">↩️ Zurücksetzen</button>
           </div>
         </section>
 
       </div>
 
       <div class="ui-foot">
-        <button type="button" onclick="closeUnifiedSettingsModal()" class="ui-btn-primary">Fertig</button>
+        <button type="button" onclick="closeUnifiedSettingsModal()" class="ui-btn-primary" data-i18n="set.done">Fertig</button>
       </div>
     </div>
   </div>
@@ -1310,7 +1326,7 @@
       <div class="ui-head">
         <div>
           <h3 class="ui-head-title">🚀 Was ist neu?</h3>
-          <p class="ui-head-sub">Aktuelle Version <span id="changelogVersionBadge" class="cl-ver">v4.0.00</span></p>
+          <p class="ui-head-sub">Aktuelle Version <span id="changelogVersionBadge" class="cl-ver">v4.0.01</span></p>
         </div>
         <button type="button" onclick="closeChangelogModal()" class="ui-close" aria-label="Schließen">&times;</button>
       </div>
@@ -1567,32 +1583,34 @@
     </div>
   </div>
 
-  <script src="js/config.js?v=4.0.00"></script>
-  <script src="js/ui.js?v=4.0.00"></script>
-  <script src="js/settings.js?v=4.0.00"></script>
-  <script src="js/pwa.js?v=4.0.00"></script>
-  <script src="js/auth.js?v=4.0.00"></script>
-  <script src="js/profile.js?v=4.0.00"></script>
-  <script src="js/staff-admin.js?v=4.0.00"></script>
-  <script src="js/chat.js?v=4.0.00"></script>
-  <script src="js/tickets.js?v=4.0.00"></script>
-  <script src="js/changelog.js?v=4.0.00"></script>
-  <script src="js/schedule.js?v=4.0.00"></script>
-  <script src="js/team-plan.js?v=4.0.00"></script>
-  <script src="js/feature-ui.js?v=4.0.00"></script>
-  <script src="js/checklists.js?v=4.0.00"></script>
-  <script src="js/shift-swap.js?v=4.0.00"></script>
-  <script src="js/payroll.js?v=4.0.00"></script>
-  <script src="js/menu-allergens.js?v=4.0.00"></script>
-  <script src="js/reports.js?v=4.0.00"></script>
-  <script src="js/seasons.js?v=4.0.00"></script>
-  <script src="js/drinks.js?v=4.0.00"></script>
-  <script src="js/drink-admin.js?v=4.0.00"></script>
-  <script src="js/tray.js?v=4.0.00"></script>
-  <script src="js/shopping.js?v=4.0.00"></script>
-  <script src="js/import-export.js?v=4.0.00"></script>
-  <script src="js/print-a3.js?v=4.0.00"></script>
-  <script src="js/dashboard.js?v=4.0.00"></script>
-  <script src="js/app.js?v=4.0.00"></script>
+  <script src="js/config.js?v=4.0.01"></script>
+  <script src="js/i18n.js?v=4.0.01"></script>
+  <script src="js/ui.js?v=4.0.01"></script>
+  <script src="js/settings.js?v=4.0.01"></script>
+  <script src="js/pwa.js?v=4.0.01"></script>
+  <script src="js/auth.js?v=4.0.01"></script>
+  <script src="js/profile.js?v=4.0.01"></script>
+  <script src="js/staff-admin.js?v=4.0.01"></script>
+  <script src="js/chat.js?v=4.0.01"></script>
+  <script src="js/tickets.js?v=4.0.01"></script>
+  <script src="js/changelog.js?v=4.0.01"></script>
+  <script src="js/schedule.js?v=4.0.01"></script>
+  <script src="js/team-plan.js?v=4.0.01"></script>
+  <script src="js/feature-ui.js?v=4.0.01"></script>
+  <script src="js/checklists.js?v=4.0.01"></script>
+  <script src="js/shift-swap.js?v=4.0.01"></script>
+  <script src="js/payroll.js?v=4.0.01"></script>
+  <script src="js/menu-allergens.js?v=4.0.01"></script>
+  <script src="js/reports.js?v=4.0.01"></script>
+  <script src="js/help.js?v=4.0.01"></script>
+  <script src="js/seasons.js?v=4.0.01"></script>
+  <script src="js/drinks.js?v=4.0.01"></script>
+  <script src="js/drink-admin.js?v=4.0.01"></script>
+  <script src="js/tray.js?v=4.0.01"></script>
+  <script src="js/shopping.js?v=4.0.01"></script>
+  <script src="js/import-export.js?v=4.0.01"></script>
+  <script src="js/print-a3.js?v=4.0.01"></script>
+  <script src="js/dashboard.js?v=4.0.01"></script>
+  <script src="js/app.js?v=4.0.01"></script>
 </body>
 </html>

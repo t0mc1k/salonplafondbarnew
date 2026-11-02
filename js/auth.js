@@ -34,7 +34,7 @@
     }
 
     function loginTileHtml(staff) {
-      const role = ({ developer: 'Developer', manager: 'Manager' }[staff.role]) || '';
+      const role = ({ developer: t('role.developer'), manager: t('role.manager') }[staff.role]) || '';
       return `
         <button type="button" onclick="selectWaiterForLogin(${jsArg(staff.name)})" class="login-tile" title="${escapeHtml(staff.name)}">
           ${loginAvatarHtml(staff)}
@@ -55,7 +55,7 @@
       const data = staffDatabaseRecords || [];
 
       if (!data.length) {
-        container.innerHTML = `<p class="login-empty">Kein Personal in der Datenbank gefunden.</p>`;
+        container.innerHTML = `<p class="login-empty">${escapeHtml(t('login.noStaff'))}</p>`;
         if (searchRow) searchRow.classList.add('hidden');
         if (recentRow) recentRow.innerHTML = '';
         return;
@@ -67,7 +67,7 @@
       if (recentRow) {
         const recent = q ? [] : getRecentLogins().map(n => data.find(s => String(s.name).toLowerCase() === n.toLowerCase())).filter(Boolean);
         recentRow.innerHTML = recent.map(s => `
-          <button type="button" onclick="selectWaiterForLogin(${jsArg(s.name)})" class="login-chip" title="Zuletzt angemeldet">
+          <button type="button" onclick="selectWaiterForLogin(${jsArg(s.name)})" class="login-chip" title="${escapeHtml(t('login.recent'))}">
             ${loginAvatarHtml(s, 'sm')}<span>${escapeHtml(s.name)}</span>
           </button>`).join('');
       }
@@ -75,7 +75,7 @@
       const list = sortedStaff(data.filter(s => !q || String(s.name).toLowerCase().indexOf(q) !== -1));
       container.innerHTML = list.length
         ? `<div class="login-grid">${list.map(loginTileHtml).join('')}</div>`
-        : `<p class="login-empty">Kein Name gefunden. Prüfe die Schreibweise.</p>`;
+        : `<p class="login-empty">${escapeHtml(t('login.noName'))}</p>`;
     }
 
     function loginPickFirstMatch() {
@@ -155,7 +155,7 @@
       if (!selectedWaiterForPin || pinLoginBusy) return;
 
       if (currentEnteredPin.length < 4) {
-        errDiv.innerText = "Bitte mindestens 4 Ziffern eingeben.";
+        errDiv.innerText = t('login.pin4');
         errDiv.classList.remove('hidden');
         return;
       }
@@ -166,8 +166,8 @@
 
       if (error) {
         errDiv.innerText = (error.message || '').indexOf('Zu viele') !== -1
-          ? "Zu viele Versuche. Bitte in 10 Minuten erneut versuchen."
-          : "Fehler: " + error.message;
+          ? t('login.tooMany')
+          : t('login.error', { msg: error.message });
         errDiv.classList.remove('hidden');
         currentEnteredPin = "";
         updatePinDisplay();
@@ -176,7 +176,7 @@
 
       const row = Array.isArray(data) ? data[0] : data;
       if (!row) {
-        errDiv.innerText = "Falscher PIN-Code!";
+        errDiv.innerText = t('login.wrongPin');
         errDiv.classList.remove('hidden');
         currentEnteredPin = "";
         updatePinDisplay();
@@ -280,7 +280,7 @@
       if (typeof updateHeaderAvatarUI === 'function') updateHeaderAvatarUI();
       if (typeof renderDashboard === 'function' && !isDrinksViewOpen()) renderDashboard();
       const mobileLabel = document.getElementById('mobileUserLabel');
-      if (mobileLabel) mobileLabel.textContent = (currentWaiterName || '') + ' (' + (({ developer: 'Developer', manager: 'Manager' })[currentStaffRole] || 'Kellner') + ')';
+      if (mobileLabel) mobileLabel.textContent = (currentWaiterName || '') + ' (' + (({ developer: t('role.developer'), manager: t('role.manager') })[currentStaffRole] || t('role.staff')) + ')';
       const label = document.getElementById('currentUserEmail');
       if (label) {
         const roleTxt = (userIsAdmin || userCanEdit) && currentStaffRole && currentStaffRole !== 'staff' ? ` (${escapeHtml(currentStaffRole)})` : '';

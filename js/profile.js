@@ -8,8 +8,8 @@
       const menuThumbContainer = document.getElementById('menuAvatarThumbnailContainer');
       const menuName = document.getElementById('menuUserName');
       const menuRole = document.getElementById('menuUserRole');
-      if (menuName) menuName.textContent = currentWaiterName || 'Mein Profil';
-      if (menuRole) menuRole.textContent = ({ developer: 'Developer', manager: 'Manager' }[currentStaffRole] || 'Kellner') + ' · Profil bearbeiten';
+      if (menuName) menuName.textContent = currentWaiterName || t('menu.profile');
+      if (menuRole) menuRole.textContent = t('menu.profileEdit', { role: ({ developer: t('role.developer'), manager: t('role.manager') }[currentStaffRole] || t('role.staff')) });
 
       if (mobileAv) {
         mobileAv.innerHTML = '';

@@ -12,29 +12,31 @@
     // need: 'all' = alle, 'edit' = darf Getränke bearbeiten, 'admin' = Manager/Developer
     function dashTileDefs() {
       const seasonSub = (typeof currentSeasonFilter !== 'undefined' && currentSeasonFilter)
-        ? 'Aktiv: ' + currentSeasonFilter : 'Aktive Karte wählen';
-      const drinkCount = (typeof allDrinks !== 'undefined' && allDrinks.length) ? allDrinks.length + ' Getränke · ' : '';
+        ? t('menu.seasonActive', { name: currentSeasonFilter }) : t('dash.seasonSub0');
+      const n = (typeof allDrinks !== 'undefined') ? allDrinks.length : 0;
+      const drinkSub = n ? t('dash.drinksSub', { n }) : t('dash.drinksSub0');
       const adm = !!userIsAdmin;
       return {
-        drinks:   { icon: '🍸', title: 'Getränke & Rezepte', sub: drinkCount + 'Datenbank öffnen', run: 'openDrinksView', need: 'all', primary: true },
-        allergens:{ icon: '🍽️', title: 'Speisekarte & Allergene', sub: 'Gerichte, Allergene A–R', run: 'openAllergenModal', need: 'all' },
-        season:   { icon: '📅', title: 'Saison wählen', sub: seasonSub, run: 'openSeasonModal', need: 'admin' },
-        print:    { icon: '🖨️', title: 'Karte drucken / PDF', sub: 'A3-Getränkekarte', run: 'openA3PrintSetupModal', need: 'admin' },
-        impexp:   { icon: '📊', title: 'Import & Export', sub: 'Excel oder CSV', run: 'openImportExportModal', need: 'edit' },
-        checklist:{ icon: '✅', title: adm ? 'Checklisten & Standards' : 'Meine Schicht', sub: adm ? 'Öffnung, Schließung, Aufgaben' : 'Aufgaben für heute', run: 'openChecklistModal', need: 'all' },
-        maint:    { icon: '🛠️', title: adm ? 'Störungen' : 'Störung melden', sub: adm ? 'Gemeldete Defekte' : 'Etwas kaputt?', run: 'openMaintenanceModal', need: 'all', badge: 'dashMaintBadge' },
-        found:    { icon: '🧳', title: 'Fundsachen', sub: 'Vergessene Dinge der Gäste', run: 'openFoundModal', need: 'all' },
-        loss:     { icon: '🔨', title: adm ? 'Verluste & Bruch' : 'Bruch melden', sub: adm ? 'Übersicht & Export' : 'Gläser, Verschüttetes', run: 'openLossModal', need: 'all' },
-        teamplan: { icon: '📆', title: 'Team & Arbeitsplan', sub: 'Monatsraster, Stunden, Schichten', run: 'openTeamPlanModal', need: 'admin' },
-        swaps:    { icon: '🔄', title: 'Schichttausch', sub: adm ? 'Anfragen genehmigen' : 'Tauschen & Börse', run: 'openSwapModal', need: 'all', badge: 'dashSwapBadge' },
-        payroll:  { icon: '💶', title: 'Stunden & Lohn', sub: 'Monatsstunden, Excel', run: 'openPayrollModal', need: 'admin' },
-        staff:    { icon: '👤', title: 'Personal & PINs', sub: 'Mitarbeiter, Rollen, Rechte', run: 'openStaffPinModal', need: 'admin' },
-        chat:     { icon: '💬', title: 'Team-Chat', sub: 'Nachrichten ans Team', run: 'openTeamChatModal', need: 'all', badge: 'dashChatBadge' },
-        myplan:   { icon: '🗓️', title: 'Mein Arbeitsplan', sub: 'Schichten, Pausen, Tausch', run: 'openMyPlanModal', need: 'all' },
-        login:    { icon: '🔐', title: 'Login-Protokoll', sub: 'Wer war wann online', run: 'openLoginHistoryModal', need: 'admin' },
-        settings: { icon: '⚙️', title: 'Einstellungen', sub: 'Design, Schrift, Hinweise', run: 'openUnifiedSettingsModal', need: 'admin' },
-        news:     { icon: '🚀', title: 'Was ist neu?', sub: 'Neuigkeiten & Team-News', run: 'openChangelogModal', need: 'all' },
-        support:  { icon: '🛟', title: 'Support & Tickets', sub: 'App-Fehler melden', run: 'openSupportModal', need: 'admin', badge: 'dashTicketBadge' }
+        drinks:   { icon: '🍸', title: t('dash.drinks'), sub: drinkSub, run: 'openDrinksView', need: 'all', primary: true },
+        allergens:{ icon: '🍽️', title: t('dash.allergens'), sub: t('dash.allergensSub'), run: 'openAllergenModal', need: 'all' },
+        season:   { icon: '📅', title: t('dash.season'), sub: seasonSub, run: 'openSeasonModal', need: 'admin' },
+        print:    { icon: '🖨️', title: t('dash.print'), sub: t('dash.printSub'), run: 'openA3PrintSetupModal', need: 'admin' },
+        impexp:   { icon: '📊', title: t('dash.impexp'), sub: t('dash.impexpSub'), run: 'openImportExportModal', need: 'edit' },
+        checklist:{ icon: '✅', title: adm ? t('dash.checklistA') : t('dash.checklistS'), sub: adm ? t('dash.checklistAS') : t('dash.checklistSS'), run: 'openChecklistModal', need: 'all' },
+        maint:    { icon: '🛠️', title: adm ? t('dash.maintA') : t('dash.maintS'), sub: adm ? t('dash.maintAS') : t('dash.maintSS'), run: 'openMaintenanceModal', need: 'all', badge: 'dashMaintBadge' },
+        found:    { icon: '🧳', title: t('dash.found'), sub: t('dash.foundSub'), run: 'openFoundModal', need: 'all' },
+        loss:     { icon: '🔨', title: adm ? t('dash.lossA') : t('dash.lossS'), sub: adm ? t('dash.lossAS') : t('dash.lossSS'), run: 'openLossModal', need: 'all' },
+        teamplan: { icon: '📆', title: t('dash.teamplan'), sub: t('dash.teamplanSub'), run: 'openTeamPlanModal', need: 'admin' },
+        swaps:    { icon: '🔄', title: t('dash.swaps'), sub: adm ? t('dash.swapsA') : t('dash.swapsS'), run: 'openSwapModal', need: 'all', badge: 'dashSwapBadge' },
+        payroll:  { icon: '💶', title: t('dash.payroll'), sub: t('dash.payrollSub'), run: 'openPayrollModal', need: 'admin' },
+        staff:    { icon: '👤', title: t('dash.staff'), sub: t('dash.staffSub'), run: 'openStaffPinModal', need: 'admin' },
+        chat:     { icon: '💬', title: t('dash.chat'), sub: t('dash.chatSub'), run: 'openTeamChatModal', need: 'all', badge: 'dashChatBadge' },
+        myplan:   { icon: '🗓️', title: t('dash.myplan'), sub: t('dash.myplanSub'), run: 'openMyPlanModal', need: 'all' },
+        login:    { icon: '🔐', title: t('dash.login'), sub: t('dash.loginSub'), run: 'openLoginHistoryModal', need: 'admin' },
+        settings: { icon: '⚙️', title: t('dash.settings'), sub: t('dash.settingsSub'), run: 'openUnifiedSettingsModal', need: 'admin' },
+        news:     { icon: '🚀', title: t('dash.news'), sub: t('dash.newsSub'), run: 'openChangelogModal', need: 'all' },
+        help:     { icon: '📖', title: t('dash.help'), sub: t('dash.helpSub'), run: 'openHelpModal', need: 'all' },
+        support:  { icon: '🛟', title: t('dash.support'), sub: t('dash.supportSub'), run: 'openSupportModal', need: 'admin', badge: 'dashTicketBadge' }
       };
     }
 
@@ -42,19 +44,19 @@
     function dashLayoutFor() {
       if (userIsAdmin) {
         return [
-          { title: '🍸 Bar & Betrieb',          ids: ['drinks', 'allergens', 'season', 'print', 'impexp'] },
-          { title: '✅ Standards & Betrieb',    ids: ['checklist', 'maint', 'found', 'loss'] },
-          { title: '👥 Team & Personal',        ids: ['teamplan', 'swaps', 'payroll', 'staff', 'chat'] },
-          { title: '🔐 Sicherheit & System',    ids: ['login', 'settings'] },
-          { title: '💡 Support & Infos',        ids: ['news', 'support'] }
+          { title: t('dash.g.bar'),  ids: ['drinks', 'allergens', 'season', 'print', 'impexp'] },
+          { title: t('dash.g.std'),  ids: ['checklist', 'maint', 'found', 'loss'] },
+          { title: t('dash.g.team'), ids: ['teamplan', 'swaps', 'payroll', 'staff', 'chat'] },
+          { title: t('dash.g.sys'),  ids: ['login', 'settings'] },
+          { title: t('dash.g.info'), ids: ['news', 'help', 'support'] }
         ];
       }
       // Kellner/Barkeeper (+ Import, falls Getränke-Recht)
-      const bar = ['drinks', 'allergens', 'maint', 'found', 'loss', 'news'];
+      const bar = ['drinks', 'allergens', 'maint', 'found', 'loss', 'help', 'news'];
       if (userCanEdit) bar.splice(1, 0, 'impexp');
       return [
-        { title: '🕒 Meine Schicht',  ids: ['checklist', 'myplan', 'swaps', 'chat'] },
-        { title: '🍸 Bar & Service',  ids: bar }
+        { title: t('dash.g.shift'),      ids: ['checklist', 'myplan', 'swaps', 'chat'] },
+        { title: t('dash.g.barService'), ids: bar }
       ];
     }
 
@@ -77,14 +79,13 @@
       const hello = document.getElementById('dashHello');
       if (hello) {
         const h = new Date().getHours();
-        const greet = h < 11 ? 'Guten Morgen' : (h < 18 ? 'Hallo' : 'Guten Abend');
-        hello.textContent = greet + ', ' + (currentWaiterName || '') + '!';
+        hello.textContent = t(h < 11 ? 'dash.morning' : (h < 18 ? 'dash.hello' : 'dash.evening'), { name: currentWaiterName || '' });
       }
       const dateEl = document.getElementById('dashDate');
-      if (dateEl) dateEl.textContent = new Date().toLocaleDateString('de-AT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      if (dateEl) dateEl.textContent = new Date().toLocaleDateString(langLocale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
       const pill = document.getElementById('dashRolePill');
       if (pill) {
-        pill.textContent = ({ developer: 'Developer', manager: 'Manager' })[currentStaffRole] || 'Kellner';
+        pill.textContent = ({ developer: t('role.developer'), manager: t('role.manager') })[currentStaffRole] || t('role.staff');
         pill.className = 'staff-pill ' + (currentStaffRole === 'developer' ? 'pill-dev' : currentStaffRole === 'manager' ? 'pill-manager' : 'pill-staff');
       }
 

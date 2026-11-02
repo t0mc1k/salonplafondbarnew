@@ -25,6 +25,8 @@ js/                 Logik, in Themen aufgeteilt (siehe unten)
 | Dashboard (Startseite, Kacheln je Rolle, Wechsel Dashboard ↔ Getränke) | js/dashboard.js |
 | Team & Arbeitsplan (Monatsraster, Stunden, Schichten planen) | js/team-plan.js |
 | Gemeinsame Hilfen der Betriebs-Module (Fenster, Datum, Foto-Upload) | js/feature-ui.js |
+| Sprachen DE/EN (Wörterbuch, Umschalter) | js/i18n.js |
+| Hilfe & Anleitung (Kapitel in DE/EN) | js/help.js |
 | Checklisten & Standards (Öffnung/Laufend/Schließung) | js/checklists.js |
 | Mein Arbeitsplan + Schichttausch (direkt/Börse, Manager genehmigt) | js/shift-swap.js |
 | Stunden & Lohn (Pausen, Korrekturen, Excel) | js/payroll.js |

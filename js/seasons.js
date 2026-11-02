@@ -60,7 +60,7 @@
 
     function updateActiveSeasonBadgeUI() {
       const menuSub = document.getElementById('menuSeasonSub');
-      if (menuSub) menuSub.textContent = currentSeasonFilter ? 'Aktiv: ' + currentSeasonFilter : 'Aktive Karte wechseln';
+      if (menuSub) menuSub.textContent = currentSeasonFilter ? t('menu.seasonActive', { name: currentSeasonFilter }) : t('menu.seasonSub');
       if (typeof renderDashboard === 'function' && !isDrinksViewOpen()) renderDashboard();
       const badge = document.getElementById('activeSeasonBadge');
       const seasonNameEl = document.getElementById('activeSeasonName');

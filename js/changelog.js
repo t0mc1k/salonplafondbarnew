@@ -10,9 +10,16 @@
    Änderungs-Typen: 'new' Neu, 'improved' Verbessert, 'fixed' Behoben,
                     'security' Sicherheit, 'info' Allgemein
    ============================================================ */
-    const APP_VERSION = '4.0.00';
+    const APP_VERSION = '4.0.01';
 
     const CHANGELOG = [
+  { version: '4.0.01', range: '', date: 'November 2026', title: 'Hilfe & Anleitung, Englisch für das Team',
+    changes: [
+      ['new', 'Hilfe & Anleitung: Eine ausführliche Anleitung für alle Funktionen, Schritt für Schritt erklärt, mit Suche und häufigen Fragen. Du findest sie auf dem Dashboard und im Menü. Kapitel für Manager sind mit „Manager“ markiert.'],
+      ['new', 'Englisch: Die App lässt sich auf Englisch umstellen. Auf der Anmeldeseite oben rechts „DE | EN“, in der App unter Einstellungen → Sprache. Die Sprache merkt sich das Gerät.'],
+      ['info', 'Zuerst übersetzt: Anmeldung, Dashboard, Menü, Einstellungen, Kopf der Getränke-Seite und die Hilfe. Weitere Bereiche für das Team folgen in den nächsten Versionen. Manager-Fenster, A3-Karte und „Was ist neu?“ bleiben Deutsch.'],
+      ['improved', '„Mein Arbeitsplan“ im Menü und in der Getränke-Datenbank öffnet jetzt den neuen Monatskalender mit Pausen und Schichttausch.']
+    ] },
   { version: '4.0.00', range: '', date: 'November 2026', title: 'Fehlerbehebungen & Verlauf aufräumen',
     changes: [
       ['fixed', 'In Eingabefeldern und Fenstern (Mengen, Minuten, Preise, PIN, Suche ...) ließen sich keine Zahlen eintippen und mit Backspace nichts löschen. Das funktioniert wieder überall.'],

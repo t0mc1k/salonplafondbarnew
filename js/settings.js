@@ -197,7 +197,7 @@
 
       const themeInfo = document.getElementById('settingsThemeInfo');
       if (themeInfo) themeInfo.textContent = appSettings.theme === 'auto'
-        ? 'Folgt dem Gerät – aktuell: ' + (themeMode === 'dark' ? 'Dunkel' : 'Hell') : '';
+        ? t('set.themeAuto', { mode: themeMode === 'dark' ? t('set.themeDark') : t('set.themeLight') }) : '';
     }
 
     function setAdminView(on) {

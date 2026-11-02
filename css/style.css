@@ -697,7 +697,7 @@ body.dark-mode .mobile-switch-btn { color: #f87171; }
 .login-logo-o { font-size: 1.1rem; font-weight: 900; line-height: 1; }
 .login-logo-dot { font-size: 7px; font-weight: 900; line-height: 1; }
 .login-head-text h1 { font-size: 1.15rem; font-weight: 900; line-height: 1.1; color: var(--ui-accent); }
-.login-head-text span { display: block; margin-top: .15rem; font-size: .68rem; color: var(--ui-muted); }
+.login-head-text > span { display: block; margin-top: .15rem; font-size: .68rem; color: var(--ui-muted); }
 .login-card { padding: .9rem; border-radius: 1.1rem; background: var(--ui-surface); border: 1px solid var(--ui-border); }
 .login-step { font-size: .8rem; font-weight: 800; color: var(--ui-text); margin-bottom: .55rem; }
 .login-search { width: 100%; padding: .55rem .75rem; margin-bottom: .55rem; font-size: .85rem; border-radius: .75rem; border: 1px solid var(--ui-border); }
@@ -937,3 +937,29 @@ textarea.ui-field { resize: vertical; }
 .pr-table tr.pr-click:hover td { background: rgba(245, 158, 11, .12); }
 .pr-table td b { font-weight: 900; }
 .pr-num { width: 4.2rem; padding: .3rem .4rem !important; font-size: .75rem !important; text-align: center; }
+
+/* v4.0.01: Sprachumschalter (Anmeldung) + Hilfe */
+.lang-switch { align-self: flex-end; display: inline-flex; border-radius: .7rem; overflow: hidden; border: 1px solid var(--ui-border); background: var(--ui-surface); }
+.lang-switch button { padding: .3rem .7rem; font-size: .72rem; font-weight: 900; color: var(--ui-muted); transition: background .12s; }
+.lang-switch button.active { background: #f59e0b; color: #0f172a; }
+.hp-chapter { border-radius: .9rem; background: var(--ui-surface); border: 1px solid var(--ui-border); overflow: hidden; }
+.hp-chapter + .hp-chapter { margin-top: .5rem; }
+.hp-head { display: flex; align-items: center; gap: .7rem; width: 100%; padding: .75rem .85rem; text-align: left; }
+.hp-ico { width: 2.1rem; height: 2.1rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; border-radius: .6rem; background: var(--ui-surface-hover); }
+.hp-title { font-size: .86rem; font-weight: 800; color: var(--ui-text); }
+.hp-sum { font-size: .7rem; color: var(--ui-muted); margin-top: .1rem; }
+.hp-chev { margin-left: auto; font-weight: 900; color: var(--ui-muted); transition: transform .15s; }
+.hp-chapter.open .hp-chev { transform: rotate(90deg); }
+.hp-content { display: none; padding: .2rem .95rem 1rem; font-size: .8rem; line-height: 1.55; color: var(--ui-text); }
+.hp-chapter.open .hp-content { display: block; }
+.hp-content h5 { font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--ui-accent); margin: .9rem 0 .3rem; }
+.hp-content p { margin: .25rem 0; }
+.hp-content ol, .hp-content ul { margin: .25rem 0 .25rem 1.15rem; }
+.hp-content ol { list-style: decimal; } .hp-content ul { list-style: disc; }
+.hp-content li { margin: .2rem 0; }
+.hp-tip { margin-top: .6rem; padding: .55rem .7rem; border-radius: .7rem; background: rgba(245, 158, 11, .12); border: 1px solid rgba(245, 158, 11, .35); font-size: .76rem; }
+.hp-mgr { display: inline-block; margin-left: .4rem; padding: .05rem .45rem; font-size: .58rem; font-weight: 900; border-radius: 999px; background: rgba(139, 92, 246, .2); color: #a78bfa; vertical-align: middle; }
+.hp-group { font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--ui-accent); margin: 1.1rem 0 .5rem; }
+.hp-group:first-child { margin-top: 0; }
+.hp-faq-q { font-weight: 800; }
+mark.hp-hit { background: rgba(245, 158, 11, .45); color: inherit; border-radius: .2rem; }
