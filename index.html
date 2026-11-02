@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Salonplafond">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>Salonplafond BAR v3.2.03</title>
+  <title>Salonplafond BAR · Nexus OS 4.0.00</title>
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- SheetJS pre Excel Import & Export -->
@@ -34,7 +34,7 @@
       window.__salonDark = dark;
     } catch (e) { document.documentElement.classList.add('dark'); window.__salonDark = true; }
   </script>
-  <link rel="stylesheet" href="css/style.css?v=3.2.03">
+  <link rel="stylesheet" href="css/style.css?v=4.0.00">
 </head>
 <body class="dark-mode p-3 pt-0 md:p-8 max-w-6xl mx-auto pb-32" onclick="closeDropdowns(event)">
   <script>if (window.__salonDark === false) { document.body.classList.remove('dark-mode'); document.body.classList.add('light-mode'); }</script>
@@ -51,7 +51,7 @@
         </div>
         <div class="login-head-text">
           <h1>Salonplafond BAR</h1>
-          <span><span data-app-version>v3.2.03</span> · Anmeldung</span>
+          <span><span data-brand-header>Nexus OS 4.0.00 by © T-K</span> · Anmeldung</span>
         </div>
       </header>
 
@@ -103,7 +103,7 @@
         <div id="pinAuthError" class="login-error hidden"></div>
       </div>
 
-      <p class="login-credit">Erstellt von © T0mc1k (Tomas Kardos)</p>
+      <p class="login-credit">Salonplafond BAR NexusOS <span data-app-number>4.0.00</span> • Erstellt von © T-K (Tomas Kardos)</p>
     </div>
   </div>
 
@@ -385,7 +385,7 @@
 
         <div class="flex flex-col justify-center min-w-0">
           <h1 class="text-lg md:text-3xl font-bold tracking-tight text-amber-700 dark:text-amber-400 leading-none whitespace-nowrap">Salonplafond BAR</h1>
-          <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium block mt-0.5" data-app-version>v3.2.03</span>
+          <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium block mt-0.5" data-brand-header>Nexus OS 4.0.00 by © T-K</span>
         </div>
       </div>
 
@@ -503,7 +503,7 @@
             </button>
             <button type="button" onclick="openChangelogModal()" class="menu-item">
               <span class="menu-ico">🚀</span>
-              <span class="menu-text"><span class="menu-label">Was ist neu?</span><span class="menu-sub">Neuigkeiten in <span data-app-version>v3.2.03</span></span></span>
+              <span class="menu-text"><span class="menu-label">Was ist neu?</span><span class="menu-sub">Neuigkeiten in <span data-app-version>v4.0.00</span></span></span>
             </button>
             <button type="button" onclick="openSupportModal()" class="menu-item">
               <span class="menu-ico">🛟<span id="menuDropdownTicketDot" class="hidden menu-dot pulse-badge-dot"></span></span>
@@ -619,7 +619,7 @@
     </div><!-- /drinksView -->
 
     <footer class="mt-20 pt-6 border-t border-slate-300 dark:border-slate-800 text-center text-xs text-slate-500">
-      Salonplafond BAR App <span data-app-version>v3.2.03</span> • Erstellt von <span class="text-amber-600 dark:text-amber-400 font-semibold">© T0mc1k (Tomas Kardos)</span>
+      Salonplafond BAR NexusOS <span data-app-number>4.0.00</span> • Erstellt von <span class="text-amber-600 dark:text-amber-400 font-semibold">© T-K (Tomas Kardos)</span>
     </footer>
 
   </div>
@@ -894,7 +894,7 @@
       
       <div id="a3PrintContainer" class="flex flex-col gap-8 bg-white text-slate-900 p-4 relative">
         <div id="a3PrintDrinksList" class="flex flex-col gap-8"></div>
-        <div class="print-watermark-footer">Salonplafond BAR App create Tomas Kardos</div>
+        <div class="print-watermark-footer">Salonplafond BAR • © T-K (Tomas Kardos)</div>
       </div>
 
       <div class="no-print flex justify-end gap-2 pt-4 border-t border-slate-200 bg-white">
@@ -1056,7 +1056,7 @@
         <section class="set-card">
           <h4 class="set-head">🧰 App</h4>
           <div class="set-row">
-            <div class="set-text"><b>Version</b><small>Salonplafond BAR <span data-app-version>v3.2.03</span></small></div>
+            <div class="set-text"><b>Version</b><small>Salonplafond BAR NexusOS <span data-app-number>4.0.00</span></small></div>
             <button type="button" onclick="closeUnifiedSettingsModal(); openChangelogModal();" class="ui-btn-ghost">🚀 Was ist neu?</button>
           </div>
           <div class="set-row">
@@ -1252,7 +1252,7 @@
       <div>
         <button onclick="closeModal()" class="no-print absolute top-4 right-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-2xl font-bold">&times;</button>
         <div id="modalContent"></div>
-        <div class="print-watermark-footer">Salonplafond BAR App create Tomas Kardos</div>
+        <div class="print-watermark-footer">Salonplafond BAR • © T-K (Tomas Kardos)</div>
       </div>
       <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex gap-2 no-print items-center flex-wrap">
         <button id="modalPhotoBtn" onclick="openPhotoPreviewFromModal()" class="hidden px-4 py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-700 dark:text-amber-400 font-bold rounded-xl transition text-sm flex items-center justify-center gap-2 border border-slate-300 dark:border-slate-700">
@@ -1310,7 +1310,7 @@
       <div class="ui-head">
         <div>
           <h3 class="ui-head-title">🚀 Was ist neu?</h3>
-          <p class="ui-head-sub">Aktuelle Version <span id="changelogVersionBadge" class="cl-ver">v3.2.03</span></p>
+          <p class="ui-head-sub">Aktuelle Version <span id="changelogVersionBadge" class="cl-ver">v4.0.00</span></p>
         </div>
         <button type="button" onclick="closeChangelogModal()" class="ui-close" aria-label="Schließen">&times;</button>
       </div>
@@ -1567,32 +1567,32 @@
     </div>
   </div>
 
-  <script src="js/config.js?v=3.2.03"></script>
-  <script src="js/ui.js?v=3.2.03"></script>
-  <script src="js/settings.js?v=3.2.03"></script>
-  <script src="js/pwa.js?v=3.2.03"></script>
-  <script src="js/auth.js?v=3.2.03"></script>
-  <script src="js/profile.js?v=3.2.03"></script>
-  <script src="js/staff-admin.js?v=3.2.03"></script>
-  <script src="js/chat.js?v=3.2.03"></script>
-  <script src="js/tickets.js?v=3.2.03"></script>
-  <script src="js/changelog.js?v=3.2.03"></script>
-  <script src="js/schedule.js?v=3.2.03"></script>
-  <script src="js/team-plan.js?v=3.2.03"></script>
-  <script src="js/feature-ui.js?v=3.2.03"></script>
-  <script src="js/checklists.js?v=3.2.03"></script>
-  <script src="js/shift-swap.js?v=3.2.03"></script>
-  <script src="js/payroll.js?v=3.2.03"></script>
-  <script src="js/menu-allergens.js?v=3.2.03"></script>
-  <script src="js/reports.js?v=3.2.03"></script>
-  <script src="js/seasons.js?v=3.2.03"></script>
-  <script src="js/drinks.js?v=3.2.03"></script>
-  <script src="js/drink-admin.js?v=3.2.03"></script>
-  <script src="js/tray.js?v=3.2.03"></script>
-  <script src="js/shopping.js?v=3.2.03"></script>
-  <script src="js/import-export.js?v=3.2.03"></script>
-  <script src="js/print-a3.js?v=3.2.03"></script>
-  <script src="js/dashboard.js?v=3.2.03"></script>
-  <script src="js/app.js?v=3.2.03"></script>
+  <script src="js/config.js?v=4.0.00"></script>
+  <script src="js/ui.js?v=4.0.00"></script>
+  <script src="js/settings.js?v=4.0.00"></script>
+  <script src="js/pwa.js?v=4.0.00"></script>
+  <script src="js/auth.js?v=4.0.00"></script>
+  <script src="js/profile.js?v=4.0.00"></script>
+  <script src="js/staff-admin.js?v=4.0.00"></script>
+  <script src="js/chat.js?v=4.0.00"></script>
+  <script src="js/tickets.js?v=4.0.00"></script>
+  <script src="js/changelog.js?v=4.0.00"></script>
+  <script src="js/schedule.js?v=4.0.00"></script>
+  <script src="js/team-plan.js?v=4.0.00"></script>
+  <script src="js/feature-ui.js?v=4.0.00"></script>
+  <script src="js/checklists.js?v=4.0.00"></script>
+  <script src="js/shift-swap.js?v=4.0.00"></script>
+  <script src="js/payroll.js?v=4.0.00"></script>
+  <script src="js/menu-allergens.js?v=4.0.00"></script>
+  <script src="js/reports.js?v=4.0.00"></script>
+  <script src="js/seasons.js?v=4.0.00"></script>
+  <script src="js/drinks.js?v=4.0.00"></script>
+  <script src="js/drink-admin.js?v=4.0.00"></script>
+  <script src="js/tray.js?v=4.0.00"></script>
+  <script src="js/shopping.js?v=4.0.00"></script>
+  <script src="js/import-export.js?v=4.0.00"></script>
+  <script src="js/print-a3.js?v=4.0.00"></script>
+  <script src="js/dashboard.js?v=4.0.00"></script>
+  <script src="js/app.js?v=4.0.00"></script>
 </body>
 </html>

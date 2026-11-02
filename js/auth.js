@@ -330,8 +330,11 @@
 
     // PIN auch mit der Computer-Tastatur eingeben (nur sichtbar, wenn der PIN-Schritt offen ist)
     document.addEventListener('keydown', e => {
+      // Nur wenn die Anmeldung wirklich sichtbar ist. Sonst würden in der App
+      // Zahlen und Backspace in allen Eingabefeldern verschluckt (Fehler in 3.2.02/3.2.03).
+      const auth = document.getElementById('authContainer');
       const sec = document.getElementById('pinInputSection');
-      if (!sec || sec.classList.contains('hidden')) return;
+      if (!auth || auth.classList.contains('hidden') || !sec || sec.classList.contains('hidden')) return;
       if (e.ctrlKey || e.metaKey || e.altKey) return;
       if (/^[0-9]$/.test(e.key)) { e.preventDefault(); appendPinNum(e.key); }
       else if (e.key === 'Backspace') { e.preventDefault(); backspacePinInput(); }

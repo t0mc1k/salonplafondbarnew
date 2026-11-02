@@ -277,6 +277,11 @@
           history: 'Noch kein Verlauf.'
         })[ss.tab]}</p>`;
       }
+      if (ss.tab === 'history' && userIsAdmin && list.length) {
+        html = `<div class="fm-row-flex" style="justify-content:space-between;margin-bottom:.6rem">
+          <span class="fm-hint">${list.length} Einträge im Verlauf</span>
+          <button type="button" class="fm-btn fm-btn-danger" onclick="ssClearHistory()">🗑 Gesamten Verlauf löschen</button></div>` + html;
+      }
       html += list.map(s => ssCardHtml(s)).join('');
       ss.m.setBody(html);
       ss.m.setFoot('<button type="button" class="ui-btn-primary" onclick="fmClose(\'ssModal\')">Fertig</button>');
@@ -306,6 +311,9 @@
       if ((isReq || userIsAdmin) && (s.status === 'open' || s.status === 'awaiting_manager') && ss.tab !== 'approve') {
         actions += `<button type="button" class="fm-btn" onclick="ssCancel(${jsArg(s.id)})">Zurückziehen</button>`;
       }
+      if (userIsAdmin && ss.tab === 'history') {
+        actions += `<button type="button" class="fm-btn fm-btn-danger" onclick="ssDeleteOne(${jsArg(s.id)})">🗑 Löschen</button>`;
+      }
       return `<div class="fm-item" style="flex-direction:column;align-items:stretch">
         <div class="fm-row-flex" style="justify-content:space-between">
           <div class="fm-item-title">${escapeHtml(fmDayLabel(s.work_date))} · ${escapeHtml(s.shift_text || '')}</div>
@@ -333,4 +341,23 @@
       const note = prompt(approve ? 'Nachricht an die Beteiligten (optional):' : 'Grund für die Ablehnung (optional):', '');
       if (note === null) return;
       return ssRpc('decide_shift_swap', { p_id: id, p_approve: approve, p_note: note }, approve ? 'Genehmigt: Arbeitsplan wurde geändert' : 'Abgelehnt');
+    }
+
+
+    // Verlauf aufräumen (nur Manager/Developer; DB-Regel in sql/4.0.00.sql)
+    async function ssDeleteOne(id) {
+      if (!userIsAdmin) return;
+      if (!confirm('Diesen Eintrag aus dem Verlauf löschen?')) return;
+      const { error } = await _supabase.from('shift_swaps').delete().eq('id', id);
+      if (error) return fmToast(fmDbError(error));
+      await ssLoad(false);
+    }
+
+    async function ssClearHistory() {
+      if (!userIsAdmin) return;
+      if (!confirm('Den gesamten Verlauf löschen?\n(Genehmigte, abgelehnte und zurückgezogene Anfragen. Offene Anfragen bleiben erhalten.)')) return;
+      const { error } = await _supabase.from('shift_swaps').delete().in('status', ['approved', 'rejected', 'declined', 'cancelled']);
+      if (error) return fmToast(fmDbError(error));
+      fmToast('Verlauf gelöscht');
+      await ssLoad(false);
     }

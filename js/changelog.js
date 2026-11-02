@@ -10,9 +10,16 @@
    Änderungs-Typen: 'new' Neu, 'improved' Verbessert, 'fixed' Behoben,
                     'security' Sicherheit, 'info' Allgemein
    ============================================================ */
-    const APP_VERSION = '3.2.03';
+    const APP_VERSION = '4.0.00';
 
     const CHANGELOG = [
+  { version: '4.0.00', range: '', date: 'November 2026', title: 'Nexus OS 4.0 & Fehlerbehebungen',
+    changes: [
+      ['new', 'Nexus OS: Die App läuft jetzt auf dem Nexus OS von T-K. Unter dem Namen „Salonplafond BAR“ steht ab sofort „Nexus OS 4.0.00 by © T-K“.'],
+      ['fixed', 'In Eingabefeldern und Fenstern (Mengen, Minuten, Preise, PIN, Suche ...) ließen sich keine Zahlen eintippen und mit Backspace nichts löschen. Das funktioniert wieder überall.'],
+      ['new', 'Schichttausch → Verlauf: Manager und Developer können einzelne Einträge oder den gesamten Verlauf löschen.'],
+      ['improved', 'Fußzeile und Druckfußzeile der A3-Karte zeigen die neue Signatur „© T-K (Tomas Kardos)“.']
+    ] },
   { version: '3.2.03', range: '', date: 'November 2026', title: 'Checklisten, Schichttausch, Stunden, Speisekarte & mehr',
     changes: [
       ['new', 'Checklisten & Standards: Aufgaben für Öffnung, Laufend und Schließung, getrennt nach Bar, Service und Terrasse. Eine gemeinsame Liste pro Tag: Wer abhakt, steht mit Name und Uhrzeit dabei. Manager/Developer legen die Aufgaben selbst an und ändern sie. Für das Team heißt die Kachel „Meine Schicht“.'],
@@ -134,8 +141,10 @@
     }
 
     function applyVersionLabels() {
-      document.title = 'Salonplafond BAR v' + APP_VERSION;
+      document.title = 'Salonplafond BAR · Nexus OS ' + APP_VERSION;
       document.querySelectorAll('[data-app-version]').forEach(el => { el.textContent = 'v' + APP_VERSION; });
+      document.querySelectorAll('[data-app-number]').forEach(el => { el.textContent = APP_VERSION; });
+      document.querySelectorAll('[data-brand-header]').forEach(el => { el.textContent = 'Nexus OS ' + APP_VERSION + ' by © T-K'; });
       const badge = document.getElementById('changelogVersionBadge');
       if (badge) badge.textContent = 'v' + APP_VERSION;
       if (CHANGELOG[0] && CHANGELOG[0].version !== APP_VERSION) {
