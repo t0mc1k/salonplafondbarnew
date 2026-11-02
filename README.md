@@ -1,4 +1,4 @@
-# Salonplafond BAR – Projektstruktur (Nexus OS, © T-K)
+# Salonplafond NeXuS • BAR – Projektstruktur
 
 Statische Web-App (kein Build nötig). Läuft auf GitHub Pages, Daten in Supabase.
 
