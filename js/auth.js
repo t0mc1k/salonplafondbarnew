@@ -4,28 +4,32 @@
    ============================================================ */
 
     // ---------- ZÁMOK PRE BETA VERZIU (salonplafondbarnew) ----------
-    // Zoznam mien/účtov, ktoré majú povolený prístup do testovacej bety:
     const ALLOWED_BETA_USERS = [
-      'tomas',     // Vývojár (Tomas Kardos)
-      'amim',   // Manažér (alebo presné meno vašeho manažéra v Supabase)
-      'vanesa'     // Vanesa (bežný čašník na testovanie)
+      'tomas',     // Vývojár
+      'manager',   // Manažér
+      'vanesa'     // Vanesa (testovací používateľ / čašník)
     ];
 
-    function isUserAllowedInBeta(name) {
-      if (!name) return false;
-      const cleanName = String(name).trim().toLowerCase();
-      return ALLOWED_BETA_USERS.some(allowed => cleanName.includes(allowed));
+    function filterBetaStaff(staffList) {
+      if (!Array.isArray(staffList)) return [];
+      return staffList.filter(st => {
+        const nameLower = String(st.name || '').trim().toLowerCase();
+        return ALLOWED_BETA_USERS.some(allowed => nameLower.includes(allowed));
+      });
     }
     // -------------------------------------------------------------
 
     async function fetchStaffByName(name) {
       const { data, error } = await _supabase.rpc('list_staff');
       if (error) return { data: null, error };
-      const rec = (data || []).find(x => x.name === name);
+      const filtered = filterBetaStaff(data || []);
+      const rec = filtered.find(x => x.name === name);
       return { data: rec || null, error: rec ? null : { message: 'nicht gefunden' } };
     }
 
     // ---------- Anmeldung: Namen wählen ----------
+    // Eine kompakte Liste für alle: oben „Zuletzt“ (max. 3), darunter alle Namen A–Z.
+    // Leitung (Manager/Developer) ist nur klein beschrifet. Suche erscheint ab 8 Personen.
     function getRecentLogins() {
       try {
         const list = JSON.parse(localStorage.getItem('salon_recent_logins') || '[]');
@@ -66,7 +70,7 @@
       const searchRow = document.getElementById('loginSearchRow');
       const recentRow = document.getElementById('loginRecentRow');
       if (!container) return;
-      const data = staffDatabaseRecords || [];
+      const data = filterBetaStaff(staffDatabaseRecords || []);
 
       if (!data.length) {
         container.innerHTML = `<p class="login-empty">${escapeHtml(t('login.noStaff'))}</p>`;
@@ -104,7 +108,7 @@
         renderLoginGrid();
         return;
       }
-      staffDatabaseRecords = data;
+      staffDatabaseRecords = filterBetaStaff(data);
       renderLoginGrid();
     }
 
@@ -168,12 +172,17 @@
       errDiv.classList.add('hidden');
       if (!selectedWaiterForPin || pinLoginBusy) return;
 
-      // KONTROLA BETA PRÍSTUPU
-      if (!isUserAllowedInBeta(selectedWaiterForPin)) {
-        errDiv.innerText = "Prístup zamietnutý: Táto beta verzia je vyhradená len pre testovanie. Použite prosím stabilnú aplikáciu.";
+      const cleanSelected = String(selectedWaiterForPin).trim().toLowerCase();
+      const isAllowed = ALLOWED_BETA_USERS.some(allowed => cleanSelected.includes(allowed));
+      if (!isAllowed) {
+        errDiv.innerHTML = `
+          Diese Version ist nur für Tests und ausgewählte Mitglieder vorgesehen.<br>
+          Bitte verwenden Sie die richtige, stabile Version.<br><br>
+          <a href="https://t0mc1k.github.io/salonplafondbar/" target="_blank" style="display: inline-block; background: #d97706; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+            Zur stabilen Version wechseln
+          </a>
+        `;
         errDiv.classList.remove('hidden');
-        currentEnteredPin = "";
-        updatePinDisplay();
         return;
       }
 
@@ -230,13 +239,14 @@
       currentStaffRole = staffRecord.role || 'staff';
       userIsAdmin = (currentStaffRole === 'manager' || currentStaffRole === 'developer');
       userCanEdit = userIsAdmin || staffRecord.can_edit_drinks === true;
-      isAdmin = userIsAdmin || userCanEdit;
+      isAdmin = userIsAdmin || userCanEdit;   // Verwaltungsansicht standardmäßig an
       applyRoleUI();
 
       await loadDrinks();
       await checkPendingTicketsBadge();
       setupChatRealtimeListener();
       startLoginWatcher();
+      // Startseite nach dem Login: Dashboard (Standard) oder Getränke, je nach Einstellung des Kontos
       await loadStartPage();
       showDashboard();
       if (userStartPage === 'drinks') openDrinksView();
@@ -244,7 +254,7 @@
 
     // ---------- Hinweis, wenn sich ein Kollege anmeldet ----------
     let loginWatchTimer = null;
-    let loginWatchBaseline = null;
+    let loginWatchBaseline = null;   // Map: Name -> letzter Login (ms)
 
     async function pollLoginWatcher() {
       if (document.hidden || !currentWaiterName) return;
@@ -270,7 +280,7 @@
         });
       }
       loginWatchBaseline = fresh;
-      staffDatabaseRecords = data;
+      staffDatabaseRecords = filterBetaStaff(data);   // aktuelle Fotos/Namen für Chat und @-Vorschläge
     }
 
     function startLoginWatcher() {
@@ -353,7 +363,10 @@
       alert("Du hast keine Berechtigung, Getränke zu bearbeiten.");
     }
 
+    // PIN auch mit der Computer-Tastatur eingeben (nur sichtbar, wenn der PIN-Schritt offen ist)
     document.addEventListener('keydown', e => {
+      // Nur wenn die Anmeldung wirklich sichtbar ist. Sonst würden in der App
+      // Zahlen und Backspace in allen Eingabefeldern verschluckt (Fehler in 3.2.02/3.2.03).
       const auth = document.getElementById('authContainer');
       const sec = document.getElementById('pinInputSection');
       if (!auth || auth.classList.contains('hidden') || !sec || sec.classList.contains('hidden')) return;
