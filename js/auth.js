@@ -3,33 +3,31 @@
    Anmeldung per PIN, Rollen/Rechte, Abmelden, Berechtigungsprüfung
    ============================================================ */
 
-    // ---------- ZÁMOK PRE BETA VERZIU (salonplafondbarnew) ----------
+    // ---------- ZÁMOK PRE BETA VERZIU ----------
+    // Len títo traja sa môžu v bete reálne prihlásiť. Ostatní uvidia upozornenie a odkaz na stabilnú verziu.
     const ALLOWED_BETA_USERS = [
       'tomas',     // Vývojár
-      'manager',   // Manažér
-      'vanesa'     // Vanesa (testovací používateľ / čašník)
+      'amim',      // Manažér / Amim
+      'vanesa'     // Vanesa (testovací čašník)
     ];
 
-    function filterBetaStaff(staffList) {
-      if (!Array.isArray(staffList)) return [];
-      return staffList.filter(st => {
-        const nameLower = String(st.name || '').trim().toLowerCase();
-        return ALLOWED_BETA_USERS.some(allowed => nameLower.includes(allowed));
-      });
+    function isUserAllowedInBeta(name) {
+      if (!name) return false;
+      const cleanName = String(name).trim().toLowerCase();
+      return ALLOWED_BETA_USERS.some(allowed => cleanName.includes(allowed));
     }
     // -------------------------------------------------------------
 
     async function fetchStaffByName(name) {
       const { data, error } = await _supabase.rpc('list_staff');
       if (error) return { data: null, error };
-      const filtered = filterBetaStaff(data || []);
-      const rec = filtered.find(x => x.name === name);
+      const rec = (data || []).find(x => x.name === name);
       return { data: rec || null, error: rec ? null : { message: 'nicht gefunden' } };
     }
 
     // ---------- Anmeldung: Namen wählen ----------
     // Eine kompakte Liste für alle: oben „Zuletzt“ (max. 3), darunter alle Namen A–Z.
-    // Leitung (Manager/Developer) ist nur klein beschrifet. Suche erscheint ab 8 Personen.
+    // Leitung (Manager/Developer) ist nur klein beschriftet. Suche erscheint ab 8 Personen.
     function getRecentLogins() {
       try {
         const list = JSON.parse(localStorage.getItem('salon_recent_logins') || '[]');
@@ -70,7 +68,7 @@
       const searchRow = document.getElementById('loginSearchRow');
       const recentRow = document.getElementById('loginRecentRow');
       if (!container) return;
-      const data = filterBetaStaff(staffDatabaseRecords || []);
+      const data = staffDatabaseRecords || [];
 
       if (!data.length) {
         container.innerHTML = `<p class="login-empty">${escapeHtml(t('login.noStaff'))}</p>`;
@@ -108,7 +106,7 @@
         renderLoginGrid();
         return;
       }
-      staffDatabaseRecords = filterBetaStaff(data);
+      staffDatabaseRecords = data;
       renderLoginGrid();
     }
 
@@ -172,9 +170,8 @@
       errDiv.classList.add('hidden');
       if (!selectedWaiterForPin || pinLoginBusy) return;
 
-      const cleanSelected = String(selectedWaiterForPin).trim().toLowerCase();
-      const isAllowed = ALLOWED_BETA_USERS.some(allowed => cleanSelected.includes(allowed));
-      if (!isAllowed) {
+      // KONTROLA: Ak sa pokúsi prihlásiť niekto iný ako vybraná trojica
+      if (!isUserAllowedInBeta(selectedWaiterForPin)) {
         errDiv.innerHTML = `
           Diese Version ist nur für Tests und ausgewählte Mitglieder vorgesehen.<br>
           Bitte verwenden Sie die richtige, stabile Version.<br><br>
@@ -183,6 +180,8 @@
           </a>
         `;
         errDiv.classList.remove('hidden');
+        currentEnteredPin = "";
+        updatePinDisplay();
         return;
       }
 
@@ -280,7 +279,7 @@
         });
       }
       loginWatchBaseline = fresh;
-      staffDatabaseRecords = filterBetaStaff(data);   // aktuelle Fotos/Namen für Chat und @-Vorschläge
+      staffDatabaseRecords = data;   // aktuelle Fotos/Namen für Chat und @-Vorschläge
     }
 
     function startLoginWatcher() {
