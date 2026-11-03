@@ -214,7 +214,10 @@
       await checkPendingTicketsBadge();
       setupChatRealtimeListener();
       startLoginWatcher();
-      showDashboard();   // 3.2.01: nach dem Login zuerst das Dashboard
+      // Startseite nach dem Login: Dashboard (Standard) oder Getränke, je nach Einstellung des Kontos
+      await loadStartPage();
+      showDashboard();
+      if (userStartPage === 'drinks') openDrinksView();
     }
 
     // ---------- Hinweis, wenn sich ein Kollege anmeldet ----------

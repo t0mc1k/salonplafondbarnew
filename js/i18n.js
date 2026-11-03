@@ -1229,6 +1229,254 @@
  "time.days": {
   "de": "vor {n} Tagen",
   "en": "{n} days ago"
+ },
+ "set.startTitle": {
+  "de": "Nach dem Login öffnen",
+  "en": "Open after login"
+ },
+ "set.startSub": {
+  "de": "Welche Seite sich nach der Anmeldung zuerst öffnet. Gilt auf allen deinen Geräten.",
+  "en": "Which page opens first after login. Applies on all your devices."
+ },
+ "set.startDash": {
+  "de": "🏠 Dashboard",
+  "en": "🏠 Dashboard"
+ },
+ "set.startDrinks": {
+  "de": "🍸 Getränke",
+  "en": "🍸 Drinks"
+ },
+ "set.startSaved": {
+  "de": "Startseite gespeichert",
+  "en": "Start page saved"
+ },
+ "set.startDeviceOnly": {
+  "de": "Nur auf diesem Gerät gespeichert (Datenbank-Update fehlt).",
+  "en": "Saved on this device only (database update missing)."
+ },
+ "chat.title": {
+  "de": "💬 Team-Chat",
+  "en": "💬 Team Chat"
+ },
+ "chat.team": {
+  "de": "Team",
+  "en": "Team"
+ },
+ "chat.loadMembers": {
+  "de": "Lade Mitglieder ...",
+  "en": "Loading members ..."
+ },
+ "chat.loadMsgs": {
+  "de": "Lade Chat-Nachrichten ...",
+  "en": "Loading chat messages ..."
+ },
+ "chat.newBtn": {
+  "de": "↓ Neue Nachrichten",
+  "en": "↓ New messages"
+ },
+ "chat.editTitle": {
+  "de": "✏️ Nachricht bearbeiten",
+  "en": "✏️ Edit message"
+ },
+ "chat.editSub": {
+  "de": "Ändere den Text und sende ihn erneut ab.",
+  "en": "Change the text and send it again."
+ },
+ "chat.send": {
+  "de": "Senden ➔",
+  "en": "Send ➔"
+ },
+ "chat.online": {
+  "de": "🟢 Online: ",
+  "en": "🟢 Online: "
+ },
+ "chat.seenAll": {
+  "de": " · Nachrichten sehen alle Kollegen",
+  "en": " · All colleagues see the messages"
+ },
+ "chat.member1": {
+  "de": "{n} Mitglied",
+  "en": "{n} member"
+ },
+ "chat.memberN": {
+  "de": "{n} Mitglieder",
+  "en": "{n} members"
+ },
+ "chat.searchTitle": {
+  "de": "Im Chat suchen",
+  "en": "Search the chat"
+ },
+ "chat.teamTitle": {
+  "de": "Team anzeigen",
+  "en": "Show team"
+ },
+ "chat.searchPh": {
+  "de": "🔍 Nachrichten oder Namen suchen ...",
+  "en": "🔍 Search messages or names ..."
+ },
+ "chat.cancelReply": {
+  "de": "Antwort abbrechen",
+  "en": "Cancel reply"
+ },
+ "chat.cancelEdit": {
+  "de": "Bearbeiten abbrechen",
+  "en": "Cancel editing"
+ },
+ "chat.removeImg": {
+  "de": "Bild entfernen",
+  "en": "Remove image"
+ },
+ "chat.bold": {
+  "de": "Fett (Strg+B)",
+  "en": "Bold (Ctrl+B)"
+ },
+ "chat.italic": {
+  "de": "Kursiv (Strg+I)",
+  "en": "Italic (Ctrl+I)"
+ },
+ "chat.strike": {
+  "de": "Durchgestrichen",
+  "en": "Strikethrough"
+ },
+ "chat.code": {
+  "de": "Code",
+  "en": "Code"
+ },
+ "chat.mention": {
+  "de": "Kollegen erwähnen",
+  "en": "Mention a colleague"
+ },
+ "chat.emoji": {
+  "de": "Emoji",
+  "en": "Emoji"
+ },
+ "chat.sendPhoto": {
+  "de": "Foto senden",
+  "en": "Send photo"
+ },
+ "chat.inputPh": {
+  "de": "Nachricht schreiben ... (@ erwähnt Kollegen)",
+  "en": "Write a message ... (@ mentions colleagues)"
+ },
+ "chat.hintEnter": {
+  "de": "Enter sendet, Shift+Enter macht eine neue Zeile",
+  "en": "Enter sends, Shift+Enter starts a new line"
+ },
+ "chat.viewProfile": {
+  "de": "Profil ansehen",
+  "en": "View profile"
+ },
+ "chat.today": {
+  "de": "Heute",
+  "en": "Today"
+ },
+ "chat.yesterday": {
+  "de": "Gestern",
+  "en": "Yesterday"
+ },
+ "chat.newMsgs": {
+  "de": "Neue Nachrichten",
+  "en": "New messages"
+ },
+ "chat.photoWord": {
+  "de": "Foto",
+  "en": "Photo"
+ },
+ "chat.photo": {
+  "de": "📷 Foto",
+  "en": "📷 Photo"
+ },
+ "chat.unpin": {
+  "de": "Anheften lösen",
+  "en": "Unpin"
+ },
+ "chat.pin": {
+  "de": "Anpinnen",
+  "en": "Pin"
+ },
+ "chat.reply": {
+  "de": "Antworten",
+  "en": "Reply"
+ },
+ "chat.react": {
+  "de": "Reagieren",
+  "en": "React"
+ },
+ "common.delete": {
+  "de": "Löschen",
+  "en": "Delete"
+ },
+ "chat.edited": {
+  "de": "bearbeitet",
+  "en": "edited"
+ },
+ "chat.noMembers": {
+  "de": "Keine Mitglieder gefunden.",
+  "en": "No members found."
+ },
+ "chat.mentionTitle": {
+  "de": "Klicken, um @{name} zu erwähnen",
+  "en": "Tap to mention @{name}"
+ },
+ "chat.typing": {
+  "de": "schreibt ...",
+  "en": "is typing ..."
+ },
+ "chat.onlineDot": {
+  "de": "online · ",
+  "en": "online · "
+ },
+ "chat.err": {
+  "de": "Fehler: {msg}",
+  "en": "Error: {msg}"
+ },
+ "chat.noHits": {
+  "de": "Keine Treffer für „{q}“.",
+  "en": "No results for “{q}”."
+ },
+ "chat.editFail": {
+  "de": "Die Nachricht konnte nicht geändert werden",
+  "en": "The message could not be changed"
+ },
+ "chat.sendFail": {
+  "de": "Fehler beim Senden:",
+  "en": "Error while sending:"
+ },
+ "chat.confirmDel": {
+  "de": "Möchtest du diese Nachricht löschen?",
+  "en": "Do you want to delete this message?"
+ },
+ "chat.delFail": {
+  "de": "Fehler beim Löschen:",
+  "en": "Error while deleting:"
+ },
+ "chat.pickPhoto": {
+  "de": "Bitte ein Foto auswählen.",
+  "en": "Please choose a photo."
+ },
+ "chat.tooBig": {
+  "de": "Das Foto ist größer als 8 MB.",
+  "en": "The photo is larger than 8 MB."
+ },
+ "chat.uploading": {
+  "de": "⏳ Foto wird hochgeladen ...",
+  "en": "⏳ Uploading photo ..."
+ },
+ "chat.uploadFail": {
+  "de": "Foto konnte nicht hochgeladen werden:",
+  "en": "Photo could not be uploaded:"
+ },
+ "chat.mentionedYou": {
+  "de": "{name} hat dich erwähnt",
+  "en": "{name} mentioned you"
+ },
+ "chat.typing1": {
+  "de": "{a} schreibt ...",
+  "en": "{a} is typing ..."
+ },
+ "chat.typingN": {
+  "de": "{a} und {b} schreiben ...",
+  "en": "{a} and {b} are typing ..."
  }
 };
 
@@ -1266,6 +1514,10 @@
       document.documentElement.lang = lang;
       applyTranslations();
       updateLangSwitchUI();
+      if (typeof fmApplyLocale === 'function') fmApplyLocale();
+      // offene Betriebs-Fenster schließen (sie werden beim nächsten Öffnen in der neuen Sprache gezeichnet); die Hilfe zeichnet sich selbst neu
+      document.querySelectorAll('.fm-root').forEach(el => { if (el.id !== 'hpModal') el.remove(); });
+      if (!document.querySelector('.fm-root')) document.body.classList.remove('fm-open');
       if (typeof renderLoginGrid === 'function') renderLoginGrid();
       if (typeof currentWaiterName !== 'undefined' && currentWaiterName) {
         if (typeof applyRoleUI === 'function') applyRoleUI();

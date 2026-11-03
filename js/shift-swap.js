@@ -205,7 +205,7 @@
       });
       if (error) return fmToast(fmDbError(error));
       fmClose('ssNew');
-      fmToast(kind === 'direct' ? 'Anfrage an ' + target + ' gesendet' : 'Schicht in die Börse gestellt');
+      fmToast(kind === 'direct' ? fmL('Anfrage an ' + target + ' gesendet', 'Request sent to ' + target) : 'Schicht in die Börse gestellt');
       if (mp.m && document.getElementById('mpModal')) await mpLoad();
     }
 

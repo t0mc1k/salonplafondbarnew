@@ -762,18 +762,18 @@
 
       <div class="ui-head !items-center">
         <div class="min-w-0">
-          <h3 class="ui-head-title">💬 Team-Chat</h3>
-          <p class="ui-head-sub">🟢 Online: <span id="chatOnlineCountLabel" class="font-bold">0 Mitglieder</span> · Nachrichten sehen alle Kollegen</p>
+          <h3 class="ui-head-title" data-i18n="chat.title">💬 Team-Chat</h3>
+          <p class="ui-head-sub"><span data-i18n="chat.online">🟢 Online: </span><span id="chatOnlineCountLabel" class="font-bold">0 Mitglieder</span><span data-i18n="chat.seenAll"> · Nachrichten sehen alle Kollegen</span></p>
         </div>
         <div class="flex items-center gap-1.5 shrink-0">
-          <button type="button" onclick="toggleChatSearch()" class="ui-btn-ghost" title="Im Chat suchen">🔍</button>
-          <button type="button" onclick="toggleChatSidebar()" class="ui-btn-ghost chat-side-toggle" title="Team anzeigen">👥</button>
-          <button type="button" onclick="closeTeamChatModal()" class="ui-close" aria-label="Schließen">&times;</button>
+          <button type="button" onclick="toggleChatSearch()" class="ui-btn-ghost" title="Im Chat suchen" data-i18n-title="chat.searchTitle">🔍</button>
+          <button type="button" onclick="toggleChatSidebar()" class="ui-btn-ghost chat-side-toggle" title="Team anzeigen" data-i18n-title="chat.teamTitle">👥</button>
+          <button type="button" onclick="closeTeamChatModal()" class="ui-close" aria-label="Schließen" data-i18n-aria="common.close">&times;</button>
         </div>
       </div>
 
       <div id="chatSearchBar" class="hidden ui-toolbar !flex-row !items-center">
-        <input type="search" id="chatSearchInput" oninput="onChatSearch(this.value)" placeholder="🔍 Nachrichten oder Namen suchen ..." class="ui-search flex-1">
+        <input type="search" id="chatSearchInput" oninput="onChatSearch(this.value)" placeholder="🔍 Nachrichten oder Namen suchen ..." data-i18n-ph="chat.searchPh" class="ui-search flex-1">
         <span id="chatSearchInfo" class="form-hint whitespace-nowrap"></span>
       </div>
 
@@ -782,18 +782,18 @@
       <div class="chat-body">
 
         <aside id="chatSidebar" class="chat-side">
-          <div class="chat-side-title">Team</div>
+          <div class="chat-side-title" data-i18n="chat.team">Team</div>
           <div id="chatSidebarUsersList" class="chat-side-list">
-            <span class="form-hint">Lade Mitglieder ...</span>
+            <span class="form-hint" data-i18n="chat.loadMembers">Lade Mitglieder ...</span>
           </div>
         </aside>
 
         <section class="chat-main">
           <div class="chat-scroll-wrap">
             <div id="chatMessagesContainer" class="chat-scroll" onscroll="onChatScroll()">
-              <p class="chat-empty">Lade Chat-Nachrichten ...</p>
+              <p class="chat-empty" data-i18n="chat.loadMsgs">Lade Chat-Nachrichten ...</p>
             </div>
-            <button type="button" id="chatJumpBtn" class="hidden chat-jump" onclick="scrollChatToBottom(true)">↓ Neue Nachrichten</button>
+            <button type="button" id="chatJumpBtn" class="hidden chat-jump" onclick="scrollChatToBottom(true)" data-i18n="chat.newBtn">↓ Neue Nachrichten</button>
           </div>
 
           <div id="chatTypingIndicator" class="chat-typing"></div>
@@ -803,15 +803,15 @@
               <span class="chat-indicator-title">↩️ Antwort auf <span id="replyingAuthorName"></span></span>
               <span id="replyingSnippetText" class="chat-indicator-text"></span>
             </div>
-            <button type="button" onclick="cancelReply()" class="ui-close" aria-label="Antwort abbrechen">&times;</button>
+            <button type="button" onclick="cancelReply()" class="ui-close" aria-label="Antwort abbrechen" data-i18n-aria="chat.cancelReply">&times;</button>
           </div>
 
           <div id="editingIndicatorBox" class="hidden chat-indicator">
             <div class="min-w-0">
-              <span class="chat-indicator-title">✏️ Nachricht bearbeiten</span>
-              <span class="chat-indicator-text">Ändere den Text und sende ihn erneut ab.</span>
+              <span class="chat-indicator-title" data-i18n="chat.editTitle">✏️ Nachricht bearbeiten</span>
+              <span class="chat-indicator-text" data-i18n="chat.editSub">Ändere den Text und sende ihn erneut ab.</span>
             </div>
-            <button type="button" onclick="cancelEdit()" class="ui-close" aria-label="Bearbeiten abbrechen">&times;</button>
+            <button type="button" onclick="cancelEdit()" class="ui-close" aria-label="Bearbeiten abbrechen" data-i18n-aria="chat.cancelEdit">&times;</button>
           </div>
 
           <div id="chatImageChip" class="hidden chat-indicator">
@@ -819,7 +819,7 @@
               <img id="chatImageThumb" class="chat-thumb" alt="">
               <span id="chatImageName" class="chat-indicator-text"></span>
             </div>
-            <button type="button" onclick="clearChatImage()" class="ui-close" aria-label="Bild entfernen">&times;</button>
+            <button type="button" onclick="clearChatImage()" class="ui-close" aria-label="Bild entfernen" data-i18n-aria="chat.removeImg">&times;</button>
           </div>
 
           <form id="chatForm" onsubmit="handleSendChatMessage(event)" class="chat-composer">
@@ -827,20 +827,20 @@
             <input type="file" id="chatImageFile" accept="image/*" class="hidden" onchange="onChatImagePicked(event)">
 
             <div class="chat-toolbar">
-              <button type="button" onclick="applyTextStyling('**')" class="chat-tool" title="Fett (Strg+B)"><b>B</b></button>
-              <button type="button" onclick="applyTextStyling('*')" class="chat-tool" title="Kursiv (Strg+I)"><i>I</i></button>
-              <button type="button" onclick="applyTextStyling('~~')" class="chat-tool" title="Durchgestrichen"><s>S</s></button>
-              <button type="button" onclick="applyTextStyling('`')" class="chat-tool font-mono" title="Code">&lt;/&gt;</button>
+              <button type="button" onclick="applyTextStyling('**')" class="chat-tool" title="Fett (Strg+B)" data-i18n-title="chat.bold"><b>B</b></button>
+              <button type="button" onclick="applyTextStyling('*')" class="chat-tool" title="Kursiv (Strg+I)" data-i18n-title="chat.italic"><i>I</i></button>
+              <button type="button" onclick="applyTextStyling('~~')" class="chat-tool" title="Durchgestrichen" data-i18n-title="chat.strike"><s>S</s></button>
+              <button type="button" onclick="applyTextStyling('`')" class="chat-tool font-mono" title="Code" data-i18n-title="chat.code">&lt;/&gt;</button>
               <span class="chat-tool-sep"></span>
-              <button type="button" onclick="insertChatAt()" class="chat-tool" title="Kollegen erwähnen">@</button>
-              <button type="button" onclick="toggleChatEmojiPanel()" class="chat-tool" title="Emoji">😊</button>
-              <button type="button" onclick="document.getElementById('chatImageFile').click()" class="chat-tool" title="Foto senden">📷</button>
+              <button type="button" onclick="insertChatAt()" class="chat-tool" title="Kollegen erwähnen" data-i18n-title="chat.mention">@</button>
+              <button type="button" onclick="toggleChatEmojiPanel()" class="chat-tool" title="Emoji" data-i18n-title="chat.emoji">😊</button>
+              <button type="button" onclick="document.getElementById('chatImageFile').click()" class="chat-tool" title="Foto senden" data-i18n-title="chat.sendPhoto">📷</button>
             </div>
             <div id="chatEmojiPanel" class="hidden chat-emoji-panel"></div>
 
             <div class="chat-input-row">
-              <textarea id="chatMessageInput" rows="1" maxlength="2000" autocomplete="off" placeholder="Nachricht schreiben ... (@ erwähnt Kollegen)" title="Enter sendet, Shift+Enter macht eine neue Zeile" class="chat-input"></textarea>
-              <button type="submit" id="chatSendBtn" class="ui-btn-primary chat-send">Senden ➔</button>
+              <textarea id="chatMessageInput" rows="1" maxlength="2000" autocomplete="off" placeholder="Nachricht schreiben ... (@ erwähnt Kollegen)" data-i18n-ph="chat.inputPh" title="Enter sendet, Shift+Enter macht eine neue Zeile" data-i18n-title="chat.hintEnter" class="chat-input"></textarea>
+              <button type="submit" id="chatSendBtn" class="ui-btn-primary chat-send" data-i18n="chat.send">Senden ➔</button>
             </div>
           </form>
         </section>
@@ -958,6 +958,13 @@
         <section class="set-card">
           <h4 class="set-head" data-i18n="set.appearance">🎨 Darstellung</h4>
 
+          <div class="set-row">
+            <div class="set-text"><b data-i18n="set.startTitle">Nach dem Login öffnen</b><small data-i18n="set.startSub">Welche Seite sich nach der Anmeldung zuerst öffnet. Gilt auf allen deinen Geräten.</small></div>
+            <div class="seg">
+              <button type="button" class="seg-btn" data-startpage="dashboard" onclick="setStartPage('dashboard')" data-i18n="set.startDash">🏠 Dashboard</button>
+              <button type="button" class="seg-btn" data-startpage="drinks" onclick="setStartPage('drinks')" data-i18n="set.drinks">🍸 Getränke</button>
+            </div>
+          </div>
           <div class="set-row">
             <div class="set-text"><b data-i18n="set.langTitle">Sprache / Language</b><small data-i18n="set.langSub">Gilt für Anmeldung, Dashboard, Menü, Einstellungen und Hilfe.</small></div>
             <div class="seg">
@@ -1585,6 +1592,7 @@
 
   <script src="js/config.js?v=4.0.02"></script>
   <script src="js/i18n.js?v=4.0.02"></script>
+  <script src="js/i18n-ui.js?v=4.0.02"></script>
   <script src="js/ui.js?v=4.0.02"></script>
   <script src="js/settings.js?v=4.0.02"></script>
   <script src="js/pwa.js?v=4.0.02"></script>

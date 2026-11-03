@@ -42,7 +42,7 @@
       countBadge.innerText = onlineUsers.length;
 
       const chatCountLabel = document.getElementById('chatOnlineCountLabel');
-      if (chatCountLabel) chatCountLabel.innerText = `${onlineUsers.length} ${onlineUsers.length === 1 ? 'Mitglied' : 'Mitglieder'}`;
+      if (chatCountLabel) chatCountLabel.innerText = t(onlineUsers.length === 1 ? 'chat.member1' : 'chat.memberN', { n: onlineUsers.length });
 
       if (onlineUsers.length === 0) {
         container.innerHTML = `<span class="text-slate-600 dark:text-slate-400 italic">Keine Benutzer in den letzten 15 Minuten aktiv.</span>`;

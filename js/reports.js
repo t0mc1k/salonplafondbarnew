@@ -85,7 +85,7 @@
       m.setBody(`<div class="fm-stack">
         <div class="fm-grid2">
           <div class="fm-field"><label class="form-label" for="mtArea">Bereich</label>
-            <select id="mtArea" class="ui-field" onchange="mtFillDevices()">${Object.keys(MAINT_LOCATIONS).map(a => `<option>${escapeHtml(a)}</option>`).join('')}</select></div>
+            <select id="mtArea" class="ui-field" onchange="mtFillDevices()">${Object.keys(MAINT_LOCATIONS).map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('')}</select></div>
           <div class="fm-field"><label class="form-label" for="mtDevice">Was ist kaputt?</label>
             <select id="mtDevice" class="ui-field" onchange="mtDeviceChanged()"></select></div>
         </div>
@@ -110,7 +110,8 @@
       const area = document.getElementById('mtArea').value;
       const devs = (MAINT_LOCATIONS[area] || []).slice();
       if (devs.indexOf('Sonstiges') === -1) devs.push('Sonstiges');
-      document.getElementById('mtDevice').innerHTML = devs.map(d => `<option>${escapeHtml(d)}</option>`).join('');
+      document.getElementById('mtDevice').innerHTML = devs.map(d => `<option value="${escapeHtml(d)}">${escapeHtml(d)}</option>`).join('');
+      trDom(document.getElementById('mtDevice'));
       mtDeviceChanged();
     }
     function mtDeviceChanged() {
@@ -124,9 +125,9 @@
       const f = input.files && input.files[0];
       if (!f) return;
       const st = document.getElementById('mtPhotoStatus');
-      st.textContent = '⏳ Foto wird hochgeladen ...';
-      try { mt.photoUrl = await fmUploadPhoto(f, 'stoerung'); st.textContent = '✔ Foto hochgeladen'; }
-      catch (e) { mt.photoUrl = ''; st.textContent = 'Fehler: ' + (e.message || e); }
+      st.textContent = fmTr('⏳ Foto wird hochgeladen ...');
+      try { mt.photoUrl = await fmUploadPhoto(f, 'stoerung'); st.textContent = fmTr('✔ Foto hochgeladen'); }
+      catch (e) { mt.photoUrl = ''; st.textContent = fmL('Fehler: ', 'Error: ') + (e.message || e); }
     }
     async function mtSubmit() {
       const area = document.getElementById('mtArea').value;
@@ -265,9 +266,9 @@
       const f = input.files && input.files[0];
       if (!f) return;
       const st = document.getElementById('fdPhotoStatus');
-      st.textContent = '⏳ Foto wird hochgeladen ...';
-      try { fd.photoUrl = await fmUploadPhoto(f, 'fund'); st.textContent = '✔ Foto hochgeladen'; }
-      catch (e) { fd.photoUrl = ''; st.textContent = 'Fehler: ' + (e.message || e); }
+      st.textContent = fmTr('⏳ Foto wird hochgeladen ...');
+      try { fd.photoUrl = await fmUploadPhoto(f, 'fund'); st.textContent = fmTr('✔ Foto hochgeladen'); }
+      catch (e) { fd.photoUrl = ''; st.textContent = fmL('Fehler: ', 'Error: ') + (e.message || e); }
     }
 
     async function fdSubmit() {

@@ -13,11 +13,13 @@
     const APP_VERSION = '4.0.02';
 
     const CHANGELOG = [
-  { version: '4.0.02', range: '', date: 'November 2026', title: 'Englisch: Getränke, Multi-View, Einkaufsliste & Profil',
+  { version: '4.0.02', range: '', date: 'November 2026', title: 'Englisch für das ganze Team & Startseite nach dem Login',
     changes: [
       ['new', 'Englisch erweitert: Die Getränke-Datenbank (Suche, Kategorien, Karten, Rezept, Drucken), Multi-View, Einkaufsliste und dein Profil lassen sich jetzt ebenfalls auf Englisch umstellen (Einstellungen → Sprache).'],
       ['improved', 'Beim Wechsel der Sprache werden Getränke-Liste, Kategorien und Multi-View-Leiste sofort neu gezeichnet. Die „Über mich“-Vorschläge im Profil werden in der gewählten Sprache gespeichert.'],
-      ['improved', 'Zeitangaben wie „vor 5 Min.“ erscheinen in der gewählten Sprache.']
+      ['improved', 'Zeitangaben wie „vor 5 Min.“ erscheinen in der gewählten Sprache.'],
+      ['new', 'Einstellung „Nach dem Login öffnen“: Du wählst, ob nach der Anmeldung das Dashboard (Standard) oder direkt die Getränke geöffnet werden. Die Einstellung gehört zu deinem Konto und gilt auf jedem Gerät.'],
+      ['new', 'Englisch vervollständigt: Team-Chat, Mein Arbeitsplan, Schichttausch, Checkliste, Speisekarte & Allergene, Störungen, Fundsachen und Verluste & Bruch lassen sich komplett auf Englisch nutzen. Manager-Ansichten, A3-Karte und „Was ist neu?“ bleiben Deutsch.']
     ] },
   { version: '4.0.01', range: '', date: 'November 2026', title: 'Hilfe & Anleitung, Englisch für das Team',
     changes: [

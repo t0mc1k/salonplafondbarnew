@@ -194,3 +194,42 @@
       if (history.state && history.state.view === 'drinks') openDrinksView({ fromPopState: true });
       else showDashboard({ fromPopState: true });
     });
+
+
+    // ---------- Startseite nach dem Login (Dashboard oder Getränke) ----------
+    // Gespeichert im Konto (Funktionen get/set_my_start_page, SQL 4.0.02) und als Kopie im Gerät.
+    let userStartPage = 'dashboard';
+
+    function startPageKey() { return 'nexus_start_' + String(currentWaiterName || '').toLowerCase(); }
+
+    function readLocalStartPage() {
+      try { return localStorage.getItem(startPageKey()) === 'drinks' ? 'drinks' : 'dashboard'; } catch (e) { return 'dashboard'; }
+    }
+
+    async function loadStartPage() {
+      userStartPage = readLocalStartPage();
+      try {
+        const res = await Promise.race([
+          _supabase.rpc('get_my_start_page'),
+          new Promise(resolve => setTimeout(() => resolve({ timeout: true }), 1500))
+        ]);
+        if (res && !res.timeout && !res.error && (res.data === 'drinks' || res.data === 'dashboard')) {
+          userStartPage = res.data;
+          try { localStorage.setItem(startPageKey(), res.data); } catch (e) {}
+        }
+      } catch (e) {}
+      updateStartPageUI();
+      return userStartPage;
+    }
+
+    async function setStartPage(page) {
+      userStartPage = page === 'drinks' ? 'drinks' : 'dashboard';
+      try { localStorage.setItem(startPageKey(), userStartPage); } catch (e) {}
+      updateStartPageUI();
+      const { error } = await _supabase.rpc('set_my_start_page', { p_page: userStartPage });
+      fmToast(error ? t('set.startDeviceOnly') : t('set.startSaved'));
+    }
+
+    function updateStartPageUI() {
+      document.querySelectorAll('[data-startpage]').forEach(b => b.classList.toggle('active', b.getAttribute('data-startpage') === userStartPage));
+    }

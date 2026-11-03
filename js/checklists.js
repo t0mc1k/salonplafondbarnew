@@ -128,7 +128,7 @@
       const dr = cl.done[taskId];
       if (dr) {
         if (!userIsAdmin && String(dr.done_by).toLowerCase() !== String(currentWaiterName).toLowerCase()) {
-          return fmToast('Nur ' + dr.done_by + ' oder ein Manager kann das zurücknehmen.');
+          return fmToast(fmL('Nur ' + dr.done_by + ' oder ein Manager kann das zurücknehmen.', 'Only ' + dr.done_by + ' or a manager can undo this.'));
         }
         const { error } = await _supabase.from('checklist_done').delete().eq('id', dr.id);
         if (error) return fmToast(fmDbError(error));
@@ -218,7 +218,7 @@
     async function clDelete(id) {
       const t = cl.tasks.find(x => x.id === id);
       if (!t) return;
-      if (!confirm(`Aufgabe „${t.title}“ endgültig löschen?\nDie erledigten Einträge dazu in der Historie werden auch gelöscht.\n(Tipp: Mit ⏸ kannst du sie nur ausblenden.)`)) return;
+      if (!confirm(fmL(`Aufgabe „${t.title}“ endgültig löschen?\nDie erledigten Einträge dazu in der Historie werden auch gelöscht.\n(Tipp: Mit ⏸ kannst du sie nur ausblenden.)`, `Delete task “${t.title}” permanently?\nIts ticked entries in the history are deleted too.\n(Tip: with ⏸ you can just hide it.)`))) return;
       const { error } = await _supabase.from('checklist_tasks').delete().eq('id', id);
       if (error) return fmToast(fmDbError(error));
       await clLoad();

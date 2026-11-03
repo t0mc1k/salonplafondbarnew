@@ -12,6 +12,13 @@
       A: 'Glutenhaltiges Getreide', B: 'Krebstiere', C: 'Eier', D: 'Fisch', E: 'Erdnüsse', F: 'Soja', G: 'Milch / Laktose',
       H: 'Schalenfrüchte (Nüsse)', L: 'Sellerie', M: 'Senf', N: 'Sesam', O: 'Sulfite', P: 'Lupinen', R: 'Weichtiere'
     };
+    const AL_EN = {
+      A: 'Cereals containing gluten', B: 'Crustaceans', C: 'Eggs', D: 'Fish', E: 'Peanuts', F: 'Soy', G: 'Milk / lactose',
+      H: 'Tree nuts', L: 'Celery', M: 'Mustard', N: 'Sesame', O: 'Sulphites', P: 'Lupin', R: 'Molluscs'
+    };
+    const AL_DE = Object.assign({}, AL_CODES);
+    // Namen der Allergene in der gewählten Sprache (Buchstaben A–R bleiben gleich)
+    function alApplyLocale() { Object.assign(AL_CODES, (typeof currentLang !== 'undefined' && currentLang === 'en') ? AL_EN : AL_DE); }
     const AL_ORDER = Object.keys(AL_CODES);
     // Schlagwörter, mit denen Allergene in den Textangaben der Getränke erkannt werden
     const AL_DRINK_WORDS = {
@@ -80,7 +87,7 @@
           <div id="faFilterBox">${faFilterHtml()}</div>`);
       } else {
         const box = document.getElementById('faFilterBox');
-        if (box) box.innerHTML = faFilterHtml();
+        if (box) { box.innerHTML = faFilterHtml(); trDom(box); }
       }
       fa.m.setBody(fa.tab === 'food' ? faFoodHtml() : faDrinksHtml());
       fa.m.setFoot(`${isAdmin && fa.tab === 'food' && !fa.manage ? '<button type="button" class="ui-btn-ghost" onclick="faSetManage(true)">✏️ Karte bearbeiten</button>' : ''}
@@ -216,7 +223,7 @@
     async function faDeleteMenu() {
       const mn = fa.menus.find(x => x.id === fa.menuId); if (!mn) return;
       const n = fa.items.filter(i => i.menu_id === mn.id).length;
-      if (!confirm(`Speisekarte „${mn.name}“ mit ${n} Gericht(en) endgültig löschen?`)) return;
+      if (!confirm(fmL(`Speisekarte „${mn.name}“ mit ${n} Gericht(en) endgültig löschen?`, `Delete food menu “${mn.name}” with ${n} dish(es) permanently?`))) return;
       const { error } = await _supabase.from('food_menus').delete().eq('id', mn.id);
       if (error) return fmToast(fmDbError(error));
       fa.menuId = null;
@@ -258,7 +265,7 @@
     }
     function faiUpdateText() {
       const el = document.getElementById('faiAlText');
-      if (el) el.textContent = faEdit.allergens.length ? faEdit.allergens.slice().sort().map(c => c + ' = ' + AL_CODES[c]).join(' · ') : 'Keine Allergene ausgewählt.';
+      if (el) el.textContent = faEdit.allergens.length ? faEdit.allergens.slice().sort().map(c => c + ' = ' + AL_CODES[c]).join(' · ') : fmTr('Keine Allergene ausgewählt.');
     }
 
     async function faSaveItem(id) {
@@ -288,7 +295,7 @@
     }
     async function faDeleteItem(id) {
       const it = fa.items.find(x => x.id === id); if (!it) return;
-      if (!confirm(`Gericht „${it.name}“ löschen?`)) return;
+      if (!confirm(fmL(`Gericht „${it.name}“ löschen?`, `Delete dish “${it.name}”?`))) return;
       const { error } = await _supabase.from('food_items').delete().eq('id', id);
       if (error) return fmToast(fmDbError(error));
       await faLoad();
@@ -305,7 +312,7 @@
         <button type="button" class="ui-btn-primary" onclick="faBulkSave()">Einfügen</button>`);
       document.getElementById('faBulkText').oninput = () => {
         const r = faParseBulk(document.getElementById('faBulkText').value);
-        document.getElementById('faBulkPreview').textContent = r.rows.length + ' Gericht(e) erkannt' + (r.errors.length ? ' · ' + r.errors.length + ' Zeile(n) mit Problem' : '');
+        document.getElementById('faBulkPreview').textContent = fmTr(r.rows.length + ' Gericht(e) erkannt' + (r.errors.length ? ' · ' + r.errors.length + ' Zeile(n) mit Problem' : ''));
       };
     }
 
@@ -334,3 +341,5 @@
       fmToast(r.rows.length + ' Gerichte eingefügt');
       await faLoad();
     }
+
+    alApplyLocale();
