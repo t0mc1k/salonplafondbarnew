@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Salonplafond">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>Salonplafond NeXuS · BAR v4.0.01</title>
+  <title>Salonplafond NeXuS · BAR v4.0.02</title>
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- SheetJS pre Excel Import & Export -->
@@ -34,7 +34,7 @@
       window.__salonDark = dark;
     } catch (e) { document.documentElement.classList.add('dark'); window.__salonDark = true; }
   </script>
-  <link rel="stylesheet" href="css/style.css?v=4.0.01">
+  <link rel="stylesheet" href="css/style.css?v=4.0.02">
 </head>
 <body class="dark-mode p-3 pt-0 md:p-8 max-w-6xl mx-auto pb-32" onclick="closeDropdowns(event)">
   <script>if (window.__salonDark === false) { document.body.classList.remove('dark-mode'); document.body.classList.add('light-mode'); }</script>
@@ -55,7 +55,7 @@
         </div>
         <div class="login-head-text">
           <h1>Salonplafond NeXuS</h1>
-          <span><span data-brand-header>BAR v4.0.01</span> · <span data-i18n="login.title">Anmeldung</span></span>
+          <span><span data-brand-header>BAR v4.0.02</span> · <span data-i18n="login.title">Anmeldung</span></span>
         </div>
       </header>
 
@@ -107,7 +107,7 @@
         <div id="pinAuthError" class="login-error hidden"></div>
       </div>
 
-      <p class="login-credit">Salonplafond NeXuS • BAR v<span data-app-number>4.0.01</span> • Developed by Tomas Kardos © 2026</p>
+      <p class="login-credit">Salonplafond NeXuS • BAR v<span data-app-number>4.0.02</span> • Developed by Tomas Kardos © 2026</p>
     </div>
   </div>
 
@@ -265,8 +265,8 @@
 
       <div class="ui-head">
         <div>
-          <h3 class="ui-head-title">👤 Mein Profil</h3>
-          <p class="ui-head-sub">So sehen dich deine Kollegen im Chat und in der Personalliste.</p>
+          <h3 class="ui-head-title" data-i18n="prof.title">👤 Mein Profil</h3>
+          <p class="ui-head-sub" data-i18n="prof.sub">So sehen dich deine Kollegen im Chat und in der Personalliste.</p>
         </div>
         <button type="button" onclick="closeUserProfileModal()" class="ui-close" aria-label="Schließen">&times;</button>
       </div>
@@ -291,8 +291,8 @@
           </div>
           <p id="profileBioPreview" class="profile-bio-preview"></p>
           <div class="flex gap-2 flex-wrap px-4 pb-4">
-            <button type="button" onclick="document.getElementById('profileAvatarFile').click()" class="ui-btn-ghost">📷 Foto ändern</button>
-            <button type="button" onclick="openMyFullAvatar()" class="ui-btn-ghost">🔍 Foto ansehen</button>
+            <button type="button" onclick="document.getElementById('profileAvatarFile').click()" class="ui-btn-ghost" data-i18n="prof.photo">📷 Foto ändern</button>
+            <button type="button" onclick="openMyFullAvatar()" class="ui-btn-ghost" data-i18n="prof.viewPhoto">🔍 Foto ansehen</button>
             <span id="profileAvatarStatus" class="profile-meta self-center"></span>
           </div>
           <input type="file" id="profileAvatarFile" accept="image/*" class="hidden" onchange="uploadMyAvatarToSupabase(event)">
@@ -302,20 +302,20 @@
         <!-- Arbeitsplan -->
         <button type="button" onclick="closeUserProfileModal(); openMyPlanModal();" class="profile-link">
           <span class="profile-link-ico">🗓️</span>
-          <span class="min-w-0 flex-1 text-left"><b class="block text-sm">Mein Arbeitsplan</b><small class="block text-xs profile-link-sub">Deine Schichten dieser Woche ansehen</small></span>
+          <span class="min-w-0 flex-1 text-left"><b class="block text-sm" data-i18n="prof.plan">Mein Arbeitsplan</b><small class="block text-xs profile-link-sub" data-i18n="prof.planSub">Deine Schichten ansehen</small></span>
           <span class="menu-arrow">›</span>
         </button>
 
         <!-- Über mich -->
         <div class="form-section">
-          <div class="form-section-title">Über mich</div>
-          <textarea id="profileInputBio" rows="2" maxlength="140" oninput="onProfileBioInput()" placeholder="Schreibe etwas über dich oder deinen Status ..." class="ui-field"></textarea>
+          <div class="form-section-title" data-i18n="prof.about">Über mich</div>
+          <textarea id="profileInputBio" rows="2" maxlength="140" oninput="onProfileBioInput()" placeholder="Schreibe etwas über dich oder deinen Status ..." data-i18n-ph="prof.bioPh" class="ui-field"></textarea>
           <div class="flex items-center justify-between gap-2 mt-1.5 flex-wrap">
             <div class="flex gap-1.5 flex-wrap">
-              <button type="button" class="ui-chip" onclick="setProfileBio('🍸 Hinter der Bar')">🍸 Hinter der Bar</button>
-              <button type="button" class="ui-chip" onclick="setProfileBio('☕ In der Pause')">☕ In der Pause</button>
-              <button type="button" class="ui-chip" onclick="setProfileBio('🔥 Heute voll dabei')">🔥 Voll dabei</button>
-              <button type="button" class="ui-chip" onclick="setProfileBio('')">Leeren</button>
+              <button type="button" class="ui-chip" onclick="setProfileBio(t('prof.bioBar'))" data-i18n="prof.btnBar">🍸 Hinter der Bar</button>
+              <button type="button" class="ui-chip" onclick="setProfileBio(t('prof.bioPause'))" data-i18n="prof.btnPause">☕ In der Pause</button>
+              <button type="button" class="ui-chip" onclick="setProfileBio(t('prof.bioIn'))" data-i18n="prof.btnIn">🔥 Voll dabei</button>
+              <button type="button" class="ui-chip" onclick="setProfileBio('')" data-i18n="prof.clear">Leeren</button>
             </div>
             <span id="profileBioCount" class="form-hint">0 / 140</span>
           </div>
@@ -323,35 +323,35 @@
 
         <!-- PIN -->
         <div class="form-section">
-          <div class="form-section-title">PIN-Code ändern</div>
+          <div class="form-section-title" data-i18n="prof.pinTitle">PIN-Code ändern</div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="form-label" for="profileInputNewPin">Neuer PIN</label>
-              <input type="password" id="profileInputNewPin" inputmode="numeric" maxlength="6" autocomplete="new-password" oninput="onProfilePinInput()" placeholder="4 bis 6 Ziffern" class="ui-field tracking-widest">
+              <label class="form-label" for="profileInputNewPin" data-i18n="prof.newPin">Neuer PIN</label>
+              <input type="password" id="profileInputNewPin" inputmode="numeric" maxlength="6" autocomplete="new-password" oninput="onProfilePinInput()" placeholder="4 bis 6 Ziffern" data-i18n-ph="prof.pinPh" class="ui-field tracking-widest">
             </div>
             <div>
-              <label class="form-label" for="profileInputPin2">PIN wiederholen</label>
-              <input type="password" id="profileInputPin2" inputmode="numeric" maxlength="6" autocomplete="new-password" oninput="onProfilePinInput()" placeholder="Zur Kontrolle" class="ui-field tracking-widest">
+              <label class="form-label" for="profileInputPin2" data-i18n="prof.repeatPin">PIN wiederholen</label>
+              <input type="password" id="profileInputPin2" inputmode="numeric" maxlength="6" autocomplete="new-password" oninput="onProfilePinInput()" placeholder="Zur Kontrolle" data-i18n-ph="prof.pinPh2" class="ui-field tracking-widest">
             </div>
           </div>
           <div class="flex items-center justify-between gap-2 mt-2 flex-wrap">
-            <p id="profilePinHint" class="form-hint">Leer lassen, wenn dein PIN gleich bleiben soll.</p>
-            <button type="button" onclick="toggleProfilePinVisibility()" class="ui-link-btn">👁️ Anzeigen / verbergen</button>
+            <p id="profilePinHint" class="form-hint" data-i18n="prof.pinHint">Leer lassen, wenn dein PIN gleich bleiben soll.</p>
+            <button type="button" onclick="toggleProfilePinVisibility()" class="ui-link-btn" data-i18n="prof.showHide">👁️ Anzeigen / verbergen</button>
           </div>
         </div>
 
         <!-- Rechte -->
         <div class="form-section">
-          <div class="form-section-title">Meine Rechte</div>
+          <div class="form-section-title" data-i18n="prof.rights">Meine Rechte</div>
           <div id="profileRightsBox" class="flex flex-col gap-1.5"></div>
         </div>
       </div>
 
       <div class="ui-foot">
-        <span id="profileDirtyHint" class="profile-dirty hidden">● Ungespeicherte Änderungen</span>
+        <span id="profileDirtyHint" class="profile-dirty hidden" data-i18n="prof.unsaved">● Ungespeicherte Änderungen</span>
         <span class="flex-1"></span>
-        <button type="button" onclick="closeUserProfileModal()" class="ui-btn-ghost">Schließen</button>
-        <button type="button" id="profileSaveBtn" onclick="saveMyUserProfile()" class="ui-btn-primary">💾 Speichern</button>
+        <button type="button" onclick="closeUserProfileModal()" class="ui-btn-ghost" data-i18n="common.close">Schließen</button>
+        <button type="button" id="profileSaveBtn" onclick="saveMyUserProfile()" class="ui-btn-primary" data-i18n="prof.save">💾 Speichern</button>
       </div>
     </div>
   </div>
@@ -368,10 +368,10 @@
         <span id="userDetailRole" class="text-[10px] uppercase tracking-wider text-amber-700 dark:text-amber-400 font-semibold block mt-0.5"></span>
       </div>
       <div class="w-full custom-box p-3 rounded-xl border text-left">
-        <span class="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400 block mb-1">Über mich:</span>
-        <p id="userDetailBio" class="text-xs italic text-slate-700 dark:text-slate-300">Keine Beschreibung angegeben.</p>
+        <span class="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400 block mb-1" data-i18n="prof.aboutColon">Über mich:</span>
+        <p id="userDetailBio" class="text-xs italic text-slate-700 dark:text-slate-300" data-i18n="prof.noBio">Keine Beschreibung angegeben.</p>
       </div>
-      <button onclick="closeUserDetailModal()" class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-white rounded-xl text-xs transition">Schließen</button>
+      <button onclick="closeUserDetailModal()" class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-white rounded-xl text-xs transition" data-i18n="common.close">Schließen</button>
     </div>
   </div>
 
@@ -389,7 +389,7 @@
 
         <div class="flex flex-col justify-center min-w-0">
           <h1 class="text-lg md:text-3xl font-bold tracking-tight text-amber-700 dark:text-amber-400 leading-none whitespace-nowrap">Salonplafond NeXuS</h1>
-          <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium block mt-0.5" data-brand-header>BAR v4.0.01</span>
+          <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium block mt-0.5" data-brand-header>BAR v4.0.02</span>
         </div>
       </div>
 
@@ -511,7 +511,7 @@
             </button>
             <button type="button" onclick="openChangelogModal()" class="menu-item">
               <span class="menu-ico">🚀</span>
-              <span class="menu-text"><span class="menu-label" data-i18n="menu.news">Was ist neu?</span><span class="menu-sub"><span data-i18n="menu.newsSub">Neuigkeiten in </span><span data-app-version>v4.0.01</span></span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.news">Was ist neu?</span><span class="menu-sub"><span data-i18n="menu.newsSub">Neuigkeiten in </span><span data-app-version>v4.0.02</span></span></span>
             </button>
             <button type="button" onclick="openSupportModal()" class="menu-item">
               <span class="menu-ico">🛟<span id="menuDropdownTicketDot" class="hidden menu-dot pulse-badge-dot"></span></span>
@@ -544,7 +544,7 @@
     <!-- Angemeldet (nur am Computer) -->
     <div class="hidden md:flex mb-5 items-center justify-between flex-wrap gap-3">
       <div class="inline-flex items-center gap-3">
-        <div id="headerUserAvatarContainer" onclick="openUserProfileModal()" class="w-8 h-8 rounded-full border-2 border-amber-500 bg-slate-100 dark:bg-slate-800 overflow-hidden flex items-center justify-center shrink-0 cursor-pointer hover:scale-105 transition shadow" title="Klicken, um mein Profil zu öffnen">
+        <div id="headerUserAvatarContainer" onclick="openUserProfileModal()" class="w-8 h-8 rounded-full border-2 border-amber-500 bg-slate-100 dark:bg-slate-800 overflow-hidden flex items-center justify-center shrink-0 cursor-pointer hover:scale-105 transition shadow" title="Klicken, um mein Profil zu öffnen" data-i18n-title="hdr.profileTitle">
           <span class="text-[10px] font-bold text-amber-700 dark:text-amber-400" id="headerAvatarFallback">?</span>
         </div>
         <span class="text-xs text-slate-800 dark:text-slate-200 font-bold">Angemeldet: <span id="currentUserEmail" class="text-amber-700 dark:text-amber-300"></span></span>
@@ -566,14 +566,14 @@
     <!-- ===== GETRÄNKE-DATENBANK ===== -->
     <div id="drinksView" class="hidden">
       <div class="dash-back-bar">
-        <button type="button" onclick="showDashboard()" class="dash-back-btn" title="Zurück zum Dashboard">← Dashboard</button>
+        <button type="button" onclick="showDashboard()" class="dash-back-btn" title="Zurück zum Dashboard" data-i18n-title="dv.backTitle">← Dashboard</button>
         <span class="dash-back-title" data-i18n="dv.title">🍸 Getränke & Rezepte</span>
       </div>
 
     <!-- Suche -->
     <div class="mb-3 md:mb-4">
       <div class="relative w-full">
-        <input type="text" id="searchInput" autocomplete="off" oninput="onSearchInput()" placeholder="🔍 Getränk oder Zutat suchen..." class="px-4 py-3 pr-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white w-full focus:outline-none focus:border-amber-500 text-sm shadow-md font-medium">
+        <input type="text" id="searchInput" autocomplete="off" oninput="onSearchInput()" placeholder="🔍 Getränk oder Zutat suchen..." data-i18n-ph="dv.search" class="px-4 py-3 pr-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white w-full focus:outline-none focus:border-amber-500 text-sm shadow-md font-medium">
         <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-sm font-bold bg-slate-200/70 dark:bg-slate-700/50 hover:bg-slate-300 dark:hover:bg-slate-700 w-5 h-5 rounded-full items-center justify-center">&times;</button>
       </div>
     </div>
@@ -586,7 +586,7 @@
 
     <!-- Schnellzugriff: Saison, Arbeitsplan, Filter -->
     <div class="quick-row mb-3 md:mb-5">
-      <div id="activeSeasonBadge" onclick="openSeasonModal()" title="Klicken, um Saison zu wechseln" class="hidden quick-chip quick-chip-amber">
+      <div id="activeSeasonBadge" onclick="openSeasonModal()" title="Klicken, um Saison zu wechseln" data-i18n-title="dv.seasonTitle" class="hidden quick-chip quick-chip-amber">
         <span>📅<span class="hidden sm:inline" data-i18n="dv.season"> Saison:</span></span> <span id="activeSeasonName"></span>
       </div>
       <button type="button" onclick="openMyPlanModal()" class="quick-chip desktop-only" data-i18n="dv.schedule">🗓️ Arbeitsplan</button>
@@ -621,13 +621,13 @@
     </div>
 
     <div id="drinksGrid">
-      <p id="loadingTxt" class="col-span-full text-slate-500 dark:text-slate-400">Lade Getränke aus der Datenbank...</p>
+      <p id="loadingTxt" class="col-span-full text-slate-500 dark:text-slate-400" data-i18n="dv.loading">Lade Getränke aus der Datenbank...</p>
     </div>
 
     </div><!-- /drinksView -->
 
     <footer class="mt-20 pt-6 border-t border-slate-300 dark:border-slate-800 text-center text-xs text-slate-500">
-      Salonplafond NeXuS • BAR v<span data-app-number>4.0.01</span> • Developed by <span class="text-amber-600 dark:text-amber-400 font-semibold">Tomas Kardos © 2026</span>
+      Salonplafond NeXuS • BAR v<span data-app-number>4.0.02</span> • Developed by <span class="text-amber-600 dark:text-amber-400 font-semibold">Tomas Kardos © 2026</span>
     </footer>
 
   </div>
@@ -644,7 +644,7 @@
       <button onclick="openMultiViewModal()" class="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs transition shadow flex items-center gap-1.5">
         ⚡ Multi-View (<span id="trayCountBadge">0</span>)
       </button>
-      <button onclick="clearBarTray()" class="px-2.5 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-xl text-xs transition border border-slate-300 dark:border-slate-700" title="Leeren">🗑️</button>
+      <button onclick="clearBarTray()" data-i18n-title="tray.clear" class="px-2.5 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-xl text-xs transition border border-slate-300 dark:border-slate-700" title="Leeren">🗑️</button>
     </div>
   </div>
 
@@ -920,15 +920,15 @@
       <button onclick="closeShoppingModal()" class="no-print absolute top-4 right-4 text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white text-2xl font-bold">&times;</button>
       
       <div>
-        <h3 class="text-xl font-bold text-amber-600 dark:text-amber-400 flex items-center gap-2">🛒 Einkaufsliste & Inventur</h3>
-        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">Übersicht aller benötigten Zutaten für die aktive Saison: <span id="shoppingSeasonName" class="font-bold text-amber-600 dark:text-amber-300"></span></p>
+        <h3 class="text-xl font-bold text-amber-600 dark:text-amber-400 flex items-center gap-2" data-i18n="shop.title">🛒 Einkaufsliste & Inventur</h3>
+        <p class="text-xs text-slate-600 dark:text-slate-400 mt-1"><span data-i18n="shop.intro">Übersicht aller benötigten Zutaten für die aktive Saison: </span><span id="shoppingSeasonName" class="font-bold text-amber-600 dark:text-amber-300"></span></p>
       </div>
 
       <div class="no-print flex flex-wrap gap-2 pt-1 pb-2 border-b border-slate-200 dark:border-slate-800">
-        <button onclick="printShoppingList()" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs transition shadow flex items-center gap-1.5">
+        <button onclick="printShoppingList()" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs transition shadow flex items-center gap-1.5" data-i18n="shop.print">
           🖨️ Einkaufsliste drucken
         </button>
-        <button onclick="exportShoppingListExcel()" class="px-3.5 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-400 font-bold rounded-xl text-xs transition border border-slate-300 dark:border-slate-700 flex items-center gap-1.5">
+        <button onclick="exportShoppingListExcel()" class="px-3.5 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-400 font-bold rounded-xl text-xs transition border border-slate-300 dark:border-slate-700 flex items-center gap-1.5" data-i18n="shop.excel">
           📗 Als Excel exportieren
         </button>
       </div>
@@ -936,7 +936,7 @@
       <div id="shoppingListContainer" class="flex flex-col gap-2 mt-1 custom-box p-4 rounded-xl border text-xs max-h-[50vh] overflow-y-auto"></div>
 
       <div class="no-print flex justify-end pt-3 border-t border-slate-200 dark:border-slate-800">
-        <button onclick="closeShoppingModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-white rounded-xl text-xs transition">Schließen</button>
+        <button onclick="closeShoppingModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-white rounded-xl text-xs transition" data-i18n="common.close">Schließen</button>
       </div>
     </div>
   </div>
@@ -1072,7 +1072,7 @@
         <section class="set-card">
           <h4 class="set-head" data-i18n="set.app">🧰 App</h4>
           <div class="set-row">
-            <div class="set-text"><b data-i18n="set.version">Version</b><small>Salonplafond NeXuS • BAR v<span data-app-number>4.0.01</span></small></div>
+            <div class="set-text"><b data-i18n="set.version">Version</b><small>Salonplafond NeXuS • BAR v<span data-app-number>4.0.02</span></small></div>
             <button type="button" onclick="closeUnifiedSettingsModal(); openChangelogModal();" class="ui-btn-ghost" data-i18n="set.news">🚀 Was ist neu?</button>
           </div>
           <div class="set-row">
@@ -1097,10 +1097,10 @@
   <div id="multiViewModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-50">
     <div class="card max-w-7xl w-full max-h-[90vh] overflow-y-auto p-6 relative flex flex-col gap-4 border-amber-500/50 shadow-2xl">
       <button onclick="closeMultiViewModal()" class="absolute top-4 right-4 text-slate-600 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white text-2xl font-bold">&times;</button>
-      <h3 class="text-xl font-bold text-amber-600 dark:text-amber-400">⚡ Multi-View: Rezepte im direkten Vergleich</h3>
+      <h3 class="text-xl font-bold text-amber-600 dark:text-amber-400" data-i18n="mv.title">⚡ Multi-View: Rezepte im direkten Vergleich</h3>
       <div id="multiViewContentContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2"></div>
       <div class="flex justify-end pt-3 border-t border-slate-200 dark:border-slate-800">
-        <button onclick="closeMultiViewModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-white rounded-xl text-xs transition border border-slate-300 dark:border-slate-700">Schließen</button>
+        <button onclick="closeMultiViewModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-white rounded-xl text-xs transition border border-slate-300 dark:border-slate-700" data-i18n="common.close">Schließen</button>
       </div>
     </div>
   </div>
@@ -1109,8 +1109,8 @@
   <div id="replaceDrinkModal" class="fixed inset-0 modal-bg backdrop-blur-sm hidden items-center justify-center p-4 z-[270]">
     <div class="card max-w-md w-full p-6 relative flex flex-col gap-4 border-amber-500/50 shadow-2xl max-h-[80vh] overflow-y-auto">
       <button onclick="closeReplaceDrinkModal()" class="absolute top-4 right-4 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-2xl font-bold">&times;</button>
-      <h3 class="text-lg font-bold text-amber-600 dark:text-amber-400">🔄 Drink ersetzen</h3>
-      <p class="text-xs text-slate-600 dark:text-slate-400">Wähle einen neuen Drink aus der aktuellen Saison aus, der diesen ersetzen soll:</p>
+      <h3 class="text-lg font-bold text-amber-600 dark:text-amber-400" data-i18n="rep.title">🔄 Drink ersetzen</h3>
+      <p class="text-xs text-slate-600 dark:text-slate-400" data-i18n="rep.sub">Wähle einen neuen Drink aus der aktuellen Saison aus, der diesen ersetzen soll:</p>
       <input type="hidden" id="replaceIndexTarget" value="">
       <div id="replaceDrinkListContainer" class="flex flex-col gap-2 max-h-[50vh] overflow-y-auto pr-1"></div>
     </div>
@@ -1271,22 +1271,22 @@
         <div class="print-watermark-footer">Salonplafond NeXuS • BAR • Developed by Tomas Kardos © 2026</div>
       </div>
       <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex gap-2 no-print items-center flex-wrap">
-        <button id="modalPhotoBtn" onclick="openPhotoPreviewFromModal()" class="hidden px-4 py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-700 dark:text-amber-400 font-bold rounded-xl transition text-sm flex items-center justify-center gap-2 border border-slate-300 dark:border-slate-700">
+        <button id="modalPhotoBtn" onclick="openPhotoPreviewFromModal()" class="hidden px-4 py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-700 dark:text-amber-400 font-bold rounded-xl transition text-sm flex items-center justify-center gap-2 border border-slate-300 dark:border-slate-700" data-i18n="drm.photo">
           🖼️ Foto anzeigen
         </button>
         <button id="modalFavBtn" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-700 dark:text-amber-400 font-bold rounded-xl transition text-sm flex items-center justify-center gap-2 border border-slate-300 dark:border-slate-700">
           ❤️ Schicht-Favorit
         </button>
-        <button id="modalEditBtn" class="px-4 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-sm">
+        <button id="modalEditBtn" class="px-4 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-sm" data-i18n="drm.edit">
           ✏️ Bearbeiten
         </button>
-        <button id="modalDeleteBtn" class="px-4 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-sm">
+        <button id="modalDeleteBtn" class="px-4 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition text-sm flex items-center justify-center gap-2 shadow-sm" data-i18n="drm.del">
           🗑️ Löschen
         </button>
-        <button onclick="openPrintOptionsModal()" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-700 dark:text-amber-400 font-bold rounded-xl transition text-sm flex items-center justify-center gap-2 border border-slate-300 dark:border-slate-700">
+        <button onclick="openPrintOptionsModal()" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-amber-700 dark:text-amber-400 font-bold rounded-xl transition text-sm flex items-center justify-center gap-2 border border-slate-300 dark:border-slate-700" data-i18n="drm.print">
           🖨️ Drucken / PDF
         </button>
-        <button onclick="closeModal()" class="flex-1 py-3.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 active:scale-[0.99] text-amber-700 dark:text-amber-400 font-extrabold text-sm rounded-xl border-2 border-amber-500/50 transition shadow-sm tracking-wide">
+        <button onclick="closeModal()" class="flex-1 py-3.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 active:scale-[0.99] text-amber-700 dark:text-amber-400 font-extrabold text-sm rounded-xl border-2 border-amber-500/50 transition shadow-sm tracking-wide" data-i18n="drm.close">
           ✕ Schließen
         </button>
       </div>
@@ -1298,13 +1298,13 @@
     <div class="card max-w-sm w-full p-6 relative flex flex-col gap-4 text-center border-amber-500/50 shadow-2xl">
       <button onclick="closePrintOptionsModal()" class="absolute top-4 right-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-2xl font-bold">&times;</button>
       <div class="w-12 h-12 bg-amber-500/20 text-amber-600 dark:text-amber-400 rounded-xl mx-auto flex items-center justify-center text-2xl border border-amber-500/30">🖨️</div>
-      <h3 class="text-lg font-bold text-amber-600 dark:text-amber-400">Drucken-Optionen</h3>
-      <p class="text-xs text-slate-600 dark:text-slate-300">Wähle aus, wie das Rezept gedruckt werden soll:</p>
+      <h3 class="text-lg font-bold text-amber-600 dark:text-amber-400" data-i18n="prn.title">Drucken-Optionen</h3>
+      <p class="text-xs text-slate-600 dark:text-slate-300" data-i18n="prn.sub">Wähle aus, wie das Rezept gedruckt werden soll:</p>
       <div class="flex flex-col gap-2.5 mt-2">
-        <button onclick="executePrint(true)" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs transition shadow flex items-center justify-center gap-2">
+        <button onclick="executePrint(true)" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs transition shadow flex items-center justify-center gap-2" data-i18n="prn.img">
           🖼️ Mit Bild drucken
         </button>
-        <button onclick="executePrint(false)" class="w-full py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold rounded-xl text-xs transition border border-slate-300 dark:border-slate-700 flex items-center justify-center gap-2">
+        <button onclick="executePrint(false)" class="w-full py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold rounded-xl text-xs transition border border-slate-300 dark:border-slate-700 flex items-center justify-center gap-2" data-i18n="prn.noimg">
           📄 Ohne Bild drucken (Text pur)
         </button>
       </div>
@@ -1326,7 +1326,7 @@
       <div class="ui-head">
         <div>
           <h3 class="ui-head-title">🚀 Was ist neu?</h3>
-          <p class="ui-head-sub">Aktuelle Version <span id="changelogVersionBadge" class="cl-ver">v4.0.01</span></p>
+          <p class="ui-head-sub">Aktuelle Version <span id="changelogVersionBadge" class="cl-ver">v4.0.02</span></p>
         </div>
         <button type="button" onclick="closeChangelogModal()" class="ui-close" aria-label="Schließen">&times;</button>
       </div>
@@ -1583,34 +1583,34 @@
     </div>
   </div>
 
-  <script src="js/config.js?v=4.0.01"></script>
-  <script src="js/i18n.js?v=4.0.01"></script>
-  <script src="js/ui.js?v=4.0.01"></script>
-  <script src="js/settings.js?v=4.0.01"></script>
-  <script src="js/pwa.js?v=4.0.01"></script>
-  <script src="js/auth.js?v=4.0.01"></script>
-  <script src="js/profile.js?v=4.0.01"></script>
-  <script src="js/staff-admin.js?v=4.0.01"></script>
-  <script src="js/chat.js?v=4.0.01"></script>
-  <script src="js/tickets.js?v=4.0.01"></script>
-  <script src="js/changelog.js?v=4.0.01"></script>
-  <script src="js/schedule.js?v=4.0.01"></script>
-  <script src="js/team-plan.js?v=4.0.01"></script>
-  <script src="js/feature-ui.js?v=4.0.01"></script>
-  <script src="js/checklists.js?v=4.0.01"></script>
-  <script src="js/shift-swap.js?v=4.0.01"></script>
-  <script src="js/payroll.js?v=4.0.01"></script>
-  <script src="js/menu-allergens.js?v=4.0.01"></script>
-  <script src="js/reports.js?v=4.0.01"></script>
-  <script src="js/help.js?v=4.0.01"></script>
-  <script src="js/seasons.js?v=4.0.01"></script>
-  <script src="js/drinks.js?v=4.0.01"></script>
-  <script src="js/drink-admin.js?v=4.0.01"></script>
-  <script src="js/tray.js?v=4.0.01"></script>
-  <script src="js/shopping.js?v=4.0.01"></script>
-  <script src="js/import-export.js?v=4.0.01"></script>
-  <script src="js/print-a3.js?v=4.0.01"></script>
-  <script src="js/dashboard.js?v=4.0.01"></script>
-  <script src="js/app.js?v=4.0.01"></script>
+  <script src="js/config.js?v=4.0.02"></script>
+  <script src="js/i18n.js?v=4.0.02"></script>
+  <script src="js/ui.js?v=4.0.02"></script>
+  <script src="js/settings.js?v=4.0.02"></script>
+  <script src="js/pwa.js?v=4.0.02"></script>
+  <script src="js/auth.js?v=4.0.02"></script>
+  <script src="js/profile.js?v=4.0.02"></script>
+  <script src="js/staff-admin.js?v=4.0.02"></script>
+  <script src="js/chat.js?v=4.0.02"></script>
+  <script src="js/tickets.js?v=4.0.02"></script>
+  <script src="js/changelog.js?v=4.0.02"></script>
+  <script src="js/schedule.js?v=4.0.02"></script>
+  <script src="js/team-plan.js?v=4.0.02"></script>
+  <script src="js/feature-ui.js?v=4.0.02"></script>
+  <script src="js/checklists.js?v=4.0.02"></script>
+  <script src="js/shift-swap.js?v=4.0.02"></script>
+  <script src="js/payroll.js?v=4.0.02"></script>
+  <script src="js/menu-allergens.js?v=4.0.02"></script>
+  <script src="js/reports.js?v=4.0.02"></script>
+  <script src="js/help.js?v=4.0.02"></script>
+  <script src="js/seasons.js?v=4.0.02"></script>
+  <script src="js/drinks.js?v=4.0.02"></script>
+  <script src="js/drink-admin.js?v=4.0.02"></script>
+  <script src="js/tray.js?v=4.0.02"></script>
+  <script src="js/shopping.js?v=4.0.02"></script>
+  <script src="js/import-export.js?v=4.0.02"></script>
+  <script src="js/print-a3.js?v=4.0.02"></script>
+  <script src="js/dashboard.js?v=4.0.02"></script>
+  <script src="js/app.js?v=4.0.02"></script>
 </body>
 </html>

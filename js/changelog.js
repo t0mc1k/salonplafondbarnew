@@ -10,9 +10,15 @@
    Änderungs-Typen: 'new' Neu, 'improved' Verbessert, 'fixed' Behoben,
                     'security' Sicherheit, 'info' Allgemein
    ============================================================ */
-    const APP_VERSION = '4.0.01';
+    const APP_VERSION = '4.0.02';
 
     const CHANGELOG = [
+  { version: '4.0.02', range: '', date: 'November 2026', title: 'Englisch: Getränke, Multi-View, Einkaufsliste & Profil',
+    changes: [
+      ['new', 'Englisch erweitert: Die Getränke-Datenbank (Suche, Kategorien, Karten, Rezept, Drucken), Multi-View, Einkaufsliste und dein Profil lassen sich jetzt ebenfalls auf Englisch umstellen (Einstellungen → Sprache).'],
+      ['improved', 'Beim Wechsel der Sprache werden Getränke-Liste, Kategorien und Multi-View-Leiste sofort neu gezeichnet. Die „Über mich“-Vorschläge im Profil werden in der gewählten Sprache gespeichert.'],
+      ['improved', 'Zeitangaben wie „vor 5 Min.“ erscheinen in der gewählten Sprache.']
+    ] },
   { version: '4.0.01', range: '', date: 'November 2026', title: 'Hilfe & Anleitung, Englisch für das Team',
     changes: [
       ['new', 'Hilfe & Anleitung: Eine ausführliche Anleitung für alle Funktionen, Schritt für Schritt erklärt, mit Suche und häufigen Fragen. Du findest sie auf dem Dashboard und im Menü. Kapitel für Manager sind mit „Manager“ markiert.'],

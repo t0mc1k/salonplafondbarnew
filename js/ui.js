@@ -74,18 +74,18 @@
 
     // ---------- Zeit als „vor 5 Min.“ ----------
     function formatRelativeTime(iso) {
-      if (!iso) return 'noch nie';
-      const t = new Date(iso).getTime();
-      if (isNaN(t)) return 'unbekannt';
-      const min = Math.floor(Math.max(0, Date.now() - t) / 60000);
-      if (min < 1) return 'gerade eben';
-      if (min < 60) return `vor ${min} Min.`;
+      if (!iso) return t('time.never');
+      const ts = new Date(iso).getTime();
+      if (isNaN(ts)) return t('time.unknown');
+      const min = Math.floor(Math.max(0, Date.now() - ts) / 60000);
+      if (min < 1) return t('time.now');
+      if (min < 60) return t('time.min', { n: min });
       const h = Math.floor(min / 60);
-      if (h < 24) return `vor ${h} Std.`;
+      if (h < 24) return t('time.hour', { n: h });
       const d = Math.floor(h / 24);
-      if (d === 1) return 'gestern';
-      if (d < 7) return `vor ${d} Tagen`;
-      return new Date(t).toLocaleDateString('de-AT');
+      if (d === 1) return t('time.yesterday');
+      if (d < 7) return t('time.days', { n: d });
+      return new Date(ts).toLocaleDateString(langLocale());
     }
 
     function handleScrollPosition() {

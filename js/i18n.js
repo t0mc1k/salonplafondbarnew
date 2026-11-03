@@ -801,6 +801,434 @@
  "common.done": {
   "de": "Fertig",
   "en": "Done"
+ },
+ "dv.loading": {
+  "de": "Lade Getränke aus der Datenbank...",
+  "en": "Loading drinks from the database..."
+ },
+ "dv.search": {
+  "de": "🔍 Getränk oder Zutat suchen...",
+  "en": "🔍 Search drink or ingredient..."
+ },
+ "dv.backTitle": {
+  "de": "Zurück zum Dashboard",
+  "en": "Back to the dashboard"
+ },
+ "dv.seasonTitle": {
+  "de": "Klicken, um Saison zu wechseln",
+  "en": "Tap to switch season"
+ },
+ "hdr.profileTitle": {
+  "de": "Klicken, um mein Profil zu öffnen",
+  "en": "Tap to open my profile"
+ },
+ "tray.clear": {
+  "de": "Leeren",
+  "en": "Clear"
+ },
+ "cat.all": {
+  "de": "Alle",
+  "en": "All"
+ },
+ "dv.noGlass": {
+  "de": "Keine Glas-Typen vorhanden",
+  "en": "No glass types available"
+ },
+ "dv.empty": {
+  "de": "Keine Getränke in dieser Saison gefunden.",
+  "en": "No drinks found in this season."
+ },
+ "dv.noImage": {
+  "de": "Kein Bild",
+  "en": "No image"
+ },
+ "dv.drinkWord": {
+  "de": "Getränk",
+  "en": "Drink"
+ },
+ "drm.bigPhoto": {
+  "de": "Klicken für Großansicht",
+  "en": "Tap to enlarge"
+ },
+ "drm.noIng": {
+  "de": "Keine Zutaten angegeben",
+  "en": "No ingredients listed"
+ },
+ "drm.allergens": {
+  "de": "Allergene:",
+  "en": "Allergens:"
+ },
+ "drm.prep": {
+  "de": "Zubereitung",
+  "en": "Preparation"
+ },
+ "drm.lastChange": {
+  "de": "🕒 Letzte Änderung: {date}",
+  "en": "🕒 Last changed: {date}"
+ },
+ "drm.favOn": {
+  "de": "Favorit ✓",
+  "en": "Favourite ✓"
+ },
+ "drm.favOff": {
+  "de": "Schicht-Favorit",
+  "en": "Shift favourite"
+ },
+ "drm.photo": {
+  "de": "🖼️ Foto anzeigen",
+  "en": "🖼️ Show photo"
+ },
+ "drm.edit": {
+  "de": "✏️ Bearbeiten",
+  "en": "✏️ Edit"
+ },
+ "drm.del": {
+  "de": "🗑️ Löschen",
+  "en": "🗑️ Delete"
+ },
+ "drm.print": {
+  "de": "🖨️ Drucken / PDF",
+  "en": "🖨️ Print / PDF"
+ },
+ "drm.close": {
+  "de": "✕ Schließen",
+  "en": "✕ Close"
+ },
+ "prn.title": {
+  "de": "Drucken-Optionen",
+  "en": "Print options"
+ },
+ "prn.sub": {
+  "de": "Wähle aus, wie das Rezept gedruckt werden soll:",
+  "en": "Choose how the recipe should be printed:"
+ },
+ "prn.img": {
+  "de": "🖼️ Mit Bild drucken",
+  "en": "🖼️ Print with image"
+ },
+ "prn.noimg": {
+  "de": "📄 Ohne Bild drucken (Text pur)",
+  "en": "📄 Print without image (text only)"
+ },
+ "shop.title": {
+  "de": "🛒 Einkaufsliste & Inventur",
+  "en": "🛒 Shopping list & Stocktake"
+ },
+ "shop.intro": {
+  "de": "Übersicht aller benötigten Zutaten für die aktive Saison: ",
+  "en": "Overview of all ingredients needed for the active season: "
+ },
+ "shop.print": {
+  "de": "🖨️ Einkaufsliste drucken",
+  "en": "🖨️ Print shopping list"
+ },
+ "shop.excel": {
+  "de": "📗 Als Excel exportieren",
+  "en": "📗 Export as Excel"
+ },
+ "mv.title": {
+  "de": "⚡ Multi-View: Rezepte im direkten Vergleich",
+  "en": "⚡ Multi-View: recipes side by side"
+ },
+ "rep.title": {
+  "de": "🔄 Drink ersetzen",
+  "en": "🔄 Replace drink"
+ },
+ "rep.sub": {
+  "de": "Wähle einen neuen Drink aus der aktuellen Saison aus, der diesen ersetzen soll:",
+  "en": "Choose a new drink from the current season to replace this one:"
+ },
+ "shop.empty": {
+  "de": "Keine Zutaten in dieser Saison gefunden.",
+  "en": "No ingredients found in this season."
+ },
+ "shop.noExport": {
+  "de": "Keine Zutaten für den Export vorhanden.",
+  "en": "No ingredients to export."
+ },
+ "shop.colIng": {
+  "de": "Zutat / Produkt",
+  "en": "Ingredient / product"
+ },
+ "shop.colUse": {
+  "de": "Verwendung & Mengen",
+  "en": "Use & amounts"
+ },
+ "shop.xlsIng": {
+  "de": "Zutat",
+  "en": "Ingredient"
+ },
+ "shop.xlsUse": {
+  "de": "Verwendung und Mengen",
+  "en": "Use and amounts"
+ },
+ "tray.max": {
+  "de": "Für den Schnellvergleich können maximal 6 Getränke gleichzeitig ausgewählt werden.",
+  "en": "You can select a maximum of 6 drinks for the quick comparison."
+ },
+ "tray.already": {
+  "de": "„{name}“ ist schon im Multi-View",
+  "en": "“{name}” is already in Multi-View"
+ },
+ "tray.added": {
+  "de": "„{name}“ zum Multi-View hinzugefügt ({n}/6)",
+  "en": "“{name}” added to Multi-View ({n}/6)"
+ },
+ "tray.full": {
+  "de": "⚡ Multi-View ist voll (6/6)",
+  "en": "⚡ Multi-View is full (6/6)"
+ },
+ "tray.drop": {
+  "de": "⚡ Hier loslassen für Multi-View ({n}/6)",
+  "en": "⚡ Release here for Multi-View ({n}/6)"
+ },
+ "tray.noIng": {
+  "de": "Keine Zutaten",
+  "en": "No ingredients"
+ },
+ "tray.prep": {
+  "de": "Zubereitung:",
+  "en": "Preparation:"
+ },
+ "tray.swap": {
+  "de": "🔄 Tauschen",
+  "en": "🔄 Swap"
+ },
+ "tray.glass": {
+  "de": "Glas:",
+  "en": "Glass:"
+ },
+ "tray.ingredients": {
+  "de": "Zutaten:",
+  "en": "Ingredients:"
+ },
+ "tray.amount": {
+  "de": "Menge:",
+  "en": "Amount:"
+ },
+ "prof.title": {
+  "de": "👤 Mein Profil",
+  "en": "👤 My profile"
+ },
+ "prof.sub": {
+  "de": "So sehen dich deine Kollegen im Chat und in der Personalliste.",
+  "en": "This is how your colleagues see you in the chat and in the staff list."
+ },
+ "prof.photo": {
+  "de": "📷 Foto ändern",
+  "en": "📷 Change photo"
+ },
+ "prof.viewPhoto": {
+  "de": "🔍 Foto ansehen",
+  "en": "🔍 View photo"
+ },
+ "prof.plan": {
+  "de": "Mein Arbeitsplan",
+  "en": "My Schedule"
+ },
+ "prof.planSub": {
+  "de": "Deine Schichten ansehen",
+  "en": "View your shifts"
+ },
+ "prof.about": {
+  "de": "Über mich",
+  "en": "About me"
+ },
+ "prof.btnBar": {
+  "de": "🍸 Hinter der Bar",
+  "en": "🍸 Behind the bar"
+ },
+ "prof.btnPause": {
+  "de": "☕ In der Pause",
+  "en": "☕ On a break"
+ },
+ "prof.btnIn": {
+  "de": "🔥 Voll dabei",
+  "en": "🔥 All in"
+ },
+ "prof.clear": {
+  "de": "Leeren",
+  "en": "Clear"
+ },
+ "prof.pinTitle": {
+  "de": "PIN-Code ändern",
+  "en": "Change PIN code"
+ },
+ "prof.newPin": {
+  "de": "Neuer PIN",
+  "en": "New PIN"
+ },
+ "prof.repeatPin": {
+  "de": "PIN wiederholen",
+  "en": "Repeat PIN"
+ },
+ "prof.pinHint": {
+  "de": "Leer lassen, wenn dein PIN gleich bleiben soll.",
+  "en": "Leave empty if your PIN should stay the same."
+ },
+ "prof.showHide": {
+  "de": "👁️ Anzeigen / verbergen",
+  "en": "👁️ Show / hide"
+ },
+ "prof.rights": {
+  "de": "Meine Rechte",
+  "en": "My rights"
+ },
+ "prof.unsaved": {
+  "de": "● Ungespeicherte Änderungen",
+  "en": "● Unsaved changes"
+ },
+ "prof.save": {
+  "de": "💾 Speichern",
+  "en": "💾 Save"
+ },
+ "prof.aboutColon": {
+  "de": "Über mich:",
+  "en": "About me:"
+ },
+ "prof.noBio": {
+  "de": "Keine Beschreibung angegeben.",
+  "en": "No description given."
+ },
+ "prof.bioBar": {
+  "de": "🍸 Hinter der Bar",
+  "en": "🍸 Behind the bar"
+ },
+ "prof.bioPause": {
+  "de": "☕ In der Pause",
+  "en": "☕ On a break"
+ },
+ "prof.bioIn": {
+  "de": "🔥 Heute voll dabei",
+  "en": "🔥 All in today"
+ },
+ "prof.bioPh": {
+  "de": "Schreibe etwas über dich oder deinen Status ...",
+  "en": "Write something about yourself or your status ..."
+ },
+ "prof.pinPh": {
+  "de": "4 bis 6 Ziffern",
+  "en": "4 to 6 digits"
+ },
+ "prof.pinPh2": {
+  "de": "Zur Kontrolle",
+  "en": "To confirm"
+ },
+ "prof.r1": {
+  "de": "Rezepte ansehen, Chat nutzen, eigenes Profil bearbeiten",
+  "en": "View recipes, use the chat, edit your own profile"
+ },
+ "prof.r2": {
+  "de": "Getränke anlegen, ändern und löschen",
+  "en": "Create, change and delete drinks"
+ },
+ "prof.r3": {
+  "de": "Personal, PINs und Login-Protokoll verwalten",
+  "en": "Manage staff, PINs and the login log"
+ },
+ "prof.r4": {
+  "de": "Tickets löschen",
+  "en": "Delete tickets"
+ },
+ "prof.allowed": {
+  "de": "✔ erlaubt",
+  "en": "✔ allowed"
+ },
+ "prof.notAllowed": {
+  "de": "– nicht erlaubt",
+  "en": "– not allowed"
+ },
+ "prof.bioEmpty": {
+  "de": "Noch keine Beschreibung – schreibe unten etwas über dich.",
+  "en": "No description yet – write something about yourself below."
+ },
+ "prof.pinLenErr": {
+  "de": "Der PIN muss aus 4 bis 6 Ziffern bestehen.",
+  "en": "The PIN must have 4 to 6 digits."
+ },
+ "prof.pinMismatch": {
+  "de": "Die beiden PINs stimmen nicht überein.",
+  "en": "The two PINs do not match."
+ },
+ "prof.pinRepeat": {
+  "de": "Bitte den PIN zur Kontrolle wiederholen.",
+  "en": "Please repeat the PIN to confirm."
+ },
+ "prof.pinOk": {
+  "de": "✔ PIN passt.",
+  "en": "✔ PIN matches."
+ },
+ "prof.loadErr": {
+  "de": "Fehler beim Laden des Profils.",
+  "en": "Error loading the profile."
+ },
+ "prof.lastLogin": {
+  "de": "Zuletzt angemeldet: {when}",
+  "en": "Last login: {when}"
+ },
+ "prof.noPhotoTitle": {
+  "de": "Noch kein Foto",
+  "en": "No photo yet"
+ },
+ "prof.noPhotoText": {
+  "de": "Lade zuerst ein Profilfoto hoch.",
+  "en": "Upload a profile photo first."
+ },
+ "prof.err": {
+  "de": "Fehler: {msg}",
+  "en": "Error: {msg}"
+ },
+ "prof.newPhoto": {
+  "de": "✔ Neues Foto – mit „Speichern“ übernehmen.",
+  "en": "✔ New photo – apply it with “Save”."
+ },
+ "prof.saveErr": {
+  "de": "Fehler beim Speichern: {msg}",
+  "en": "Error while saving: {msg}"
+ },
+ "prof.savedTitle": {
+  "de": "Profil gespeichert",
+  "en": "Profile saved"
+ },
+ "prof.savedPin": {
+  "de": "Dein neuer PIN gilt ab dem nächsten Login.",
+  "en": "Your new PIN applies from your next login."
+ },
+ "prof.savedOk": {
+  "de": "Deine Änderungen sind übernommen.",
+  "en": "Your changes have been saved."
+ },
+ "prof.role": {
+  "de": "Rolle: {role}",
+  "en": "Role: {role}"
+ },
+ "time.never": {
+  "de": "noch nie",
+  "en": "never"
+ },
+ "time.unknown": {
+  "de": "unbekannt",
+  "en": "unknown"
+ },
+ "time.now": {
+  "de": "gerade eben",
+  "en": "just now"
+ },
+ "time.min": {
+  "de": "vor {n} Min.",
+  "en": "{n} min ago"
+ },
+ "time.hour": {
+  "de": "vor {n} Std.",
+  "en": "{n} h ago"
+ },
+ "time.yesterday": {
+  "de": "gestern",
+  "en": "yesterday"
+ },
+ "time.days": {
+  "de": "vor {n} Tagen",
+  "en": "{n} days ago"
  }
 };
 
@@ -844,6 +1272,13 @@
         if (typeof updateActiveSeasonBadgeUI === 'function') updateActiveSeasonBadgeUI();
         if (typeof renderDashboard === 'function') renderDashboard();
         if (typeof updateUnifiedSettingsUI === 'function') updateUnifiedSettingsUI();
+        // Getränke-Seite neu zeichnen (Kategorien, Karten, Glas-Filter, Multi-View-Leiste)
+        try {
+          if (typeof renderCategories === 'function') renderCategories();
+          if (typeof renderGlassFilterButtons === 'function') renderGlassFilterButtons();
+          if (typeof renderDrinks === 'function') renderDrinks();
+          if (typeof renderBarTrayUI === 'function') renderBarTrayUI();
+        } catch (e) {}
       }
       if (typeof helpOnLanguageChange === 'function') helpOnLanguageChange();
     }
