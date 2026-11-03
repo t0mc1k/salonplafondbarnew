@@ -2,6 +2,22 @@
    js/auth.js
    Anmeldung per PIN, Rollen/Rechte, Abmelden, Berechtigungsprüfung
    ============================================================ */
+
+    // ---------- ZÁMOK PRE BETA VERZIU (salonplafondbarnew) ----------
+    // Zoznam mien/účtov, ktoré majú povolený prístup do testovacej bety:
+    const ALLOWED_BETA_USERS = [
+      'tomas',     // Vývojár (Tomas Kardos)
+      'amim',   // Manažér (alebo presné meno vašeho manažéra v Supabase)
+      'vanesa'     // Vanesa (bežný čašník na testovanie)
+    ];
+
+    function isUserAllowedInBeta(name) {
+      if (!name) return false;
+      const cleanName = String(name).trim().toLowerCase();
+      return ALLOWED_BETA_USERS.some(allowed => cleanName.includes(allowed));
+    }
+    // -------------------------------------------------------------
+
     async function fetchStaffByName(name) {
       const { data, error } = await _supabase.rpc('list_staff');
       if (error) return { data: null, error };
@@ -10,8 +26,6 @@
     }
 
     // ---------- Anmeldung: Namen wählen ----------
-    // Eine kompakte Liste für alle: oben „Zuletzt“ (max. 3), darunter alle Namen A–Z.
-    // Leitung (Manager/Developer) ist nur klein beschriftet. Suche erscheint ab 8 Personen.
     function getRecentLogins() {
       try {
         const list = JSON.parse(localStorage.getItem('salon_recent_logins') || '[]');
@@ -154,6 +168,15 @@
       errDiv.classList.add('hidden');
       if (!selectedWaiterForPin || pinLoginBusy) return;
 
+      // KONTROLA BETA PRÍSTUPU
+      if (!isUserAllowedInBeta(selectedWaiterForPin)) {
+        errDiv.innerText = "Prístup zamietnutý: Táto beta verzia je vyhradená len pre testovanie. Použite prosím stabilnú aplikáciu.";
+        errDiv.classList.remove('hidden');
+        currentEnteredPin = "";
+        updatePinDisplay();
+        return;
+      }
+
       if (currentEnteredPin.length < 4) {
         errDiv.innerText = t('login.pin4');
         errDiv.classList.remove('hidden');
@@ -207,14 +230,13 @@
       currentStaffRole = staffRecord.role || 'staff';
       userIsAdmin = (currentStaffRole === 'manager' || currentStaffRole === 'developer');
       userCanEdit = userIsAdmin || staffRecord.can_edit_drinks === true;
-      isAdmin = userIsAdmin || userCanEdit;   // Verwaltungsansicht standardmäßig an
+      isAdmin = userIsAdmin || userCanEdit;
       applyRoleUI();
 
       await loadDrinks();
       await checkPendingTicketsBadge();
       setupChatRealtimeListener();
       startLoginWatcher();
-      // Startseite nach dem Login: Dashboard (Standard) oder Getränke, je nach Einstellung des Kontos
       await loadStartPage();
       showDashboard();
       if (userStartPage === 'drinks') openDrinksView();
@@ -222,7 +244,7 @@
 
     // ---------- Hinweis, wenn sich ein Kollege anmeldet ----------
     let loginWatchTimer = null;
-    let loginWatchBaseline = null;   // Map: Name -> letzter Login (ms)
+    let loginWatchBaseline = null;
 
     async function pollLoginWatcher() {
       if (document.hidden || !currentWaiterName) return;
@@ -248,7 +270,7 @@
         });
       }
       loginWatchBaseline = fresh;
-      staffDatabaseRecords = data;   // aktuelle Fotos/Namen für Chat und @-Vorschläge
+      staffDatabaseRecords = data;
     }
 
     function startLoginWatcher() {
@@ -331,10 +353,7 @@
       alert("Du hast keine Berechtigung, Getränke zu bearbeiten.");
     }
 
-    // PIN auch mit der Computer-Tastatur eingeben (nur sichtbar, wenn der PIN-Schritt offen ist)
     document.addEventListener('keydown', e => {
-      // Nur wenn die Anmeldung wirklich sichtbar ist. Sonst würden in der App
-      // Zahlen und Backspace in allen Eingabefeldern verschluckt (Fehler in 3.2.02/3.2.03).
       const auth = document.getElementById('authContainer');
       const sec = document.getElementById('pinInputSection');
       if (!auth || auth.classList.contains('hidden') || !sec || sec.classList.contains('hidden')) return;
