@@ -2,22 +2,6 @@
    js/auth.js
    Anmeldung per PIN, Rollen/Rechte, Abmelden, Berechtigungsprüfung
    ============================================================ */
-
-    // ---------- ZÁMOK PRE BETA VERZIU ----------
-    // Len títo traja sa môžu v bete reálne prihlásiť. Ostatní uvidia upozornenie a odkaz na stabilnú verziu.
-    const ALLOWED_BETA_USERS = [
-      'tomas',     // Vývojár
-      'amim',      // Manažér / Amim
-      'vanesa'     // Vanesa (testovací čašník)
-    ];
-
-    function isUserAllowedInBeta(name) {
-      if (!name) return false;
-      const cleanName = String(name).trim().toLowerCase();
-      return ALLOWED_BETA_USERS.some(allowed => cleanName.includes(allowed));
-    }
-    // -------------------------------------------------------------
-
     async function fetchStaffByName(name) {
       const { data, error } = await _supabase.rpc('list_staff');
       if (error) return { data: null, error };
@@ -170,21 +154,6 @@
       errDiv.classList.add('hidden');
       if (!selectedWaiterForPin || pinLoginBusy) return;
 
-      // KONTROLA: Ak sa pokúsi prihlásiť niekto iný ako vybraná trojica
-      if (!isUserAllowedInBeta(selectedWaiterForPin)) {
-        errDiv.innerHTML = `
-          Diese Version ist nur für Tests und ausgewählte Mitglieder vorgesehen.<br>
-          Bitte verwenden Sie die richtige, stabile Version.<br><br>
-          <a href="https://t0mc1k.github.io/salonplafondbar/" target="_blank" style="display: inline-block; background: #d97706; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold;">
-            Zur stabilen Version wechseln
-          </a>
-        `;
-        errDiv.classList.remove('hidden');
-        currentEnteredPin = "";
-        updatePinDisplay();
-        return;
-      }
-
       if (currentEnteredPin.length < 4) {
         errDiv.innerText = t('login.pin4');
         errDiv.classList.remove('hidden');
@@ -249,6 +218,7 @@
       await loadStartPage();
       showDashboard();
       if (userStartPage === 'drinks') openDrinksView();
+      if (typeof pushOnLogin === 'function') pushOnLogin();   // Gerät für Benachrichtigungen dieser Person zuordnen
     }
 
     // ---------- Hinweis, wenn sich ein Kollege anmeldet ----------
@@ -325,6 +295,7 @@
     async function handleLogout() {
       closeSettingsMenu();
       stopLoginWatcher();
+      if (typeof pushOnLogout === 'function') await pushOnLogout();   // Gerät von dieser Person trennen, solange der Token noch gilt
       try { await _supabase.rpc('logout_staff'); } catch (e) {}
       clearStaffSession();
       sessionStorage.removeItem('salon_waiter_name');

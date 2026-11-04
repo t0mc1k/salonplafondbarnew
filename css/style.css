@@ -772,7 +772,7 @@ body.dark-mode .mobile-switch-btn { color: #f87171; }
 /* Auf dem Dashboard gibt es weder Getränke-Korb noch Hoch-Knopf */
 body.on-dashboard #barTrayBar,
 body.on-dashboard #scrollToTopBtn { display: none !important; }
-body.on-dashboard { padding-bottom: 2rem; }
+body.on-dashboard { padding-bottom: 5rem; }
 
 .dash-hero { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin: .25rem 0 1.1rem; }
 .dash-hello { font-size: 1.35rem; font-weight: 900; color: var(--ui-text); line-height: 1.2; }
@@ -963,3 +963,42 @@ textarea.ui-field { resize: vertical; }
 .hp-group:first-child { margin-top: 0; }
 .hp-faq-q { font-weight: 800; }
 mark.hp-hit { background: rgba(245, 158, 11, .45); color: inherit; border-radius: .2rem; }
+
+/* =====================================================================
+   v4.1.00: TomiAI + Push-Hinweis
+   ===================================================================== */
+.tomi-fab { position: fixed; left: 1rem; bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); z-index: 80; padding: .65rem 1rem; font-size: .8rem; font-weight: 900; color: #0f172a; border-radius: 999px; background: linear-gradient(135deg, #fbbf24, #f59e0b 55%, #fb923c); box-shadow: 0 8px 24px rgba(245, 158, 11, .45); transition: transform .12s; }
+.tomi-fab:hover { transform: translateY(-2px); }
+.tomi-fab:active { transform: scale(.95); }
+body:has(#barTrayBar:not(.hidden)) .tomi-fab { bottom: calc(5.6rem + env(safe-area-inset-bottom, 0px)); }
+body.fm-open .tomi-fab { display: none; }
+@media print { .tomi-fab { display: none !important; } }
+.tomi-card { height: min(90vh, 46rem); }
+.tomi-body { display: flex; flex-direction: column; padding: 0 !important; overflow: hidden !important; }
+.tomi-thread { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: .6rem; }
+.tomi-msg { max-width: 92%; padding: .65rem .85rem; border-radius: 1rem; font-size: .82rem; line-height: 1.5; color: var(--ui-text); word-break: break-word; }
+.tomi-msg p { margin: .2rem 0; }
+.tomi-msg ul { margin: .3rem 0 .3rem 1.1rem; list-style: disc; }
+.tomi-msg li { margin: .15rem 0; }
+.tomi-me { align-self: flex-end; background: #f59e0b; color: #0f172a; border-bottom-right-radius: .3rem; }
+.tomi-bot { align-self: flex-start; background: var(--ui-surface); border: 1px solid var(--ui-border); border-bottom-left-radius: .3rem; }
+.tomi-err { border-color: rgba(239, 68, 68, .5); color: #ef4444; }
+.tomi-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+.tomi-chips .fm-tab { white-space: normal; text-align: left; }
+.tomi-typing { display: flex; align-items: center; gap: .3rem; }
+.tomi-typing span { width: .45rem; height: .45rem; border-radius: 50%; background: var(--ui-muted); animation: tomiDot 1s infinite ease-in-out; }
+.tomi-typing span:nth-child(2) { animation-delay: .15s; } .tomi-typing span:nth-child(3) { animation-delay: .3s; }
+.tomi-typing em { margin-left: .4rem; font-size: .7rem; color: var(--ui-muted); }
+@keyframes tomiDot { 0%, 80%, 100% { opacity: .25; transform: scale(.8); } 40% { opacity: 1; transform: scale(1); } }
+.tomi-prop { margin-top: .6rem; padding: .6rem .7rem; border-radius: .8rem; background: rgba(245, 158, 11, .12); border: 1px solid rgba(245, 158, 11, .45); }
+.tomi-prop-title { font-size: .62rem; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; color: var(--ui-accent); margin-bottom: .2rem; }
+.fm-foot-tomi, .tomi-input { display: flex; gap: .5rem; align-items: flex-end; width: 100%; }
+.tomi-input textarea { flex: 1; resize: none; max-height: 120px; min-height: 2.6rem; }
+.tomi-input button { height: 2.6rem; min-width: 2.8rem; }
+.tomi-disc { width: 100%; text-align: center; margin-top: .3rem; }
+#tomiModal .fm-foot { flex-direction: column; align-items: stretch; }
+.dash-push { margin-bottom: 1.1rem; padding: .85rem 1rem; border-radius: 1rem; background: rgba(245, 158, 11, .12); border: 1px solid rgba(245, 158, 11, .5); }
+.dash-push b { font-size: .88rem; color: var(--ui-text); }
+.dash-push p { margin: .3rem 0 .6rem; font-size: .76rem; line-height: 1.45; color: var(--ui-muted); }
+.dash-push-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+.push-settings { margin-bottom: .5rem; }

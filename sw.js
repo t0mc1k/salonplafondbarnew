@@ -77,3 +77,46 @@ self.addEventListener('fetch', event => {
 self.addEventListener('message', event => {
   if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });
+
+/* ============================================================
+   Web Push (v4.1.00): Benachrichtigungen auch bei geschlossener App
+   Der Server (Edge Function send-push) schickt JSON: { title, body, tag, url, groupTitle, groupBody }
+   - Gleiche Meldungsart (tag) wird zusammengefasst, z. B. „3 neue Nachrichten“.
+   - Tippen auf die Meldung öffnet die App und das passende Fenster (url = chat, swaps, myplan, faults, tickets, news).
+   Wichtig für iPhone: Jede Push-Nachricht MUSS eine sichtbare Meldung zeigen, sonst entzieht iOS die Erlaubnis.
+   ============================================================ */
+self.addEventListener('push', event => {
+  let d = {};
+  try { d = event.data ? event.data.json() : {}; } catch (e) { d = { title: 'Salonplafond BAR', body: event.data ? event.data.text() : '' }; }
+  event.waitUntil((async () => {
+    const tag = d.tag || 'general';
+    let title = d.title || 'Salonplafond BAR';
+    let body = d.body || '';
+    let count = 1;
+    if (d.groupBody) {
+      const existing = await self.registration.getNotifications({ tag });
+      if (existing.length) {
+        count = ((existing[0].data && existing[0].data.count) || 1) + 1;
+        title = d.groupTitle || title;
+        body = String(d.groupBody).replace('{n}', String(count));
+      }
+    }
+    await self.registration.showNotification(title, {
+      body, tag, renotify: true,
+      icon: 'icons/icon-192.png', badge: 'icons/icon-192.png',
+      data: { url: d.url || '', count }
+    });
+  })());
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const target = (event.notification.data && event.notification.data.url) || '';
+  event.waitUntil((async () => {
+    const list = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const c of list) {
+      if ('focus' in c) { await c.focus(); c.postMessage({ type: 'open', target }); return; }
+    }
+    await self.clients.openWindow(self.registration.scope + (target ? '?open=' + encodeURIComponent(target) : ''));
+  })());
+});

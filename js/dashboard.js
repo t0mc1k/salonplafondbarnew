@@ -35,6 +35,7 @@
         login:    { icon: '🔐', title: t('dash.login'), sub: t('dash.loginSub'), run: 'openLoginHistoryModal', need: 'admin' },
         settings: { icon: '⚙️', title: t('dash.settings'), sub: t('dash.settingsSub'), run: 'openUnifiedSettingsModal', need: 'admin' },
         news:     { icon: '🚀', title: t('dash.news'), sub: t('dash.newsSub'), run: 'openChangelogModal', need: 'all' },
+        tomi:     { icon: '✨', title: t('dash.tomi'), sub: adm ? t('dash.tomiSubA') : t('dash.tomiSubS'), run: 'openTomiModal', need: 'all', ai: true },
         help:     { icon: '📖', title: t('dash.help'), sub: t('dash.helpSub'), run: 'openHelpModal', need: 'all' },
         support:  { icon: '🛟', title: t('dash.support'), sub: t('dash.supportSub'), run: 'openSupportModal', need: 'admin', badge: 'dashTicketBadge' }
       };
@@ -48,11 +49,11 @@
           { title: t('dash.g.std'),  ids: ['checklist', 'maint', 'found', 'loss'] },
           { title: t('dash.g.team'), ids: ['teamplan', 'swaps', 'payroll', 'staff', 'chat'] },
           { title: t('dash.g.sys'),  ids: ['login', 'settings'] },
-          { title: t('dash.g.info'), ids: ['news', 'help', 'support'] }
+          { title: t('dash.g.info'), ids: ['news', 'tomi', 'help', 'support'] }
         ];
       }
       // Kellner/Barkeeper (+ Import, falls Getränke-Recht)
-      const bar = ['drinks', 'allergens', 'maint', 'found', 'loss', 'help', 'news'];
+      const bar = ['drinks', 'allergens', 'maint', 'found', 'loss', 'tomi', 'help', 'news'];
       if (userCanEdit) bar.splice(1, 0, 'impexp');
       return [
         { title: t('dash.g.shift'),      ids: ['checklist', 'myplan', 'swaps', 'chat'] },
@@ -99,6 +100,7 @@
 
       refreshDashboardBadges();
       loadDashboardCounts();
+      if (typeof pushRenderBanner === 'function') pushRenderBanner();
     }
 
     // Kachel antippen: Funktion aufrufen (nur bekannte Funktionen, nie beliebigen Text ausführen)

@@ -28,6 +28,11 @@ js/                 Logik, in Themen aufgeteilt (siehe unten)
 | Sprachen DE/EN (Wörterbuch, Umschalter) | js/i18n.js |
 | Übersetzung der Betriebs-Fenster (Tabelle Deutsch → Englisch) | js/i18n-ui.js (generiert) |
 | Hilfe & Anleitung (Kapitel in DE/EN) | js/help.js |
+| Push-Benachrichtigungen (Client) | js/push.js, sw.js |
+| TomiAI (Client) | js/tomi.js |
+| Edge Functions (Server): send-push, tomi-ai | supabase/functions/ |
+| Einrichtung 4.1.00 (Schritt für Schritt) | docs/SETUP-4.1.00.md |
+| VAPID-Schlüssel erzeugen (offline) | tools/vapid-generator.html |
 | Checklisten & Standards (Öffnung/Laufend/Schließung) | js/checklists.js |
 | Mein Arbeitsplan + Schichttausch (direkt/Börse, Manager genehmigt) | js/shift-swap.js |
 | Stunden & Lohn (Pausen, Korrekturen, Excel) | js/payroll.js |

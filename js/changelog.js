@@ -10,9 +10,16 @@
    Änderungs-Typen: 'new' Neu, 'improved' Verbessert, 'fixed' Behoben,
                     'security' Sicherheit, 'info' Allgemein
    ============================================================ */
-    const APP_VERSION = '4.0.02';
+    const APP_VERSION = '4.1.00';
 
     const CHANGELOG = [
+  { version: '4.1.00', range: '', date: 'November 2026', title: 'Benachrichtigungen & TomiAI',
+    changes: [
+      ['new', 'Push-Benachrichtigungen: Du bekommst eine Meldung auf dein Handy, auch wenn die App geschlossen ist: neue Chat-Nachrichten, @Erwähnungen, Änderungen am Arbeitsplan, Schichttausch-Anfragen und Entscheidungen, Team-News. Manager erfahren zusätzlich von Tauschanfragen zur Genehmigung, dringenden Störungen und neuen Tickets. Aktivieren: Dashboard-Karte oder Einstellungen → Push-Benachrichtigungen. Auf dem iPhone muss die App dafür auf dem Home-Bildschirm liegen.'],
+      ['new', 'TomiAI: Der neue Assistent (Knopf „✨ TomiAI“ unten links). Er beantwortet Fragen zu Rezepten, Allergenen, Speisekarte, Checklisten und zur App, auf Deutsch, Englisch oder Slowakisch. Manager/Developer bekommen zusätzlich Hilfe bei Plan, Stunden, Tausch und Tickets: Änderungen schlägt TomiAI nur vor, du bestätigst sie mit einem Knopf.'],
+      ['improved', 'Einzelne Meldungsarten lassen sich in den Einstellungen ein- und ausschalten. Beim Abmelden wird das Gerät von deinem Konto getrennt.'],
+      ['info', 'Einrichtung durch Manager/Developer nötig: siehe docs/SETUP-4.1.00.md (SQL, Schlüssel, zwei Edge Functions). Der TomiAI-Gesprächsverlauf wird nicht gespeichert.']
+    ] },
   { version: '4.0.02', range: '', date: 'November 2026', title: 'Englisch für das ganze Team & Startseite nach dem Login',
     changes: [
       ['new', 'Englisch erweitert: Die Getränke-Datenbank (Suche, Kategorien, Karten, Rezept, Drucken), Multi-View, Einkaufsliste und dein Profil lassen sich jetzt ebenfalls auf Englisch umstellen (Einstellungen → Sprache).'],

@@ -199,6 +199,7 @@
       if (themeInfo) themeInfo.textContent = appSettings.theme === 'auto'
         ? t('set.themeAuto', { mode: themeMode === 'dark' ? t('set.themeDark') : t('set.themeLight') }) : '';
       if (typeof updateStartPageUI === 'function') updateStartPageUI();
+      if (typeof pushRefresh === 'function') pushRefresh();
     }
 
     function setAdminView(on) {

@@ -1477,6 +1477,282 @@
  "chat.typingN": {
   "de": "{a} und {b} schreiben ...",
   "en": "{a} and {b} are typing ..."
+ },
+ "dash.tomi": {
+  "de": "TomiAI",
+  "en": "TomiAI"
+ },
+ "dash.tomiSubS": {
+  "de": "Fragen & Hilfe",
+  "en": "Questions & help"
+ },
+ "dash.tomiSubA": {
+  "de": "Assistent & Planung",
+  "en": "Assistant & planning"
+ },
+ "push.title": {
+  "de": "🔔 Push-Benachrichtigungen",
+  "en": "🔔 Push notifications"
+ },
+ "push.enable": {
+  "de": "Benachrichtigungen aktivieren",
+  "en": "Enable notifications"
+ },
+ "push.disable": {
+  "de": "Auf diesem Gerät ausschalten",
+  "en": "Turn off on this device"
+ },
+ "push.test": {
+  "de": "Test senden",
+  "en": "Send a test"
+ },
+ "push.testSent": {
+  "de": "Test gesendet. Er kommt in wenigen Sekunden.",
+  "en": "Test sent. It arrives in a few seconds."
+ },
+ "push.on": {
+  "de": "✅ Aktiv auf diesem Gerät",
+  "en": "✅ Active on this device"
+ },
+ "push.stUnconfigured": {
+  "de": "Noch nicht eingerichtet. Ein Manager/Developer muss zuerst die Push-Schlüssel eintragen (siehe Einrichtungs-Anleitung).",
+  "en": "Not set up yet. A manager/developer has to enter the push keys first (see the setup guide)."
+ },
+ "push.stUnsupported": {
+  "de": "Dieses Gerät oder dieser Browser unterstützt keine Push-Benachrichtigungen.",
+  "en": "This device or browser does not support push notifications."
+ },
+ "push.stIos": {
+  "de": "Auf iPhone/iPad funktionieren Benachrichtigungen nur, wenn die App auf dem Home-Bildschirm liegt: Tippe in Safari auf „Teilen“ → „Zum Home-Bildschirm“, öffne die App dann von dort und aktiviere die Benachrichtigungen.",
+  "en": "On iPhone/iPad notifications only work if the app is on your home screen: in Safari tap “Share” → “Add to Home Screen”, then open the app from there and enable notifications."
+ },
+ "push.stDenied": {
+  "de": "Benachrichtigungen sind blockiert. Erlaube sie in den Einstellungen deines Geräts oder Browsers für diese App und lade die App neu.",
+  "en": "Notifications are blocked. Allow them in your device or browser settings for this app and reload the app."
+ },
+ "push.stOff": {
+  "de": "Aus. Aktiviere sie, um auch bei geschlossener App Bescheid zu bekommen.",
+  "en": "Off. Enable them to be notified even when the app is closed."
+ },
+ "push.denied": {
+  "de": "Du hast Benachrichtigungen nicht erlaubt.",
+  "en": "You did not allow notifications."
+ },
+ "push.enabled": {
+  "de": "Benachrichtigungen aktiviert",
+  "en": "Notifications enabled"
+ },
+ "push.disabled": {
+  "de": "Benachrichtigungen ausgeschaltet",
+  "en": "Notifications turned off"
+ },
+ "push.error": {
+  "de": "Fehler: {msg}",
+  "en": "Error: {msg}"
+ },
+ "push.what": {
+  "de": "Worüber möchtest du informiert werden?",
+  "en": "What do you want to be notified about?"
+ },
+ "push.mgrWhat": {
+  "de": "Für Manager",
+  "en": "For managers"
+ },
+ "push.cChat": {
+  "de": "💬 Neue Chat-Nachrichten",
+  "en": "💬 New chat messages"
+ },
+ "push.cChatSub": {
+  "de": "Alle Nachrichten im Team-Chat",
+  "en": "All messages in the team chat"
+ },
+ "push.cMention": {
+  "de": "@ Erwähnungen",
+  "en": "@ Mentions"
+ },
+ "push.cMentionSub": {
+  "de": "Wenn dich jemand im Chat mit @ erwähnt",
+  "en": "When someone mentions you with @ in the chat"
+ },
+ "push.cPlan": {
+  "de": "🗓️ Änderungen am Arbeitsplan",
+  "en": "🗓️ Schedule changes"
+ },
+ "push.cPlanSub": {
+  "de": "Dein Plan wurde geändert oder neu erstellt",
+  "en": "Your schedule was changed or created"
+ },
+ "push.cSwap": {
+  "de": "🔄 Schichttausch",
+  "en": "🔄 Shift swaps"
+ },
+ "push.cSwapSub": {
+  "de": "Anfragen an dich, Börse und Entscheidungen",
+  "en": "Requests to you, the board and decisions"
+ },
+ "push.cNews": {
+  "de": "📣 Team-News",
+  "en": "📣 Team news"
+ },
+ "push.cNewsSub": {
+  "de": "Neuigkeiten und Specials vom Manager",
+  "en": "News and specials from the manager"
+ },
+ "push.cMgrSwap": {
+  "de": "✅ Tausch wartet auf Genehmigung",
+  "en": "✅ Swap waiting for approval"
+ },
+ "push.cFaultUrgent": {
+  "de": "🚨 Dringende Störungen und Notfälle",
+  "en": "🚨 Urgent faults and emergencies"
+ },
+ "push.cFault": {
+  "de": "🛠️ Weitere Störungen",
+  "en": "🛠️ Other faults"
+ },
+ "push.cTicket": {
+  "de": "🛟 Neue Tickets",
+  "en": "🛟 New tickets"
+ },
+ "push.bTitle": {
+  "de": "🔔 Nichts mehr verpassen",
+  "en": "🔔 Never miss anything"
+ },
+ "push.bText": {
+  "de": "Aktiviere Benachrichtigungen und erfahre auch bei geschlossener App von neuen Nachrichten, Planänderungen und Tausch-Anfragen.",
+  "en": "Enable notifications to hear about new messages, schedule changes and swap requests even when the app is closed."
+ },
+ "push.bIosTitle": {
+  "de": "📲 Für Benachrichtigungen: App auf den Home-Bildschirm",
+  "en": "📲 For notifications: add the app to your home screen"
+ },
+ "push.bIosText": {
+  "de": "Tippe in Safari auf „Teilen“ → „Zum Home-Bildschirm“ und öffne die App dann von dort. Erst dann sind Benachrichtigungen auf dem iPhone möglich.",
+  "en": "In Safari tap “Share” → “Add to Home Screen”, then open the app from there. Only then are notifications possible on the iPhone."
+ },
+ "push.bEnable": {
+  "de": "Aktivieren",
+  "en": "Enable"
+ },
+ "push.bLater": {
+  "de": "Später",
+  "en": "Later"
+ },
+ "tomi.fab": {
+  "de": "TomiAI",
+  "en": "TomiAI"
+ },
+ "tomi.title": {
+  "de": "✨ TomiAI",
+  "en": "✨ TomiAI"
+ },
+ "tomi.subStaff": {
+  "de": "Fragen zu Rezepten, Allergenen, Speisekarte und der App",
+  "en": "Questions about recipes, allergens, the food menu and the app"
+ },
+ "tomi.subAdmin": {
+  "de": "Assistent für Rezepte, Team und Planung (Manager-Modus)",
+  "en": "Assistant for recipes, team and planning (manager mode)"
+ },
+ "tomi.hello": {
+  "de": "Hallo {name}! Ich bin Tomi. Was möchtest du wissen?",
+  "en": "Hi {name}! I am Tomi. What would you like to know?"
+ },
+ "tomi.helloAdmin": {
+  "de": "Als Manager helfe ich dir auch bei Plan, Stunden, Tausch und Tickets. Änderungen mache ich nie selbst, ich schlage sie nur vor.",
+  "en": "As a manager I can also help you with the schedule, hours, swaps and tickets. I never change anything myself, I only suggest."
+ },
+ "tomi.ph": {
+  "de": "Frage stellen ...",
+  "en": "Ask a question ..."
+ },
+ "tomi.send": {
+  "de": "Senden",
+  "en": "Send"
+ },
+ "tomi.thinking": {
+  "de": "Tomi denkt nach ...",
+  "en": "Tomi is thinking ..."
+ },
+ "tomi.disc": {
+  "de": "TomiAI kann Fehler machen. Bei Allergenen immer in der Küche nachfragen.",
+  "en": "TomiAI can make mistakes. For allergens always check with the kitchen."
+ },
+ "tomi.errAuth": {
+  "de": "Bitte melde dich neu an.",
+  "en": "Please log in again."
+ },
+ "tomi.errQuota": {
+  "de": "Du hast das Tageslimit für TomiAI erreicht. Morgen geht es weiter.",
+  "en": "You have reached the daily limit for TomiAI. Try again tomorrow."
+ },
+ "tomi.errNotConfigured": {
+  "de": "TomiAI ist noch nicht eingerichtet (Gemini-Schlüssel fehlt). Bitte den Manager/Developer informieren.",
+  "en": "TomiAI is not set up yet (Gemini key missing). Please tell the manager/developer."
+ },
+ "tomi.errDeploy": {
+  "de": "TomiAI ist noch nicht eingerichtet (Funktion nicht gefunden). Bitte den Manager/Developer informieren.",
+  "en": "TomiAI is not set up yet (function not found). Please tell the manager/developer."
+ },
+ "tomi.errAi": {
+  "de": "TomiAI ist gerade nicht erreichbar. Bitte versuche es später noch einmal.",
+  "en": "TomiAI is not reachable right now. Please try again later."
+ },
+ "tomi.propTitle": {
+  "de": "Vorschlag (noch nicht ausgeführt)",
+  "en": "Proposal (not done yet)"
+ },
+ "tomi.confirm": {
+  "de": "✅ Bestätigen",
+  "en": "✅ Confirm"
+ },
+ "tomi.discard": {
+  "de": "✖ Verwerfen",
+  "en": "✖ Discard"
+ },
+ "tomi.done": {
+  "de": "✔ Ausgeführt",
+  "en": "✔ Done"
+ },
+ "tomi.failed": {
+  "de": "⚠️ Fehlgeschlagen: {msg}",
+  "en": "⚠️ Failed: {msg}"
+ },
+ "tomi.discarded": {
+  "de": "Verworfen",
+  "en": "Discarded"
+ },
+ "tomi.chipS1": {
+  "de": "Wie macht man einen Negroni?",
+  "en": "How do I make a Negroni?"
+ },
+ "tomi.chipS2": {
+  "de": "Welche Drinks sind vegan?",
+  "en": "Which drinks are vegan?"
+ },
+ "tomi.chipS3": {
+  "de": "Was kann ein Gast mit Nuss-Allergie essen?",
+  "en": "What can a guest with a nut allergy eat?"
+ },
+ "tomi.chipS4": {
+  "de": "Wann arbeite ich diese Woche?",
+  "en": "When do I work this week?"
+ },
+ "tomi.chipM1": {
+  "de": "Wer ist am Freitag frei?",
+  "en": "Who is free on Friday?"
+ },
+ "tomi.chipM2": {
+  "de": "Fasse die Stunden diesen Monat zusammen",
+  "en": "Summarise the hours this month"
+ },
+ "tomi.chipM3": {
+  "de": "Welche Tausch-Anfragen warten auf mich?",
+  "en": "Which swap requests are waiting for me?"
+ },
+ "tomi.chipM4": {
+  "de": "Welche Tickets sind offen? Schlage Antworten vor.",
+  "en": "Which tickets are open? Suggest replies."
  }
 };
 
@@ -1532,6 +1808,7 @@
           if (typeof renderBarTrayUI === 'function') renderBarTrayUI();
         } catch (e) {}
       }
+      if (typeof pushOnLanguageChange === 'function') pushOnLanguageChange();
       if (typeof helpOnLanguageChange === 'function') helpOnLanguageChange();
     }
 
