@@ -7,7 +7,7 @@
    Einrichtung: docs/SETUP-4.1.00.md. Der öffentliche VAPID-Schlüssel kommt unten bei PUSH_VAPID_PUBLIC_KEY hinein.
    ============================================================ */
 
-    const PUSH_VAPID_PUBLIC_KEY = '';   // ← hier den ÖFFENTLICHEN Schlüssel aus tools/vapid-generator.html eintragen
+    const PUSH_VAPID_PUBLIC_KEY = 'BA3zkiAEV55GF27vyyDEKb71d8GD_NlwOeNVp_RzYr9jqz-G3h08NNHbly5cCrDpmIP3cgrcqvDcmRcWzHxi1eM';   // ← hier den ÖFFENTLICHEN Schlüssel aus tools/vapid-generator.html eintragen
 
     const PUSH_CATS = [
       ['chat', '💬', 'push.cChat', 'push.cChatSub'],
