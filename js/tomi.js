@@ -110,6 +110,7 @@
         if (!code && error && error.context && typeof error.context.json === 'function') code = (await error.context.json()).error;
       } catch (e) {}
       const status = error && error.context && error.context.status;
+      if (code === 'busy' || status === 503) return t('tomi.errBusy');
       if (code === 'auth' || status === 401) return t('tomi.errAuth');
       if (code === 'quota' || status === 429) return t('tomi.errQuota');
       if (code === 'not_configured') return t('tomi.errNotConfigured');

@@ -1694,6 +1694,10 @@
   "de": "TomiAI ist noch nicht eingerichtet (Funktion nicht gefunden). Bitte den Manager/Developer informieren.",
   "en": "TomiAI is not set up yet (function not found). Please tell the manager/developer."
  },
+ "tomi.errBusy": {
+  "de": "TomiAI ist gerade stark ausgelastet (Google). Bitte versuche es in einer Minute noch einmal.",
+  "en": "TomiAI is very busy right now (Google). Please try again in a minute."
+ },
  "tomi.errAi": {
   "de": "TomiAI ist gerade nicht erreichbar. Bitte versuche es später noch einmal.",
   "en": "TomiAI is not reachable right now. Please try again later."

@@ -10,9 +10,14 @@
    Änderungs-Typen: 'new' Neu, 'improved' Verbessert, 'fixed' Behoben,
                     'security' Sicherheit, 'info' Allgemein
    ============================================================ */
-    const APP_VERSION = '4.1.00';
+    const APP_VERSION = '4.1.01';
 
     const CHANGELOG = [
+  { version: '4.1.01', range: '', date: 'November 2026', title: 'TomiAI: stabiler bei Überlastung',
+    changes: [
+      ['fixed', 'TomiAI antwortete manchmal nicht, wenn der KI-Dienst von Google kurz überlastet war. Jetzt versucht TomiAI es automatisch erneut und weicht bei Bedarf auf ein anderes Modell aus. Bleibt der Dienst überlastet, erscheint eine verständliche Meldung.'],
+      ['improved', 'Fehlgeschlagene TomiAI-Anfragen zählen nicht mehr zum Tageslimit.']
+    ] },
   { version: '4.1.00', range: '', date: 'November 2026', title: 'Benachrichtigungen & TomiAI',
     changes: [
       ['new', 'Push-Benachrichtigungen: Du bekommst eine Meldung auf dein Handy, auch wenn die App geschlossen ist: neue Chat-Nachrichten, @Erwähnungen, Änderungen am Arbeitsplan, Schichttausch-Anfragen und Entscheidungen, Team-News. Manager erfahren zusätzlich von Tauschanfragen zur Genehmigung, dringenden Störungen und neuen Tickets. Aktivieren: Dashboard-Karte oder Einstellungen → Push-Benachrichtigungen. Auf dem iPhone muss die App dafür auf dem Home-Bildschirm liegen.'],
