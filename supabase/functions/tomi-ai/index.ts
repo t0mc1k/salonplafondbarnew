@@ -9,9 +9,10 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const GEMINI_KEY = Deno.env.get("GEMINI_API_KEY") ?? "";
-const MODEL = Deno.env.get("GEMINI_MODEL") ?? "gemini-2.5-flash";
-// Reihenfolge: gewünschtes Modell, dann Ausweichmodelle bei Überlastung (Doppelte werden entfernt)
-const MODELS = Array.from(new Set([MODEL, "gemini-2.5-flash-lite", "gemini-2.0-flash"]));
+const MODEL_ENV = (Deno.env.get("GEMINI_MODEL") ?? "").trim();
+// Reihenfolge: eigenes Modell (falls gesetzt), dann „immer aktuell“-Aliase und bekannte Modelle.
+// Findet Google keines davon (404), wird automatisch gefragt, welche Modelle der Schlüssel wirklich hat.
+const MODELS = Array.from(new Set([MODEL_ENV, "gemini-flash-latest", "gemini-2.5-flash", "gemini-flash-lite-latest", "gemini-2.5-flash-lite"].filter(Boolean)));
 const LIMIT_STAFF = 60;     // Anfragen pro Person und Tag
 const LIMIT_ADMIN = 200;
 
@@ -162,10 +163,28 @@ export async function callGeminiWithFallback(
       log.push(`${model} #${attempt} ${res.status} ${body}`);
       if (retryable(res.status)) { sawBusy = true; if (attempt === 1) await sleep(900); continue; }
       if (res.status === 404) break;                                  // Modell gibt es nicht (mehr): nächstes Modell
-      return { error: "ai", status: res.status, log };                // Schlüssel/Anfrage fehlerhaft: Abbruch
+      if (res.status === 400 && !/API[_ ]?KEY/i.test(body)) break;    // Modell mag die Anfrage nicht: nächstes Modell
+      return { error: "ai", status: res.status, log };                // Schlüssel ungültig / nicht erlaubt: Abbruch
     }
   }
   return { error: sawBusy ? "busy" : "ai", status: lastStatus, log };
+}
+
+// Aus der Modellliste von Google die besten Chat-Modelle auswählen (stabil vor Vorschau, Flash vor Flash-Lite vor Pro, neueste Version zuerst)
+export function rankModels(list: any[]): string[] {
+  const bad = /embed|imagen|image|tts|audio|live|robotics|computer|aqa|veo|learnlm|gemma|vision|thinking|exp|customtools|transcribe|diarize/i;
+  const rows: { name: string; ver: number; tier: number; preview: boolean }[] = [];
+  for (const m of list ?? []) {
+    const methods = m?.supportedGenerationMethods;
+    if (!Array.isArray(methods) || !methods.includes("generateContent")) continue;
+    const name = String(m?.name ?? "").replace(/^models\//, "");
+    if (!/^gemini-/.test(name) || bad.test(name)) continue;
+    const mm = name.match(/^gemini-(\d+(?:\.\d+)?)-(flash-lite|flash|pro)/);
+    if (!mm) continue;
+    rows.push({ name, ver: parseFloat(mm[1]), tier: mm[2] === "flash" ? 2 : mm[2] === "flash-lite" ? 1 : 0, preview: /preview/.test(name) });
+  }
+  rows.sort((a, b) => (Number(a.preview) - Number(b.preview)) || (b.tier - a.tier) || (b.ver - a.ver) || a.name.localeCompare(b.name));
+  return rows.map((r) => r.name);
 }
 // >>helpers
 
@@ -327,24 +346,37 @@ Deno.serve(async (req) => {
   const ctx = await buildContext(db, me, isAdmin, messages.map((m: any) => m.text).slice(-3).join(" "));
   const system = buildSystem(me, isAdmin, lang, ctx.text);
 
-  const baseConfig: any = { temperature: 0.3, maxOutputTokens: 2000, responseMimeType: "application/json", responseSchema: SCHEMA };
-  const result = await callGeminiWithFallback(
-    (model) => {
-      const genConfig = { ...baseConfig };
-      if (/2\.5/.test(model)) genConfig.thinkingConfig = { thinkingBudget: 0 };
-      return fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-goog-api-key": GEMINI_KEY },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: system }] },
-          contents: messages.map((m: any) => ({ role: m.role, parts: [{ text: m.text }] })),
-          generationConfig: genConfig,
-        }),
-      });
-    },
-    MODELS,
-    (ms) => new Promise((r) => setTimeout(r, ms)),
-  );
+  const baseConfig: any = { temperature: 0.3, maxOutputTokens: 4000, responseMimeType: "application/json", responseSchema: SCHEMA };
+  const doFetch = (model: string) => {
+    const genConfig = { ...baseConfig };
+    if (/2\.5/.test(model)) genConfig.thinkingConfig = { thinkingBudget: 0 };
+    return fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-goog-api-key": GEMINI_KEY },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: system }] },
+        contents: messages.map((m: any) => ({ role: m.role, parts: [{ text: m.text }] })),
+        generationConfig: genConfig,
+      }),
+    });
+  };
+  const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+  let result = await callGeminiWithFallback(doFetch, MODELS, wait);
+  if (!result.data && result.status === 404) {
+    // Keines der bekannten Modelle gefunden: Google fragen, welche Modelle dieser Schlüssel kann
+    try {
+      const lr = await fetch("https://generativelanguage.googleapis.com/v1beta/models?pageSize=200", { headers: { "x-goog-api-key": GEMINI_KEY } });
+      if (lr.ok) {
+        const ranked = rankModels((await lr.json())?.models ?? []).filter((m) => !MODELS.includes(m)).slice(0, 4);
+        console.log("available models (ranked):", ranked.join(", "));
+        if (ranked.length) {
+          const second = await callGeminiWithFallback(doFetch, ranked, wait);
+          second.log = result.log.concat(second.log);
+          result = second;
+        }
+      } else console.error("list models failed", lr.status);
+    } catch (e) { console.error("list models error", e); }
+  }
   console.log("gemini:", result.log.join(" | "));
   if (!result.data) {
     await refund(me.name);
