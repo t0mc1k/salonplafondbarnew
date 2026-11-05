@@ -7,8 +7,11 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const GEMINI_KEY = Deno.env.get("GEMINI_API_KEY") ?? "";
 const MODEL = Deno.env.get("GEMINI_MODEL") ?? "gemini-2.5-flash";
+// Reihenfolge: gewünschtes Modell, dann Ausweichmodelle bei Überlastung (Doppelte werden entfernt)
+const MODELS = Array.from(new Set([MODEL, "gemini-2.5-flash-lite", "gemini-2.0-flash"]));
 const LIMIT_STAFF = 60;     // Anfragen pro Person und Tag
 const LIMIT_ADMIN = 200;
 
@@ -133,6 +136,37 @@ export function sanitizeProposals(raw: any, isAdmin: boolean, names: string[], s
   }
   return out;
 }
+
+// Gemini aufrufen: bei Überlastung (503/429/500/504) kurz warten und erneut versuchen, dann auf ein anderes Modell ausweichen.
+// Fehler wie 400/401/403 (z. B. falscher Schlüssel) werden nicht wiederholt.
+export async function callGeminiWithFallback(
+  doFetch: (model: string) => Promise<{ ok: boolean; status: number; text: () => Promise<string>; json: () => Promise<any> }>,
+  models: string[],
+  sleep: (ms: number) => Promise<void>,
+  now: () => number = () => Date.now(),
+  maxMs = 40000,
+): Promise<{ data?: any; model?: string; error?: "busy" | "ai"; status?: number; log: string[] }> {
+  const log: string[] = [];
+  const started = now();
+  const retryable = (st: number) => st === 429 || st === 500 || st === 503 || st === 504;
+  let sawBusy = false, lastStatus = 0;
+  for (const model of models) {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      if (now() - started > maxMs) { log.push("time limit"); return { error: sawBusy ? "busy" : "ai", status: lastStatus, log }; }
+      let res;
+      try { res = await doFetch(model); }
+      catch (e) { log.push(`${model} #${attempt} network: ${e}`); sawBusy = true; await sleep(attempt * 600); continue; }
+      if (res.ok) { log.push(`${model} #${attempt} ok`); return { data: await res.json(), model, log }; }
+      lastStatus = res.status;
+      const body = (await res.text()).slice(0, 300);
+      log.push(`${model} #${attempt} ${res.status} ${body}`);
+      if (retryable(res.status)) { sawBusy = true; if (attempt === 1) await sleep(900); continue; }
+      if (res.status === 404) break;                                  // Modell gibt es nicht (mehr): nächstes Modell
+      return { error: "ai", status: res.status, log };                // Schlüssel/Anfrage fehlerhaft: Abbruch
+    }
+  }
+  return { error: sawBusy ? "busy" : "ai", status: lastStatus, log };
+}
 // >>helpers
 
 const SCHEMA = {
@@ -255,6 +289,14 @@ ${ctx}
 === END OF DATA ===`;
 }
 
+// Fehlgeschlagene Anfrage nicht zum Tageslimit zählen (Funktion tomi_refund aus SQL 4.1.01; Fehler werden ignoriert)
+async function refund(name: string) {
+  try {
+    if (!SERVICE_KEY) return;
+    await createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } }).rpc("tomi_refund", { p_name: name });
+  } catch (_) { /* ignorieren */ }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return json({ error: "method" }, 405);
@@ -285,35 +327,36 @@ Deno.serve(async (req) => {
   const ctx = await buildContext(db, me, isAdmin, messages.map((m: any) => m.text).slice(-3).join(" "));
   const system = buildSystem(me, isAdmin, lang, ctx.text);
 
-  const genConfig: any = { temperature: 0.3, maxOutputTokens: 2000, responseMimeType: "application/json", responseSchema: SCHEMA };
-  if (/2\.5-flash/.test(MODEL)) genConfig.thinkingConfig = { thinkingBudget: 0 };
-
-  let res: Response;
-  try {
-    res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": GEMINI_KEY },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: system }] },
-        contents: messages.map((m: any) => ({ role: m.role, parts: [{ text: m.text }] })),
-        generationConfig: genConfig,
-      }),
-    });
-  } catch (e) {
-    console.error("gemini fetch failed", e);
-    return json({ error: "ai" }, 502);
+  const baseConfig: any = { temperature: 0.3, maxOutputTokens: 2000, responseMimeType: "application/json", responseSchema: SCHEMA };
+  const result = await callGeminiWithFallback(
+    (model) => {
+      const genConfig = { ...baseConfig };
+      if (/2\.5/.test(model)) genConfig.thinkingConfig = { thinkingBudget: 0 };
+      return fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-goog-api-key": GEMINI_KEY },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: system }] },
+          contents: messages.map((m: any) => ({ role: m.role, parts: [{ text: m.text }] })),
+          generationConfig: genConfig,
+        }),
+      });
+    },
+    MODELS,
+    (ms) => new Promise((r) => setTimeout(r, ms)),
+  );
+  console.log("gemini:", result.log.join(" | "));
+  if (!result.data) {
+    await refund(me.name);
+    return json({ error: result.error ?? "ai", status: result.status }, result.error === "busy" ? 503 : 502);
   }
-  if (!res.ok) {
-    console.error("gemini error", res.status, (await res.text()).slice(0, 500));
-    return json({ error: "ai", status: res.status }, 502);
-  }
-  const data = await res.json();
+  const data = result.data;
   const text = (data?.candidates?.[0]?.content?.parts ?? []).map((p: any) => p?.text ?? "").join("").trim();
-  if (!text) return json({ error: "empty" }, 502);
+  if (!text) { await refund(me.name); return json({ error: "empty" }, 502); }
 
   let parsed: any;
   try { parsed = JSON.parse(text); } catch { parsed = { reply: text, proposals: [] }; }
   const reply = String(parsed?.reply ?? "").slice(0, 6000) || "…";
   const proposals = sanitizeProposals(parsed?.proposals, isAdmin, ctx.names, ctx.swapIds);
-  return json({ reply, proposals, remaining: quota.data ?? null });
+  return json({ reply, proposals, remaining: quota.data ?? null, model: result.model });
 });
