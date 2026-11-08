@@ -9,7 +9,7 @@
 
     // Der öffentliche Schlüssel steht in der Datenbank (Tabelle push_config, SQL 4.1.02) und wird beim Start geladen.
     // Hier nur eintragen, falls er NICHT in der Datenbank steht (Notlösung).
-    let PUSH_VAPID_PUBLIC_KEY = '';
+    let PUSH_VAPID_PUBLIC_KEY = 'e91a5f61217803f9961a62e5437618e7930b9b9b3676f2af63484ed9c857a415';
     let pushKeyLoaded = false;
 
     const PUSH_CATS = [
