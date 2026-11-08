@@ -30,6 +30,9 @@ js/                 Logik, in Themen aufgeteilt (siehe unten)
 | Hilfe & Anleitung (Kapitel in DE/EN) | js/help.js |
 | Push-Benachrichtigungen (Client) | js/push.js, sw.js |
 | TomiAI (Client) | js/tomi.js |
+| Online-Status & Sitzungen (Datenquelle des Login-Protokolls) | js/presence.js |
+| Login-Protokoll (Manager) | js/login-log.js |
+| Begrüßungsanimation | js/intro.js |
 | Edge Functions (Server): send-push, tomi-ai | supabase/functions/ |
 | Einrichtung 4.1.00 (Schritt für Schritt) | docs/SETUP-4.1.00.md |
 | VAPID-Schlüssel erzeugen (offline) | tools/vapid-generator.html |

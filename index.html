@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Salonplafond">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>Salonplafond NeXuS · BAR v4.1.01</title>
+  <title>Salonplafond NeXuS · BAR v4.1.03</title>
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- SheetJS pre Excel Import & Export -->
@@ -34,7 +34,7 @@
       window.__salonDark = dark;
     } catch (e) { document.documentElement.classList.add('dark'); window.__salonDark = true; }
   </script>
-  <link rel="stylesheet" href="css/style.css?v=4.1.01">
+  <link rel="stylesheet" href="css/style.css?v=4.1.03">
 </head>
 <body class="dark-mode p-3 pt-0 md:p-8 max-w-6xl mx-auto pb-32" onclick="closeDropdowns(event)">
   <script>if (window.__salonDark === false) { document.body.classList.remove('dark-mode'); document.body.classList.add('light-mode'); }</script>
@@ -55,7 +55,7 @@
         </div>
         <div class="login-head-text">
           <h1>Salonplafond NeXuS</h1>
-          <span><span data-brand-header>BAR v4.1.01</span> · <span data-i18n="login.title">Anmeldung</span></span>
+          <span><span data-brand-header>BAR v4.1.03</span> · <span data-i18n="login.title">Anmeldung</span></span>
         </div>
       </header>
 
@@ -107,7 +107,7 @@
         <div id="pinAuthError" class="login-error hidden"></div>
       </div>
 
-      <p class="login-credit">Salonplafond NeXuS • BAR v<span data-app-number>4.1.01</span> • Developed by Tomas Kardos © 2026</p>
+      <p class="login-credit">Salonplafond NeXuS • BAR v<span data-app-number>4.1.03</span> • Developed by Tomas Kardos © 2026</p>
     </div>
   </div>
 
@@ -129,7 +129,7 @@
           <div class="flex gap-2 flex-wrap items-center">
             <input type="search" id="staffSearchInput" oninput="renderStaffList()" placeholder="🔍 Mitarbeiter suchen..." class="ui-search flex-1 min-w-[10rem]">
             <button type="button" onclick="startNewStaff()" class="ui-btn-primary">➕ Neuer Mitarbeiter</button>
-            <button type="button" onclick="openLoginHistoryModal()" class="ui-btn-ghost">📜 Login-Protokoll</button>
+            <button type="button" onclick="openLoginLogModal()" class="ui-btn-ghost">📜 Login-Protokoll</button>
           </div>
           <div class="flex gap-1.5 flex-wrap items-center">
             <button type="button" id="staffChip_all" onclick="setStaffRoleFilter('all')" class="ui-chip active">Alle</button>
@@ -389,7 +389,7 @@
 
         <div class="flex flex-col justify-center min-w-0">
           <h1 class="text-lg md:text-3xl font-bold tracking-tight text-amber-700 dark:text-amber-400 leading-none whitespace-nowrap">Salonplafond NeXuS</h1>
-          <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium block mt-0.5" data-brand-header>BAR v4.1.01</span>
+          <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium block mt-0.5" data-brand-header>BAR v4.1.03</span>
         </div>
       </div>
 
@@ -511,7 +511,7 @@
             </button>
             <button type="button" onclick="openChangelogModal()" class="menu-item">
               <span class="menu-ico">🚀</span>
-              <span class="menu-text"><span class="menu-label" data-i18n="menu.news">Was ist neu?</span><span class="menu-sub"><span data-i18n="menu.newsSub">Neuigkeiten in </span><span data-app-version>v4.1.01</span></span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.news">Was ist neu?</span><span class="menu-sub"><span data-i18n="menu.newsSub">Neuigkeiten in </span><span data-app-version>v4.1.03</span></span></span>
             </button>
             <button type="button" onclick="openSupportModal()" class="menu-item">
               <span class="menu-ico">🛟<span id="menuDropdownTicketDot" class="hidden menu-dot pulse-badge-dot"></span></span>
@@ -631,7 +631,7 @@
     </div><!-- /drinksView -->
 
     <footer class="mt-20 pt-6 border-t border-slate-300 dark:border-slate-800 text-center text-xs text-slate-500">
-      Salonplafond NeXuS • BAR v<span data-app-number>4.1.01</span> • Developed by <span class="text-amber-600 dark:text-amber-400 font-semibold">Tomas Kardos © 2026</span>
+      Salonplafond NeXuS • BAR v<span data-app-number>4.1.03</span> • Developed by <span class="text-amber-600 dark:text-amber-400 font-semibold">Tomas Kardos © 2026</span>
     </footer>
 
   </div>
@@ -952,15 +952,31 @@
       <div class="ui-head">
         <div>
           <h3 class="ui-head-title" data-i18n="set.title">⚙️ Einstellungen & Zentrale</h3>
-          <p class="ui-head-sub" data-i18n="set.sub">Gelten nur auf diesem Gerät und werden automatisch gespeichert.</p>
+          <p class="ui-head-sub" data-i18n="set.sub">Die meisten Einstellungen gelten nur auf diesem Gerät. Startseite und Begrüßungsanimation gelten für dein Konto.</p>
         </div>
         <button type="button" onclick="closeUnifiedSettingsModal()" class="ui-close" aria-label="Schließen">&times;</button>
       </div>
 
+      <div class="set-tabs px-5 pt-3" id="settingsTabs" role="tablist">
+        <button type="button" class="set-tab active" data-settab="general" onclick="setSettingsTab('general')" data-i18n="set.tabGeneral">🏠 Allgemein</button>
+        <button type="button" class="set-tab" data-settab="look" onclick="setSettingsTab('look')" data-i18n="set.tabLook">🎨 Darstellung</button>
+        <button type="button" class="set-tab" data-settab="drinks" onclick="setSettingsTab('drinks')" data-i18n="set.tabDrinks">🍸 Getränke</button>
+        <button type="button" class="set-tab" data-settab="notif" onclick="setSettingsTab('notif')" data-i18n="set.tabNotif">🔔 Hinweise</button>
+        <button type="button" class="set-tab" data-settab="account" onclick="setSettingsTab('account')" data-i18n="set.tabAccount">👤 Konto</button>
+        <button type="button" class="set-tab" data-settab="app" onclick="setSettingsTab('app')" data-i18n="set.tabApp">🧰 App</button>
+      </div>
       <div id="settingsBody" class="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
 
+        <div class="set-panel active" data-panel="general">
         <section class="set-card">
-          <h4 class="set-head" data-i18n="set.appearance">🎨 Darstellung</h4>
+          <h4 class="set-head" data-i18n="set.generalHead">🏠 Allgemein</h4>
+          <div class="set-row">
+            <div class="set-text"><b data-i18n="set.langTitle">Sprache / Language</b><small data-i18n="set.langSub">Gilt für Anmeldung, Dashboard, Menü, Einstellungen und Hilfe.</small></div>
+            <div class="seg">
+              <button type="button" class="seg-btn" data-lang="de" onclick="setLanguage('de')">Deutsch</button>
+              <button type="button" class="seg-btn" data-lang="en" onclick="setLanguage('en')">English</button>
+            </div>
+          </div>
 
           <div class="set-row">
             <div class="set-text"><b data-i18n="set.startTitle">Nach dem Login öffnen</b><small data-i18n="set.startSub">Welche Seite sich nach der Anmeldung zuerst öffnet. Gilt auf allen deinen Geräten.</small></div>
@@ -970,13 +986,15 @@
             </div>
           </div>
           <div class="set-row">
-            <div class="set-text"><b data-i18n="set.langTitle">Sprache / Language</b><small data-i18n="set.langSub">Gilt für Anmeldung, Dashboard, Menü, Einstellungen und Hilfe.</small></div>
-            <div class="seg">
-              <button type="button" class="seg-btn" data-lang="de" onclick="setLanguage('de')">Deutsch</button>
-              <button type="button" class="seg-btn" data-lang="en" onclick="setLanguage('en')">English</button>
-            </div>
+            <div class="set-text"><b data-i18n="set.introTitle">Begrüßungsanimation</b><small data-i18n="set.introSub">Kurze Animation nach dem Anmelden. Gilt für dein Konto auf allen Geräten.</small></div>
+            <label class="switch"><input type="checkbox" id="setIntroToggle" onchange="setIntroEnabled(this.checked)"><span class="switch-track"></span></label>
           </div>
+        </section>
+        </div>
 
+        <div class="set-panel" data-panel="look">
+        <section class="set-card">
+          <h4 class="set-head" data-i18n="set.appearance">🎨 Darstellung</h4>
           <div class="set-row">
             <div class="set-text"><b data-i18n="set.theme">Design</b><small id="settingsThemeInfo">Hell ist augenschonend bei Tageslicht, Dunkel für die Bar am Abend.</small></div>
             <div class="seg">
@@ -1006,7 +1024,9 @@
             <label class="switch"><input type="checkbox" data-setting-check="reduceMotion" onchange="setSetting('reduceMotion',this.checked)"><span class="switch-track"></span></label>
           </div>
         </section>
+        </div>
 
+        <div class="set-panel" data-panel="drinks">
         <section class="set-card">
           <h4 class="set-head" data-i18n="set.drinks">🍸 Getränke</h4>
 
@@ -1040,7 +1060,9 @@
             <select id="unifiedSeasonSelect" onchange="onUnifiedSeasonChange(this)" class="ui-field set-select"></select>
           </div>
         </section>
+        </div>
 
+        <div class="set-panel" data-panel="notif">
         <section class="set-card">
           <h4 class="set-head" data-i18n="set.notif">🔔 Hinweise</h4>
 
@@ -1060,9 +1082,29 @@
           </div>
         </section>
 
-        <section class="set-card" id="setGroupMode">
+        <section class="set-card">
           <h4 class="set-head" data-i18n="push.title">🔔 Push-Benachrichtigungen</h4>
           <div id="pushSettings" class="push-settings"></div>
+        </section>
+        </div>
+
+        <div class="set-panel" data-panel="account">
+        <section class="set-card">
+          <h4 class="set-head" data-i18n="set.accHead">👤 Konto</h4>
+          <div class="set-row">
+            <div class="set-text"><b id="setAccName">–</b><small id="setAccRole"></small></div>
+          </div>
+          <div class="set-row">
+            <div class="set-text"><b data-i18n="set.accProfile">Mein Profil</b><small data-i18n="set.accProfileSub">Foto, „Über mich“ und PIN ändern.</small></div>
+            <button type="button" class="fm-btn" onclick="closeUnifiedSettingsModal(); openUserProfileModal()" data-i18n="set.open">Öffnen</button>
+          </div>
+          <div class="set-row">
+            <div class="set-text"><b data-i18n="set.accLogout">Benutzer wechseln</b><small data-i18n="set.accLogoutSub">Abmelden und einen anderen Namen wählen.</small></div>
+            <button type="button" class="fm-btn fm-btn-danger" onclick="closeUnifiedSettingsModal(); handleLogout()" data-i18n="set.accLogoutBtn">Abmelden</button>
+          </div>
+        </section>
+
+        <section class="set-card" id="setGroupMode">
 
           <h4 class="set-head" data-i18n="set.rights">👤 Ansicht für Mitarbeiter mit Rechten</h4>
           <div class="set-row">
@@ -1074,6 +1116,13 @@
           </div>
         </section>
 
+        <section class="set-card">
+          <h4 class="set-head" data-i18n="set.privHead">🔒 Datenschutz</h4>
+          <p class="fm-hint" style="padding:.5rem 0 .7rem" data-i18n="set.privText">Zur Sicherheit speichert die App deine Anmeldezeit, das Gerät, die geöffneten Bereiche und wichtige Aktionen (z. B. Aufgabe abgehakt). Nur Manager sehen das. Es werden keine IP-Adressen gespeichert und alles wird nach 90 Tagen automatisch gelöscht.</p>
+        </section>
+        </div>
+
+        <div class="set-panel" data-panel="app">
         <section class="set-card" id="setInstall">
           <h4 class="set-head" data-i18n="set.install">📲 App installieren</h4>
           <div class="set-row">
@@ -1086,7 +1135,7 @@
         <section class="set-card">
           <h4 class="set-head" data-i18n="set.app">🧰 App</h4>
           <div class="set-row">
-            <div class="set-text"><b data-i18n="set.version">Version</b><small>Salonplafond NeXuS • BAR v<span data-app-number>4.1.01</span></small></div>
+            <div class="set-text"><b data-i18n="set.version">Version</b><small>Salonplafond NeXuS • BAR v<span data-app-number>4.1.03</span></small></div>
             <button type="button" onclick="closeUnifiedSettingsModal(); openChangelogModal();" class="ui-btn-ghost" data-i18n="set.news">🚀 Was ist neu?</button>
           </div>
           <div class="set-row">
@@ -1098,6 +1147,7 @@
             <button type="button" onclick="resetSettings()" class="ui-btn-ghost set-danger" data-i18n="set.resetBtn">↩️ Zurücksetzen</button>
           </div>
         </section>
+        </div>
 
       </div>
 
@@ -1340,7 +1390,7 @@
       <div class="ui-head">
         <div>
           <h3 class="ui-head-title">🚀 Was ist neu?</h3>
-          <p class="ui-head-sub">Aktuelle Version <span id="changelogVersionBadge" class="cl-ver">v4.1.01</span></p>
+          <p class="ui-head-sub">Aktuelle Version <span id="changelogVersionBadge" class="cl-ver">v4.1.03</span></p>
         </div>
         <button type="button" onclick="closeChangelogModal()" class="ui-close" aria-label="Schließen">&times;</button>
       </div>
@@ -1597,37 +1647,40 @@
     </div>
   </div>
 
-  <script src="js/config.js?v=4.1.01"></script>
-  <script src="js/i18n.js?v=4.1.01"></script>
-  <script src="js/i18n-ui.js?v=4.1.01"></script>
-  <script src="js/ui.js?v=4.1.01"></script>
-  <script src="js/settings.js?v=4.1.01"></script>
-  <script src="js/pwa.js?v=4.1.01"></script>
-  <script src="js/auth.js?v=4.1.01"></script>
-  <script src="js/profile.js?v=4.1.01"></script>
-  <script src="js/staff-admin.js?v=4.1.01"></script>
-  <script src="js/chat.js?v=4.1.01"></script>
-  <script src="js/tickets.js?v=4.1.01"></script>
-  <script src="js/changelog.js?v=4.1.01"></script>
-  <script src="js/schedule.js?v=4.1.01"></script>
-  <script src="js/team-plan.js?v=4.1.01"></script>
-  <script src="js/feature-ui.js?v=4.1.01"></script>
-  <script src="js/checklists.js?v=4.1.01"></script>
-  <script src="js/shift-swap.js?v=4.1.01"></script>
-  <script src="js/payroll.js?v=4.1.01"></script>
-  <script src="js/menu-allergens.js?v=4.1.01"></script>
-  <script src="js/reports.js?v=4.1.01"></script>
-  <script src="js/help.js?v=4.1.01"></script>
-  <script src="js/push.js?v=4.1.01"></script>
-  <script src="js/tomi.js?v=4.1.01"></script>
-  <script src="js/seasons.js?v=4.1.01"></script>
-  <script src="js/drinks.js?v=4.1.01"></script>
-  <script src="js/drink-admin.js?v=4.1.01"></script>
-  <script src="js/tray.js?v=4.1.01"></script>
-  <script src="js/shopping.js?v=4.1.01"></script>
-  <script src="js/import-export.js?v=4.1.01"></script>
-  <script src="js/print-a3.js?v=4.1.01"></script>
-  <script src="js/dashboard.js?v=4.1.01"></script>
-  <script src="js/app.js?v=4.1.01"></script>
+  <script src="js/config.js?v=4.1.03"></script>
+  <script src="js/i18n.js?v=4.1.03"></script>
+  <script src="js/i18n-ui.js?v=4.1.03"></script>
+  <script src="js/ui.js?v=4.1.03"></script>
+  <script src="js/settings.js?v=4.1.03"></script>
+  <script src="js/pwa.js?v=4.1.03"></script>
+  <script src="js/auth.js?v=4.1.03"></script>
+  <script src="js/profile.js?v=4.1.03"></script>
+  <script src="js/staff-admin.js?v=4.1.03"></script>
+  <script src="js/chat.js?v=4.1.03"></script>
+  <script src="js/tickets.js?v=4.1.03"></script>
+  <script src="js/changelog.js?v=4.1.03"></script>
+  <script src="js/schedule.js?v=4.1.03"></script>
+  <script src="js/team-plan.js?v=4.1.03"></script>
+  <script src="js/feature-ui.js?v=4.1.03"></script>
+  <script src="js/checklists.js?v=4.1.03"></script>
+  <script src="js/shift-swap.js?v=4.1.03"></script>
+  <script src="js/payroll.js?v=4.1.03"></script>
+  <script src="js/menu-allergens.js?v=4.1.03"></script>
+  <script src="js/reports.js?v=4.1.03"></script>
+  <script src="js/help.js?v=4.1.03"></script>
+  <script src="js/push.js?v=4.1.03"></script>
+  <script src="js/presence.js?v=4.1.03"></script>
+  <script src="js/login-log.js?v=4.1.03"></script>
+  <script src="js/intro.js?v=4.1.03"></script>
+  <script src="js/tomi.js?v=4.1.03"></script>
+  <script src="js/seasons.js?v=4.1.03"></script>
+  <script src="js/drinks.js?v=4.1.03"></script>
+  <script src="js/drink-admin.js?v=4.1.03"></script>
+  <script src="js/tray.js?v=4.1.03"></script>
+  <script src="js/shopping.js?v=4.1.03"></script>
+  <script src="js/import-export.js?v=4.1.03"></script>
+  <script src="js/print-a3.js?v=4.1.03"></script>
+  <script src="js/dashboard.js?v=4.1.03"></script>
+  <script src="js/app.js?v=4.1.03"></script>
 </body>
 </html>
