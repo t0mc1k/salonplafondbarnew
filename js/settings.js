@@ -161,8 +161,9 @@
       const modal = document.getElementById('unifiedSettingsModal');
       modal.classList.remove('hidden');
       modal.classList.add('flex');
-      const body = document.getElementById('settingsBody');
-      if (body) body.scrollTop = 0;
+      let tab = 'general';
+      try { tab = localStorage.getItem('nexus_settings_tab') || 'general'; } catch (e) {}
+      setSettingsTab(tab);
     }
 
     function closeUnifiedSettingsModal() {
@@ -199,7 +200,12 @@
       if (themeInfo) themeInfo.textContent = appSettings.theme === 'auto'
         ? t('set.themeAuto', { mode: themeMode === 'dark' ? t('set.themeDark') : t('set.themeLight') }) : '';
       if (typeof updateStartPageUI === 'function') updateStartPageUI();
+      if (typeof updateIntroUI === 'function') updateIntroUI();
       if (typeof pushRefresh === 'function') pushRefresh();
+      const accName = document.getElementById('setAccName');
+      if (accName) accName.textContent = currentWaiterName || '–';
+      const accRole = document.getElementById('setAccRole');
+      if (accRole) accRole.textContent = ({ developer: t('role.developer'), manager: t('role.manager') }[currentStaffRole]) || t('role.staff');
     }
 
     function setAdminView(on) {
@@ -226,3 +232,13 @@
     }
 
     loadSettings();
+
+    // Einstellungen in Reitern: den zuletzt benutzten Reiter merkt sich das Gerät
+    function setSettingsTab(id) {
+      if (['general', 'look', 'drinks', 'notif', 'account', 'app'].indexOf(id) === -1) id = 'general';
+      document.querySelectorAll('#settingsTabs .set-tab').forEach(b => b.classList.toggle('active', b.getAttribute('data-settab') === id));
+      document.querySelectorAll('#settingsBody .set-panel').forEach(p => p.classList.toggle('active', p.getAttribute('data-panel') === id));
+      try { localStorage.setItem('nexus_settings_tab', id); } catch (e) {}
+      const body = document.getElementById('settingsBody');
+      if (body) body.scrollTop = 0;
+    }

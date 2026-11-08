@@ -4,10 +4,13 @@
    - Gerät wird im Konto gespeichert (Funktionen push_save_subscription / push_remove_subscription).
    - Kategorien pro Person abschaltbar (push_get_prefs / push_set_prefs).
    - Beim Abmelden wird das Gerät von der Person getrennt, damit die nächste Person keine fremden Meldungen bekommt.
-   Einrichtung: docs/SETUP-4.1.00.md. Der öffentliche VAPID-Schlüssel kommt unten bei PUSH_VAPID_PUBLIC_KEY hinein.
+   Einrichtung: docs/SETUP-4.1.00.md. Der öffentliche VAPID-Schlüssel steht in der Datenbank (push_config.vapid_public_key, SQL 4.1.02).
    ============================================================ */
 
-    const PUSH_VAPID_PUBLIC_KEY = 'BGXJ3waUeiRqwHTJY82qWxpFvd2u4NioJNlmv4VzfMD42XSnLh5WD8A_6GMNgXQ_q3C6Ah7mEIuIcO0-fx3Xrag';   // ← hier den ÖFFENTLICHEN Schlüssel aus tools/vapid-generator.html eintragen
+    // Der öffentliche Schlüssel steht in der Datenbank (Tabelle push_config, SQL 4.1.02) und wird beim Start geladen.
+    // Hier nur eintragen, falls er NICHT in der Datenbank steht (Notlösung).
+    let PUSH_VAPID_PUBLIC_KEY = '';
+    let pushKeyLoaded = false;
 
     const PUSH_CATS = [
       ['chat', '💬', 'push.cChat', 'push.cChatSub'],
@@ -62,7 +65,18 @@
       return reg ? reg.pushManager.getSubscription() : null;
     }
 
+    async function pushLoadKey(force) {
+      if (pushKeyLoaded && !force) return PUSH_VAPID_PUBLIC_KEY;
+      try {
+        const { data, error } = await _supabase.rpc('push_get_public_key');
+        if (!error && typeof data === 'string' && data.trim()) PUSH_VAPID_PUBLIC_KEY = data.trim();
+      } catch (e) {}
+      pushKeyLoaded = true;
+      return PUSH_VAPID_PUBLIC_KEY;
+    }
+
     async function pushComputeState() {
+      if (!PUSH_VAPID_PUBLIC_KEY) await pushLoadKey();
       if (!PUSH_VAPID_PUBLIC_KEY) return 'unconfigured';
       if (!pushSupported()) return (pushIsIos() && !pushIsStandalone()) ? 'ios-install' : 'unsupported';
       if (Notification.permission === 'denied') return 'denied';
@@ -139,6 +153,7 @@
     // ---------- Anmeldung / Abmeldung ----------
     async function pushOnLogin() {
       try {
+        await pushLoadKey(true);
         pushPrefs = await pushLoadPrefs();
         if (PUSH_VAPID_PUBLIC_KEY && pushSupported() && Notification.permission === 'granted') {
           const reg = await pushSwReady();

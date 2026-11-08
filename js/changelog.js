@@ -10,9 +10,23 @@
    Änderungs-Typen: 'new' Neu, 'improved' Verbessert, 'fixed' Behoben,
                     'security' Sicherheit, 'info' Allgemein
    ============================================================ */
-    const APP_VERSION = '4.1.01';
+    const APP_VERSION = '4.1.03';
 
     const CHANGELOG = [
+  { version: '4.1.03', range: '', date: 'November 2026', title: 'Login-Protokoll, Online-Status, Begrüßung & Einstellungs-Reiter',
+    changes: [
+      ['new', 'Login-Protokoll (Manager/Developer): Live-Ansicht (wer ist gerade wo), Sitzungen mit Gerät, Anmeldung, Abmeldung und Dauer, Aktivität (geöffnete Bereiche und wichtige Aktionen), Statistik pro Person und Excel-Export. Keine IP-Adressen, automatische Löschung nach 90 Tagen, jederzeit manuell leerbar.'],
+      ['improved', 'Online-Status genauer: Wer in den letzten 3 Minuten aktiv war, ist online (vorher 15 Minuten). Das gilt im Chat, in der Personalliste und im Protokoll. Dafür sendet die App einmal pro Minute ein kleines Lebenszeichen, solange sie geöffnet ist.'],
+      ['new', 'Begrüßungsanimation nach dem Anmelden mit dem App-Logo und „powered by TomiAI“. Tippen überspringt sie. Ausschalten: Einstellungen → Allgemein → Begrüßungsanimation (gilt für dein Konto).'],
+      ['improved', 'Einstellungen übersichtlich in Reitern: Allgemein, Darstellung, Getränke, Hinweise, Konto, App. Die App merkt sich den zuletzt geöffneten Reiter.'],
+      ['fixed', 'Die Push-Einstellungen waren für Kellner im Einstellungsfenster nicht sichtbar. Jetzt sind sie für alle im Reiter „Hinweise“.'],
+      ['info', 'Einrichtung: sql/4.1.03_presence_log.sql im Supabase SQL Editor ausführen.']
+    ] },
+  { version: '4.1.02', range: '', date: 'November 2026', title: 'TomiAI findet das richtige Modell, Push-Schlüssel bleibt erhalten',
+    changes: [
+      ['fixed', 'TomiAI: Wenn ein bestimmtes Gemini-Modell nicht verfügbar ist, nutzt TomiAI jetzt automatisch das aktuelle Modell und fragt bei Bedarf Google, welche Modelle der Schlüssel kann.'],
+      ['fixed', 'Push-Benachrichtigungen: Der öffentliche Schlüssel liegt jetzt in der Datenbank. Nach einem App-Update bleiben „Aktivieren“ und „Test senden“ dadurch immer verfügbar.']
+    ] },
   { version: '4.1.01', range: '', date: 'November 2026', title: 'TomiAI: stabiler bei Überlastung',
     changes: [
       ['fixed', 'TomiAI antwortete manchmal nicht, wenn der KI-Dienst von Google kurz überlastet war. Jetzt versucht TomiAI es automatisch erneut und weicht bei Bedarf auf ein anderes Modell aus. Bleibt der Dienst überlastet, erscheint eine verständliche Meldung.'],

@@ -31,13 +31,7 @@
         return 0;
       }
 
-      const now = new Date();
-      let onlineUsers = data.filter(staff => {
-        if (!staff.last_used_at) return false;
-        let lastActive = new Date(staff.last_used_at);
-        let diffMinutes = (now - lastActive) / (1000 * 60);
-        return diffMinutes <= 15;
-      });
+      let onlineUsers = data.filter(staff => isStaffOnline(staff));
 
       countBadge.innerText = onlineUsers.length;
 
@@ -45,7 +39,7 @@
       if (chatCountLabel) chatCountLabel.innerText = t(onlineUsers.length === 1 ? 'chat.member1' : 'chat.memberN', { n: onlineUsers.length });
 
       if (onlineUsers.length === 0) {
-        container.innerHTML = `<span class="text-slate-600 dark:text-slate-400 italic">Keine Benutzer in den letzten 15 Minuten aktiv.</span>`;
+        container.innerHTML = `<span class="text-slate-600 dark:text-slate-400 italic">Keine Benutzer in den letzten 3 Minuten aktiv.</span>`;
         return 0;
       }
 
@@ -285,7 +279,7 @@
       // Zusammenfassung
       const total = staffListCache.length;
       const admins = staffListCache.filter(s => s.role === 'manager' || s.role === 'developer').length;
-      const online = staffListCache.filter(s => s.last_used_at && (nowMs - new Date(s.last_used_at).getTime()) <= 15 * 60 * 1000).length;
+      const online = staffListCache.filter(s => isStaffOnline(s)).length;
       const withoutPin = staffListCache.filter(s => !s.has_pin).length;
       const sum = document.getElementById('staffSummary');
       if (sum) {
@@ -315,7 +309,7 @@
 
       container.innerHTML = list.map(staff => {
         const isDev = (staff.role === 'developer');
-        const isOnline = staff.last_used_at && (nowMs - new Date(staff.last_used_at).getTime()) <= 15 * 60 * 1000;
+        const isOnline = isStaffOnline(staff);
         const avatar = staff.avatar_url
           ? `<img src="${escapeHtml(staff.avatar_url)}" class="w-full h-full object-cover" alt="">`
           : escapeHtml((staff.name || '?').charAt(0).toUpperCase());

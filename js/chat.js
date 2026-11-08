@@ -241,13 +241,13 @@
       if (!box) return;
       const nowMs = Date.now();
       const list = (staffDatabaseRecords || []).slice().sort((a, b) => {
-        const oa = a.last_used_at && (nowMs - new Date(a.last_used_at).getTime()) <= 15 * 60000 ? 0 : 1;
-        const ob = b.last_used_at && (nowMs - new Date(b.last_used_at).getTime()) <= 15 * 60000 ? 0 : 1;
+        const oa = isStaffOnline(a) ? 0 : 1;
+        const ob = isStaffOnline(b) ? 0 : 1;
         return oa - ob || String(a.name).localeCompare(String(b.name), 'de');
       });
       if (!list.length) { box.innerHTML = '<span class="form-hint">' + escapeHtml(t('chat.noMembers')) + '</span>'; return; }
       box.innerHTML = list.map(s => {
-        const online = s.last_used_at && (nowMs - new Date(s.last_used_at).getTime()) <= 15 * 60000;
+        const online = isStaffOnline(s);
         const typing = chatTypingUsers[s.name] && chatTypingUsers[s.name] > nowMs;
         const avatar = s.avatar_url
           ? `<img src="${escapeHtml(s.avatar_url)}" alt="">`

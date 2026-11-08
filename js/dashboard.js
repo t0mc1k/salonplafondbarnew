@@ -32,7 +32,7 @@
         staff:    { icon: '👤', title: t('dash.staff'), sub: t('dash.staffSub'), run: 'openStaffPinModal', need: 'admin' },
         chat:     { icon: '💬', title: t('dash.chat'), sub: t('dash.chatSub'), run: 'openTeamChatModal', need: 'all', badge: 'dashChatBadge' },
         myplan:   { icon: '🗓️', title: t('dash.myplan'), sub: t('dash.myplanSub'), run: 'openMyPlanModal', need: 'all' },
-        login:    { icon: '🔐', title: t('dash.login'), sub: t('dash.loginSub'), run: 'openLoginHistoryModal', need: 'admin' },
+        login:    { icon: '🔐', title: t('dash.login'), sub: t('dash.loginSub'), run: 'openLoginLogModal', need: 'admin' },
         settings: { icon: '⚙️', title: t('dash.settings'), sub: t('dash.settingsSub'), run: 'openUnifiedSettingsModal', need: 'admin' },
         news:     { icon: '🚀', title: t('dash.news'), sub: t('dash.newsSub'), run: 'openChangelogModal', need: 'all' },
         tomi:     { icon: '✨', title: t('dash.tomi'), sub: adm ? t('dash.tomiSubA') : t('dash.tomiSubS'), run: 'openTomiModal', need: 'all', ai: true },
@@ -210,17 +210,31 @@
 
     async function loadStartPage() {
       userStartPage = readLocalStartPage();
+      if (typeof readLocalIntro === 'function') userIntroEnabled = readLocalIntro();
+      const timeout = () => new Promise(resolve => setTimeout(() => resolve({ timeout: true }), 1500));
       try {
-        const res = await Promise.race([
-          _supabase.rpc('get_my_start_page'),
-          new Promise(resolve => setTimeout(() => resolve({ timeout: true }), 1500))
-        ]);
-        if (res && !res.timeout && !res.error && (res.data === 'drinks' || res.data === 'dashboard')) {
-          userStartPage = res.data;
-          try { localStorage.setItem(startPageKey(), res.data); } catch (e) {}
+        // Neu (SQL 4.1.03): Startseite und Begrüßungsanimation in einer Abfrage
+        const res = await Promise.race([_supabase.rpc('get_my_ui_prefs'), timeout()]);
+        if (res && !res.timeout && !res.error && res.data && typeof res.data === 'object') {
+          if (res.data.start_page === 'drinks' || res.data.start_page === 'dashboard') {
+            userStartPage = res.data.start_page;
+            try { localStorage.setItem(startPageKey(), userStartPage); } catch (e) {}
+          }
+          if (typeof res.data.intro === 'boolean') {
+            userIntroEnabled = res.data.intro;
+            try { localStorage.setItem(introLocalKey(), userIntroEnabled ? 'on' : 'off'); } catch (e) {}
+          }
+        } else {
+          // Ältere Datenbank (nur SQL 4.0.02): nur die Startseite
+          const r2 = await Promise.race([_supabase.rpc('get_my_start_page'), timeout()]);
+          if (r2 && !r2.timeout && !r2.error && (r2.data === 'drinks' || r2.data === 'dashboard')) {
+            userStartPage = r2.data;
+            try { localStorage.setItem(startPageKey(), r2.data); } catch (e) {}
+          }
         }
       } catch (e) {}
       updateStartPageUI();
+      if (typeof updateIntroUI === 'function') updateIntroUI();
       return userStartPage;
     }
 

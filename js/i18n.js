@@ -315,8 +315,8 @@
   "en": "⚙️ Settings & Control Centre"
  },
  "set.sub": {
-  "de": "Gelten nur auf diesem Gerät und werden automatisch gespeichert.",
-  "en": "Apply to this device only and are saved automatically."
+  "de": "Die meisten Einstellungen gelten nur auf diesem Gerät. Startseite und Begrüßungsanimation gelten für dein Konto.",
+  "en": "Most settings apply to this device only. Start page and welcome animation apply to your account."
  },
  "set.appearance": {
   "de": "🎨 Darstellung",
@@ -1757,6 +1757,94 @@
  "tomi.chipM4": {
   "de": "Welche Tickets sind offen? Schlage Antworten vor.",
   "en": "Which tickets are open? Suggest replies."
+ },
+ "set.tabGeneral": {
+  "de": "🏠 Allgemein",
+  "en": "🏠 General"
+ },
+ "set.tabLook": {
+  "de": "🎨 Darstellung",
+  "en": "🎨 Appearance"
+ },
+ "set.tabDrinks": {
+  "de": "🍸 Getränke",
+  "en": "🍸 Drinks"
+ },
+ "set.tabNotif": {
+  "de": "🔔 Hinweise",
+  "en": "🔔 Notifications"
+ },
+ "set.tabAccount": {
+  "de": "👤 Konto",
+  "en": "👤 Account"
+ },
+ "set.tabApp": {
+  "de": "🧰 App",
+  "en": "🧰 App"
+ },
+ "set.generalHead": {
+  "de": "🏠 Allgemein",
+  "en": "🏠 General"
+ },
+ "set.introTitle": {
+  "de": "Begrüßungsanimation",
+  "en": "Welcome animation"
+ },
+ "set.introSub": {
+  "de": "Kurze Animation nach dem Anmelden. Gilt für dein Konto auf allen Geräten.",
+  "en": "A short animation after logging in. Applies to your account on all devices."
+ },
+ "set.introSaved": {
+  "de": "Einstellung gespeichert",
+  "en": "Setting saved"
+ },
+ "set.accHead": {
+  "de": "👤 Konto",
+  "en": "👤 Account"
+ },
+ "set.accProfile": {
+  "de": "Mein Profil",
+  "en": "My profile"
+ },
+ "set.accProfileSub": {
+  "de": "Foto, „Über mich“ und PIN ändern.",
+  "en": "Change photo, “About me” and PIN."
+ },
+ "set.open": {
+  "de": "Öffnen",
+  "en": "Open"
+ },
+ "set.accLogout": {
+  "de": "Benutzer wechseln",
+  "en": "Switch user"
+ },
+ "set.accLogoutSub": {
+  "de": "Abmelden und einen anderen Namen wählen.",
+  "en": "Log out and choose another name."
+ },
+ "set.accLogoutBtn": {
+  "de": "Abmelden",
+  "en": "Log out"
+ },
+ "set.privHead": {
+  "de": "🔒 Datenschutz",
+  "en": "🔒 Privacy"
+ },
+ "set.privText": {
+  "de": "Zur Sicherheit speichert die App deine Anmeldezeit, das Gerät, die geöffneten Bereiche und wichtige Aktionen (z. B. Aufgabe abgehakt). Nur Manager sehen das. Es werden keine IP-Adressen gespeichert und alles wird nach 90 Tagen automatisch gelöscht.",
+  "en": "For security the app stores your login time, device, the sections you open and important actions (e.g. task ticked). Only managers can see this. No IP addresses are stored and everything is deleted automatically after 90 days."
+ },
+ "intro.welcome": {
+  "de": "Willkommen, {name}",
+  "en": "Welcome, {name}"
+ },
+ "intro.system": {
+  "de": "im System",
+  "en": "to the system"
+ },
+ "intro.skip": {
+  "de": "Tippen zum Überspringen",
+  "en": "Tap to skip"
  }
 };
 

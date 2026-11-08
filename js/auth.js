@@ -194,10 +194,10 @@
         role: row.out_role,
         avatar_url: row.out_avatar,
         can_edit_drinks: row.out_can_edit_drinks
-      });
+      }, { fresh: true });
     }
 
-    async function finalizeAppStartForStaff(staffRecord) {
+    async function finalizeAppStartForStaff(staffRecord, opts) {
       document.getElementById('authContainer').classList.add('hidden');
       document.getElementById('appContainer').classList.remove('hidden');
 
@@ -219,6 +219,8 @@
       showDashboard();
       if (userStartPage === 'drinks') openDrinksView();
       if (typeof pushOnLogin === 'function') pushOnLogin();   // Gerät für Benachrichtigungen dieser Person zuordnen
+      if (typeof presenceStart === 'function') presenceStart();   // Sitzung für Login-Protokoll / Online-Status
+      if (opts && opts.fresh && typeof introMaybePlay === 'function') introMaybePlay();   // Begrüßungsanimation (nur nach echter Anmeldung)
     }
 
     // ---------- Hinweis, wenn sich ein Kollege anmeldet ----------
@@ -255,7 +257,7 @@
     function startLoginWatcher() {
       stopLoginWatcher();
       pollLoginWatcher();
-      loginWatchTimer = setInterval(pollLoginWatcher, 15000);
+      loginWatchTimer = setInterval(pollLoginWatcher, 30000);
     }
 
     function stopLoginWatcher() {
@@ -295,6 +297,7 @@
     async function handleLogout() {
       closeSettingsMenu();
       stopLoginWatcher();
+      if (typeof presenceEnd === 'function') await presenceEnd('logout');   // Abmeldung ins Protokoll
       if (typeof pushOnLogout === 'function') await pushOnLogout();   // Gerät von dieser Person trennen, solange der Token noch gilt
       try { await _supabase.rpc('logout_staff'); } catch (e) {}
       clearStaffSession();
