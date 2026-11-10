@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Salonplafond">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>Salonplafond NeXuS · BAR v4.1.03</title>
+  <title>Salonplafond NeXuS · BAR v4.1.04</title>
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- SheetJS pre Excel Import & Export -->
@@ -34,7 +34,7 @@
       window.__salonDark = dark;
     } catch (e) { document.documentElement.classList.add('dark'); window.__salonDark = true; }
   </script>
-  <link rel="stylesheet" href="css/style.css?v=4.1.03">
+  <link rel="stylesheet" href="css/style.css?v=4.1.04">
 </head>
 <body class="dark-mode p-3 pt-0 md:p-8 max-w-6xl mx-auto pb-32" onclick="closeDropdowns(event)">
   <script>if (window.__salonDark === false) { document.body.classList.remove('dark-mode'); document.body.classList.add('light-mode'); }</script>
@@ -55,7 +55,7 @@
         </div>
         <div class="login-head-text">
           <h1>Salonplafond NeXuS</h1>
-          <span><span data-brand-header>BAR v4.1.03</span> · <span data-i18n="login.title">Anmeldung</span></span>
+          <span><span data-brand-header>BAR v4.1.04</span> · <span data-i18n="login.title">Anmeldung</span></span>
         </div>
       </header>
 
@@ -107,7 +107,7 @@
         <div id="pinAuthError" class="login-error hidden"></div>
       </div>
 
-      <p class="login-credit">Salonplafond NeXuS • BAR v<span data-app-number>4.1.03</span> • Developed by Tomas Kardos © 2026</p>
+      <p class="login-credit">Salonplafond NeXuS • BAR v<span data-app-number>4.1.04</span> • Developed by Tomas Kardos © 2026</p>
     </div>
   </div>
 
@@ -389,7 +389,7 @@
 
         <div class="flex flex-col justify-center min-w-0">
           <h1 class="text-lg md:text-3xl font-bold tracking-tight text-amber-700 dark:text-amber-400 leading-none whitespace-nowrap">Salonplafond NeXuS</h1>
-          <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium block mt-0.5" data-brand-header>BAR v4.1.03</span>
+          <span class="text-[10px] md:text-xs text-slate-600 dark:text-slate-400 font-medium block mt-0.5" data-brand-header>BAR v4.1.04</span>
         </div>
       </div>
 
@@ -511,7 +511,7 @@
             </button>
             <button type="button" onclick="openChangelogModal()" class="menu-item">
               <span class="menu-ico">🚀</span>
-              <span class="menu-text"><span class="menu-label" data-i18n="menu.news">Was ist neu?</span><span class="menu-sub"><span data-i18n="menu.newsSub">Neuigkeiten in </span><span data-app-version>v4.1.03</span></span></span>
+              <span class="menu-text"><span class="menu-label" data-i18n="menu.news">Was ist neu?</span><span class="menu-sub"><span data-i18n="menu.newsSub">Neuigkeiten in </span><span data-app-version>v4.1.04</span></span></span>
             </button>
             <button type="button" onclick="openSupportModal()" class="menu-item">
               <span class="menu-ico">🛟<span id="menuDropdownTicketDot" class="hidden menu-dot pulse-badge-dot"></span></span>
@@ -631,7 +631,7 @@
     </div><!-- /drinksView -->
 
     <footer class="mt-20 pt-6 border-t border-slate-300 dark:border-slate-800 text-center text-xs text-slate-500">
-      Salonplafond NeXuS • BAR v<span data-app-number>4.1.03</span> • Developed by <span class="text-amber-600 dark:text-amber-400 font-semibold">Tomas Kardos © 2026</span>
+      Salonplafond NeXuS • BAR v<span data-app-number>4.1.04</span> • Developed by <span class="text-amber-600 dark:text-amber-400 font-semibold">Tomas Kardos © 2026</span>
     </footer>
 
   </div>
@@ -1135,7 +1135,7 @@
         <section class="set-card">
           <h4 class="set-head" data-i18n="set.app">🧰 App</h4>
           <div class="set-row">
-            <div class="set-text"><b data-i18n="set.version">Version</b><small>Salonplafond NeXuS • BAR v<span data-app-number>4.1.03</span></small></div>
+            <div class="set-text"><b data-i18n="set.version">Version</b><small>Salonplafond NeXuS • BAR v<span data-app-number>4.1.04</span></small></div>
             <button type="button" onclick="closeUnifiedSettingsModal(); openChangelogModal();" class="ui-btn-ghost" data-i18n="set.news">🚀 Was ist neu?</button>
           </div>
           <div class="set-row">
@@ -1390,7 +1390,7 @@
       <div class="ui-head">
         <div>
           <h3 class="ui-head-title">🚀 Was ist neu?</h3>
-          <p class="ui-head-sub">Aktuelle Version <span id="changelogVersionBadge" class="cl-ver">v4.1.03</span></p>
+          <p class="ui-head-sub">Aktuelle Version <span id="changelogVersionBadge" class="cl-ver">v4.1.04</span></p>
         </div>
         <button type="button" onclick="closeChangelogModal()" class="ui-close" aria-label="Schließen">&times;</button>
       </div>
@@ -1647,40 +1647,40 @@
     </div>
   </div>
 
-  <script src="js/config.js?v=4.1.03"></script>
-  <script src="js/i18n.js?v=4.1.03"></script>
-  <script src="js/i18n-ui.js?v=4.1.03"></script>
-  <script src="js/ui.js?v=4.1.03"></script>
-  <script src="js/settings.js?v=4.1.03"></script>
-  <script src="js/pwa.js?v=4.1.03"></script>
-  <script src="js/auth.js?v=4.1.03"></script>
-  <script src="js/profile.js?v=4.1.03"></script>
-  <script src="js/staff-admin.js?v=4.1.03"></script>
-  <script src="js/chat.js?v=4.1.03"></script>
-  <script src="js/tickets.js?v=4.1.03"></script>
-  <script src="js/changelog.js?v=4.1.03"></script>
-  <script src="js/schedule.js?v=4.1.03"></script>
-  <script src="js/team-plan.js?v=4.1.03"></script>
-  <script src="js/feature-ui.js?v=4.1.03"></script>
-  <script src="js/checklists.js?v=4.1.03"></script>
-  <script src="js/shift-swap.js?v=4.1.03"></script>
-  <script src="js/payroll.js?v=4.1.03"></script>
-  <script src="js/menu-allergens.js?v=4.1.03"></script>
-  <script src="js/reports.js?v=4.1.03"></script>
-  <script src="js/help.js?v=4.1.03"></script>
-  <script src="js/push.js?v=4.1.03"></script>
-  <script src="js/presence.js?v=4.1.03"></script>
-  <script src="js/login-log.js?v=4.1.03"></script>
-  <script src="js/intro.js?v=4.1.03"></script>
-  <script src="js/tomi.js?v=4.1.03"></script>
-  <script src="js/seasons.js?v=4.1.03"></script>
-  <script src="js/drinks.js?v=4.1.03"></script>
-  <script src="js/drink-admin.js?v=4.1.03"></script>
-  <script src="js/tray.js?v=4.1.03"></script>
-  <script src="js/shopping.js?v=4.1.03"></script>
-  <script src="js/import-export.js?v=4.1.03"></script>
-  <script src="js/print-a3.js?v=4.1.03"></script>
-  <script src="js/dashboard.js?v=4.1.03"></script>
-  <script src="js/app.js?v=4.1.03"></script>
+  <script src="js/config.js?v=4.1.04"></script>
+  <script src="js/i18n.js?v=4.1.04"></script>
+  <script src="js/i18n-ui.js?v=4.1.04"></script>
+  <script src="js/ui.js?v=4.1.04"></script>
+  <script src="js/settings.js?v=4.1.04"></script>
+  <script src="js/pwa.js?v=4.1.04"></script>
+  <script src="js/auth.js?v=4.1.04"></script>
+  <script src="js/profile.js?v=4.1.04"></script>
+  <script src="js/staff-admin.js?v=4.1.04"></script>
+  <script src="js/chat.js?v=4.1.04"></script>
+  <script src="js/tickets.js?v=4.1.04"></script>
+  <script src="js/changelog.js?v=4.1.04"></script>
+  <script src="js/schedule.js?v=4.1.04"></script>
+  <script src="js/team-plan.js?v=4.1.04"></script>
+  <script src="js/feature-ui.js?v=4.1.04"></script>
+  <script src="js/checklists.js?v=4.1.04"></script>
+  <script src="js/shift-swap.js?v=4.1.04"></script>
+  <script src="js/payroll.js?v=4.1.04"></script>
+  <script src="js/menu-allergens.js?v=4.1.04"></script>
+  <script src="js/reports.js?v=4.1.04"></script>
+  <script src="js/help.js?v=4.1.04"></script>
+  <script src="js/push.js?v=4.1.04"></script>
+  <script src="js/presence.js?v=4.1.04"></script>
+  <script src="js/login-log.js?v=4.1.04"></script>
+  <script src="js/intro.js?v=4.1.04"></script>
+  <script src="js/tomi.js?v=4.1.04"></script>
+  <script src="js/seasons.js?v=4.1.04"></script>
+  <script src="js/drinks.js?v=4.1.04"></script>
+  <script src="js/drink-admin.js?v=4.1.04"></script>
+  <script src="js/tray.js?v=4.1.04"></script>
+  <script src="js/shopping.js?v=4.1.04"></script>
+  <script src="js/import-export.js?v=4.1.04"></script>
+  <script src="js/print-a3.js?v=4.1.04"></script>
+  <script src="js/dashboard.js?v=4.1.04"></script>
+  <script src="js/app.js?v=4.1.04"></script>
 </body>
 </html>
