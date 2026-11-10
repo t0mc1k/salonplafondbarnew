@@ -83,7 +83,7 @@
       presenceStop();
       presenceWrapSections();
       try {
-        const { data, error } = await _supabase.rpc('presence_start', { p_device: presenceDevice(), p_version: (typeof APP_VERSION !== 'undefined' ? APP_VERSION : '') });
+        const { data, error } = await _supabase.rpc('nx_presence_start', { p_device: presenceDevice(), p_version: (typeof APP_VERSION !== 'undefined' ? APP_VERSION : '') });
         if (error || !data) { presenceAvailable = false; presenceMap = null; return; }
         presenceAvailable = true;
         presenceSid = data;
@@ -114,7 +114,7 @@
         // lange weg gewesen: alte Sitzung beenden, neue beginnen
         const old = presenceSid;
         presenceSid = null;
-        if (old) { try { await _supabase.rpc('presence_end', { p_sid: old, p_reason: 'timeout', p_events: [] }); } catch (e) {} }
+        if (old) { try { await _supabase.rpc('nx_presence_end', { p_sid: old, p_reason: 'timeout', p_events: [] }); } catch (e) {} }
         await presenceStart();
       } else {
         presencePing();
@@ -126,7 +126,7 @@
       presenceBusy = true;
       const events = presenceQueue.splice(0, 30);
       try {
-        const { data, error } = await _supabase.rpc('presence_ping', { p_sid: presenceSid, p_section: presenceSection, p_events: events });
+        const { data, error } = await _supabase.rpc('nx_presence_ping', { p_sid: presenceSid, p_section: presenceSection, p_events: events });
         presenceLastPing = Date.now();
         if (error) { presenceQueue = events.concat(presenceQueue).slice(0, 60); return; }
         if (data && Array.isArray(data.online)) {
@@ -156,7 +156,7 @@
       const events = presenceQueue.splice(0, 30);
       try {
         await Promise.race([
-          _supabase.rpc('presence_end', { p_sid: sid, p_reason: reason || 'logout', p_events: events }),
+          _supabase.rpc('nx_presence_end', { p_sid: sid, p_reason: reason || 'logout', p_events: events }),
           new Promise(resolve => setTimeout(resolve, 1500))
         ]);
       } catch (e) {}

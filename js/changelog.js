@@ -10,9 +10,13 @@
    Änderungs-Typen: 'new' Neu, 'improved' Verbessert, 'fixed' Behoben,
                     'security' Sicherheit, 'info' Allgemein
    ============================================================ */
-    const APP_VERSION = '4.1.03';
+    const APP_VERSION = '4.1.04';
 
     const CHANGELOG = [
+  { version: '4.1.04', range: '', date: 'November 2026', title: 'Login-Protokoll: sichere Datenbank-Namen',
+    changes: [
+      ['fixed', 'Die Datenbank-Einrichtung für das Login-Protokoll brach mit „column started_at does not exist“ ab, weil der Name einer neuen Tabelle schon von der App benutzt wird. Alle neuen Objekte heißen jetzt eindeutig (nx_...), bestehende Daten bleiben unberührt.']
+    ] },
   { version: '4.1.03', range: '', date: 'November 2026', title: 'Login-Protokoll, Online-Status, Begrüßung & Einstellungs-Reiter',
     changes: [
       ['new', 'Login-Protokoll (Manager/Developer): Live-Ansicht (wer ist gerade wo), Sitzungen mit Gerät, Anmeldung, Abmeldung und Dauer, Aktivität (geöffnete Bereiche und wichtige Aktionen), Statistik pro Person und Excel-Export. Keine IP-Adressen, automatische Löschung nach 90 Tagen, jederzeit manuell leerbar.'],
@@ -20,7 +24,7 @@
       ['new', 'Begrüßungsanimation nach dem Anmelden mit dem App-Logo und „powered by TomiAI“. Tippen überspringt sie. Ausschalten: Einstellungen → Allgemein → Begrüßungsanimation (gilt für dein Konto).'],
       ['improved', 'Einstellungen übersichtlich in Reitern: Allgemein, Darstellung, Getränke, Hinweise, Konto, App. Die App merkt sich den zuletzt geöffneten Reiter.'],
       ['fixed', 'Die Push-Einstellungen waren für Kellner im Einstellungsfenster nicht sichtbar. Jetzt sind sie für alle im Reiter „Hinweise“.'],
-      ['info', 'Einrichtung: sql/4.1.03_presence_log.sql im Supabase SQL Editor ausführen.']
+      ['info', 'Einrichtung: sql/4.1.04_presence_log.sql im Supabase SQL Editor ausführen.']
     ] },
   { version: '4.1.02', range: '', date: 'November 2026', title: 'TomiAI findet das richtige Modell, Push-Schlüssel bleibt erhalten',
     changes: [

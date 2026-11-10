@@ -69,10 +69,10 @@
       ll.m.setBody('<p class="staff-empty">Lade ...</p>');
       const r = llRange();
       let res;
-      if (ll.tab === 'live') res = await _supabase.rpc('admin_presence_live');
-      else if (ll.tab === 'sessions') res = await _supabase.rpc('admin_sessions', { p_from: r.from, p_to: r.to, p_name: ll.name || null });
-      else if (ll.tab === 'activity') res = await _supabase.rpc('admin_activity', { p_from: r.from, p_to: r.to, p_name: ll.name || null, p_kind: ll.kind || null });
-      else res = await _supabase.rpc('admin_stats', { p_from: r.from, p_to: r.to });
+      if (ll.tab === 'live') res = await _supabase.rpc('nx_admin_live');
+      else if (ll.tab === 'sessions') res = await _supabase.rpc('nx_admin_sessions', { p_from: r.from, p_to: r.to, p_name: ll.name || null });
+      else if (ll.tab === 'activity') res = await _supabase.rpc('nx_admin_activity', { p_from: r.from, p_to: r.to, p_name: ll.name || null, p_kind: ll.kind || null });
+      else res = await _supabase.rpc('nx_admin_stats', { p_from: r.from, p_to: r.to });
       if (res.error) { ll.m.setBody(fmErrorHtml(res.error)); return; }
       ll.data = Array.isArray(res.data) ? res.data : [];
       llRender();
@@ -80,7 +80,7 @@
     }
 
     async function llRefreshLive() {
-      const res = await _supabase.rpc('admin_presence_live');
+      const res = await _supabase.rpc('nx_admin_live');
       if (!res.error && Array.isArray(res.data)) { ll.data = res.data; llRender(); }
     }
 
@@ -181,7 +181,7 @@
 
     async function llClear() {
       if (!confirm('Das gesamte Login-Protokoll löschen?\n\nGelöscht werden alle Sitzungen, die Aktivität und die alte Anmelde-Liste. Das kann nicht rückgängig gemacht werden.')) return;
-      const a = await _supabase.rpc('admin_clear_activity');
+      const a = await _supabase.rpc('nx_admin_clear');
       if (a.error) return fmToast(fmDbError(a.error));
       try { await _supabase.rpc('admin_clear_login_history'); } catch (e) {}
       fmToast('Protokoll gelöscht');
