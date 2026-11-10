@@ -71,8 +71,10 @@ Weil der erste Schlüssel im Chat stand: in Google AI Studio / Cloud Console den
 2. Edge Function **tomi-ai** mit dem neuen Code aus `supabase/functions/tomi-ai/index.ts` ersetzen und deployen.
 3. Secret `GEMINI_MODEL` am besten **löschen** (oder auf `gemini-flash-latest` setzen). Dann wählt TomiAI selbst ein passendes Modell. Im Log von `tomi-ai` steht danach `gemini: <modell> #1 ok`.
 
-## Update 4.1.03 (Login-Protokoll, Online-Status, Begrüßung, Einstellungs-Reiter)
-1. SQL Editor: `sql/4.1.03_presence_log.sql` ausführen (Tabellen `staff_sessions`, `staff_activity`, Funktionen, Trigger, Einstellung „Begrüßungsanimation“). Eine Edge Function oder ein Secret ist nicht nötig.
+## Update 4.1.03/4.1.04 (Login-Protokoll, Online-Status, Begrüßung, Einstellungs-Reiter)
+1. SQL Editor: `sql/4.1.04_presence_log.sql` ausführen (Tabellen `nx_sessions`, `nx_activity`, Funktionen, Trigger, Einstellung „Begrüßungsanimation“). Eine Edge Function oder ein Secret ist nicht nötig.
 2. App hochladen und einmal ganz schließen/neu öffnen. Ab dann läuft pro geöffneter App einmal pro Minute ein kleiner Anruf (`presence_ping`). Das sind etwa 500 000 winzige Anfragen pro Monat bei 40 Personen, ohne Limit im Free-Plan (Prüfen: Dashboard → Settings → Usage).
 3. Prüfen: Dashboard → „🔐 Login-Protokoll“ → Reiter Live zeigt dich selbst mit Gerät und Bereich.
 4. Datenschutz: Keine IP-Adressen, Chat-Inhalte werden nie gespeichert, automatische Löschung nach 90 Tagen (beim Anmelden), „🗑️ Protokoll leeren“ löscht sofort. Bitte das Team informieren (Hinweis steht auch in Einstellungen → Konto).
+
+Hinweis 4.1.04: Die Tabelle `staff_sessions` gehört zur Anmeldung der App und darf nicht verändert werden. Das Login-Protokoll nutzt eigene Tabellen mit der Vorsilbe `nx_`. Die Datei `sql/4.1.03_presence_log.sql` gibt es nicht mehr; falls sie schon (teilweise) ausgeführt wurde, ist nichts aufzuräumen, denn sie ist vor Änderungen abgebrochen.
