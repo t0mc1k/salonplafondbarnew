@@ -1905,6 +1905,14 @@
  "set.tabsNext": {
   "de": "Weitere Reiter rechts",
   "en": "More tabs to the right"
+ },
+ "dash.specials": {
+  "de": "Tagesangebot",
+  "en": "Daily specials"
+ },
+ "dash.specialsSub": {
+  "de": "Kuchen & Suppe heute, mit Allergenen",
+  "en": "Cake & soup today, with allergens"
  }
 };
 

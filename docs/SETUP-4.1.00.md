@@ -99,3 +99,22 @@ Reihenfolge einhalten:
 
 **TomiAI-Hinweise:** Standardmäßig versucht TomiAI zuerst `gemini-2.5-flash-lite` (schnell), bei Plan-Änderungen durch Manager zuerst `gemini-2.5-flash`. Ist das Secret `GEMINI_MODEL` gesetzt, wird dieses Modell immer zuerst genommen. Wenn dir die Antworten zu knapp vorkommen, das Secret auf `gemini-2.5-flash` setzen.
 
+## Update 4.1.06 (Tagesangebot: Tageskuchen & Tagessuppe, Zettel per Foto einlesen)
+Reihenfolge einhalten:
+1. **SQL Editor:** `sql/4.1.06_daily_specials.sql` ausführen (Tabelle `daily_specials`). Bei „Potential issue detected“ → *Run query*. Das Skript darf mehrmals ausgeführt werden.
+2. **Neue Edge Function `scan-special`** bereitstellen: Im Supabase Dashboard → Edge Functions → neue Funktion `scan-special` anlegen und den Code aus `supabase/functions/scan-special/index.ts` einfügen, oder per Konsole `supabase functions deploy scan-special`. Sie verwendet dasselbe Secret `GEMINI_API_KEY` wie `tomi-ai` (nichts Neues einzutragen). Optional: Secret `GEMINI_MODEL_SCAN`, falls du ein bestimmtes Modell zum Lesen der Zettel willst (Standard: `gemini-2.5-flash`).
+3. **Edge Function `tomi-ai`** neu bereitstellen (TomiAI kennt jetzt das Tagesangebot).
+4. **App hochladen:** alle geänderten Dateien aus dem 4.1.06-Paket ersetzen und die neue Datei `js/specials.js` mit hochladen. Danach die App einmal ganz schließen und neu öffnen (oder Menü → „App neu laden“).
+5. **Prüfen:**
+   - Dashboard zeigt die Kachel **🍰 Tagesangebot** (bei Bar bzw. Service).
+   - Als Manager: **➕ Neu** → Suppe und Kuchen für heute eintragen. Kellner sehen sie sofort im Reiter „Heute“.
+   - Als Manager: **📷 Foto scannen** → Zettel fotografieren → Ergebnis neben dem Foto prüfen → Häkchen setzen → Speichern.
+   - TomiAI fragen: „Was ist heute die Suppe und welche Allergene hat sie?“
+
+**Hinweise zum Foto-Scan:**
+- Nur Manager und Developer können scannen. Das Foto wird nur zum Lesen an Google Gemini geschickt, **nicht gespeichert**.
+- Gespeichert wird erst nach dem Häkchen „Ich habe Namen und Allergene mit dem Original verglichen“. Die KI liest nur Buchstaben, die auf dem Zettel stehen. Sie rät nie Allergene aus dem Namen des Gerichts. Für die Richtigkeit der Allergene ist immer der Manager verantwortlich.
+- Jeder Scan zählt zum Tageslimit der KI-Anfragen (gemeinsam mit TomiAI). Wird nichts erkannt, wird der Versuch gutgeschrieben.
+- Weitere Arten wie „Tagesgericht“: in `js/specials.js` die Liste `SP_KINDS` erweitern (die Datenbank erlaubt `dish` bereits).
+- `js/specials.js` ist in `js/version.js` unter `APP_SCRIPTS` eingetragen.
+

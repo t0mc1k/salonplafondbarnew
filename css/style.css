@@ -1087,3 +1087,26 @@ body.light-mode .set-tabs-arrow { background: #ffffff; }
 /* --- Urlaub / Krank --- */
 .ab-dates { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
 @media (max-width: 380px) { .ab-dates { grid-template-columns: 1fr; } }
+
+/* =====================================================================
+   v4.1.06: Tagesangebot (Kuchen & Suppe mit Allergenen), Foto-Scan
+   ===================================================================== */
+.sp-group { margin-bottom: 1.1rem; }
+.sp-head { font-size: .95rem; font-weight: 900; margin-bottom: .5rem; color: var(--ui-accent, #f59e0b); }
+.sp-none { font-size: .8rem; font-style: italic; color: var(--ui-muted, #94a3b8); padding: .3rem 0; }
+.sp-card { padding: .75rem .85rem; margin-bottom: .55rem; border-radius: .9rem; background: var(--ui-surface); border: 1px solid var(--ui-border); }
+.sp-top { display: flex; justify-content: space-between; align-items: baseline; gap: .6rem; }
+.sp-name { font-size: 1rem; font-weight: 900; color: var(--ui-text); }
+.sp-price { font-weight: 900; font-size: .9rem; color: var(--ui-accent, #f59e0b); white-space: nowrap; }
+.sp-desc { margin-top: .2rem; font-size: .8rem; color: var(--ui-muted, #94a3b8); }
+.sp-al { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem; margin-top: .45rem; }
+.sp-al-text { font-size: .72rem; color: var(--ui-muted, #94a3b8); }
+.sp-meta { margin-top: .35rem; font-size: .68rem; color: var(--ui-muted, #94a3b8); }
+.sp-photo { width: 100%; max-height: 14rem; object-fit: contain; border-radius: .8rem; background: rgba(0, 0, 0, .25); cursor: zoom-in; }
+.sp-photo.big { max-height: 80vh; cursor: zoom-out; }
+.sp-warn { padding: .6rem .75rem; border-radius: .8rem; font-size: .78rem; line-height: 1.35; background: rgba(245, 158, 11, .15); border: 1px solid rgba(245, 158, 11, .5); }
+.sp-scan-item { padding: .7rem; border-radius: .9rem; background: var(--ui-surface); border: 1px solid var(--ui-border); }
+.sp-scan-item.unsure { border-color: #f59e0b; background: rgba(245, 158, 11, .10); }
+.sp-scan-incl { display: flex; align-items: center; gap: .45rem; margin-bottom: .5rem; font-size: .78rem; font-weight: 800; }
+.sp-confirm { display: flex; align-items: flex-start; gap: .55rem; padding: .7rem .8rem; border-radius: .8rem; border: 1px solid var(--ui-border); font-size: .8rem; font-weight: 700; line-height: 1.35; cursor: pointer; }
+.sp-confirm input { margin-top: .15rem; flex: none; }

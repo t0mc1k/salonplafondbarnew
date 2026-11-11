@@ -19,6 +19,7 @@
       return {
         drinks:   { icon: '🍸', title: t('dash.drinks'), sub: drinkSub, run: 'openDrinksView', need: 'all', primary: true },
         allergens:{ icon: '🍽️', title: t('dash.allergens'), sub: t('dash.allergensSub'), run: 'openAllergenModal', need: 'all' },
+        specials: { icon: '🍰', title: t('dash.specials'), sub: t('dash.specialsSub'), run: 'openSpecialsModal', need: 'all' },
         season:   { icon: '📅', title: t('dash.season'), sub: seasonSub, run: 'openSeasonModal', need: 'admin' },
         print:    { icon: '🖨️', title: t('dash.print'), sub: t('dash.printSub'), run: 'openA3PrintSetupModal', need: 'admin' },
         impexp:   { icon: '📊', title: t('dash.impexp'), sub: t('dash.impexpSub'), run: 'openImportExportModal', need: 'edit' },
@@ -46,7 +47,7 @@
     function dashLayoutFor() {
       if (userIsAdmin) {
         return [
-          { title: t('dash.g.bar'),  ids: ['drinks', 'allergens', 'season', 'print', 'impexp'] },
+          { title: t('dash.g.bar'),  ids: ['drinks', 'allergens', 'specials', 'season', 'print', 'impexp'] },
           { title: t('dash.g.std'),  ids: ['checklist', 'maint', 'found', 'loss'] },
           { title: t('dash.g.team'), ids: ['teamplan', 'swaps', 'absence', 'payroll', 'staff', 'chat'] },
           { title: t('dash.g.sys'),  ids: ['login', 'settings'] },
@@ -54,7 +55,7 @@
         ];
       }
       // Kellner/Barkeeper (+ Import, falls Getränke-Recht)
-      const bar = ['drinks', 'allergens', 'maint', 'found', 'loss', 'tomi', 'help', 'news'];
+      const bar = ['drinks', 'allergens', 'specials', 'maint', 'found', 'loss', 'tomi', 'help', 'news'];
       if (userCanEdit) bar.splice(1, 0, 'impexp');
       return [
         { title: t('dash.g.shift'),      ids: ['checklist', 'myplan', 'swaps', 'absence', 'chat'] },

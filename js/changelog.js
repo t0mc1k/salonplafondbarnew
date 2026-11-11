@@ -12,6 +12,14 @@
    ============================================================ */
 
     const CHANGELOG = [
+  { version: '4.1.06', range: '', date: 'November 2026', title: 'Tagesangebot: Tageskuchen & Tagessuppe mit Allergenen, Zettel per Foto einlesen',
+    changes: [
+      ['new', 'Neue Kachel „🍰 Tagesangebot“ im Dashboard: Alle sehen den Tageskuchen und die Tagessuppe von heute mit Preis und Allergenen (A–R, auch im Klartext). Reiter „Kommend“ zeigt die nächsten Tage.'],
+      ['new', 'Manager und Developer tragen Einträge mit Gültigkeit von–bis ein (Schnellwahl „Nur heute“, „Bis Sonntag“, „7 Tage“) und sehen den Verlauf.'],
+      ['new', '📷 Foto scannen: Den Zettel fotografieren, die KI liest Namen, Preise und Allergen-Buchstaben. Du prüfst alles neben dem Foto, korrigierst bei Bedarf und speicherst erst nach Bestätigung. Das Foto wird nicht gespeichert.'],
+      ['new', 'TomiAI kennt das Tagesangebot: „Was ist heute die Suppe und welche Allergene hat sie?“'],
+      ['info', 'Einrichtung: sql/4.1.06_daily_specials.sql im Supabase SQL Editor ausführen, Edge Function scan-special bereitstellen (supabase functions deploy scan-special) und tomi-ai neu bereitstellen.']
+    ] },
   { version: '4.1.05', range: '', date: 'November 2026', title: 'Urlaub & Krankmeldung, TomiAI schneller, verschiebbarer TomiAI-Knopf',
     changes: [
       ['new', 'Neue Kachel „Urlaub / Krank“ im Dashboard: Du kannst Urlaub beantragen und dich krank melden. Manager sehen alle Anträge, genehmigen oder lehnen ab und können Urlaub (U) bzw. Krank (K) mit einem Klick in den Arbeitsplan eintragen. Push-Benachrichtigungen für Anträge und Entscheidungen.'],
