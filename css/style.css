@@ -1054,3 +1054,36 @@ body.fm-open .tomi-fab { display: none; }
 .intro-static .intro-orbit, .intro-static .intro-line { stroke-dashoffset: 0 !important; }
 .intro-static .intro-particles { display: none; }
 @media (prefers-reduced-motion: reduce) { .intro-ring, .intro-particles i { animation: none !important; } }
+
+/* =====================================================================
+   v4.1.05: Einstellungs-Reiter mit Pfeilen, TomiAI-Knopf (ausblenden/verschieben), Urlaub/Krank
+   ===================================================================== */
+/* --- Einstellungs-Reiter: Pfeile erscheinen nur, wenn links/rechts noch Reiter versteckt sind --- */
+.set-tabs-wrap { position: relative; }
+.set-tabs-wrap.can-left .set-tabs, .set-tabs-wrap.can-right .set-tabs { cursor: grab; }
+.set-tabs-wrap .set-tabs.dragging { cursor: grabbing; user-select: none; -webkit-user-select: none; scroll-behavior: auto; }
+/* weicher Rand als zusätzlicher Hinweis, dass es weitergeht (unabhängig von der Hintergrundfarbe) */
+.set-tabs-wrap.can-left .set-tabs { -webkit-mask-image: linear-gradient(to right, transparent 0, #000 2.6rem); mask-image: linear-gradient(to right, transparent 0, #000 2.6rem); }
+.set-tabs-wrap.can-right .set-tabs { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2.6rem), transparent 100%); mask-image: linear-gradient(to right, #000 calc(100% - 2.6rem), transparent 100%); }
+.set-tabs-wrap.can-left.can-right .set-tabs { -webkit-mask-image: linear-gradient(to right, transparent 0, #000 2.6rem, #000 calc(100% - 2.6rem), transparent 100%); mask-image: linear-gradient(to right, transparent 0, #000 2.6rem, #000 calc(100% - 2.6rem), transparent 100%); }
+.set-tabs-arrow {
+  display: none; position: absolute; top: .8rem; z-index: 3; width: 2rem; height: 2.1rem;
+  align-items: center; justify-content: center; padding: 0 0 .12rem; font-size: 1.35rem; font-weight: 900; line-height: 1;
+  color: var(--ui-text); background: #334155; border: 1px solid var(--ui-border); border-radius: 999px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .25); cursor: pointer;
+}
+body.light-mode .set-tabs-arrow { background: #ffffff; }
+.set-tabs-arrow:hover { background: #f59e0b; color: #0f172a; }
+.set-tabs-left { left: 1.25rem; }
+.set-tabs-right { right: 1.25rem; }
+.set-tabs-wrap.can-left .set-tabs-left { display: inline-flex; }
+.set-tabs-wrap.can-right .set-tabs-right { display: inline-flex; }
+
+/* --- TomiAI-Knopf --- */
+.tomi-fab-off .tomi-fab { display: none !important; }
+.tomi-fab.tomi-fab-movable { cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; outline: 2px dashed rgba(15, 23, 42, .6); outline-offset: 3px; }
+.tomi-fab.dragging { cursor: grabbing; transition: none; transform: scale(1.07); box-shadow: 0 14px 34px rgba(245, 158, 11, .6); }
+
+/* --- Urlaub / Krank --- */
+.ab-dates { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+@media (max-width: 380px) { .ab-dates { grid-template-columns: 1fr; } }

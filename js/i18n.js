@@ -1845,6 +1845,66 @@
  "intro.skip": {
   "de": "Tippen zum Überspringen",
   "en": "Tap to skip"
+ },
+ "dash.absence": {
+  "de": "Urlaub / Krank",
+  "en": "Vacation / Sick"
+ },
+ "dash.absenceA": {
+  "de": "Anträge & Krankmeldungen",
+  "en": "Requests & sick reports"
+ },
+ "dash.absenceS": {
+  "de": "Urlaub beantragen, krank melden",
+  "en": "Request vacation, report sick"
+ },
+ "push.cAbsence": {
+  "de": "🏖️ Entscheidung zu Urlaub / Krankmeldung",
+  "en": "🏖️ Decision on vacation / sick report"
+ },
+ "push.cMgrAbsence": {
+  "de": "🏖️ Neuer Urlaubsantrag / neue Krankmeldung",
+  "en": "🏖️ New vacation request / sick report"
+ },
+ "set.tomiHead": {
+  "de": "✨ TomiAI-Knopf",
+  "en": "✨ TomiAI button"
+ },
+ "set.tomiShow": {
+  "de": "TomiAI-Knopf anzeigen",
+  "en": "Show TomiAI button"
+ },
+ "set.tomiShowSub": {
+  "de": "Der schwebende Knopf unten links. Ausgeblendet erreichst du TomiAI weiter über das Dashboard.",
+  "en": "The floating button at the bottom left. When hidden, you can still open TomiAI from the dashboard."
+ },
+ "set.tomiMove": {
+  "de": "Knopf verschieben",
+  "en": "Move button"
+ },
+ "set.tomiMoveSub": {
+  "de": "Eingeschaltet kannst du den Knopf mit Finger oder Maus an eine beliebige Stelle ziehen. Gilt nur auf diesem Gerät.",
+  "en": "When on, you can drag the button anywhere with your finger or mouse. Applies to this device only."
+ },
+ "set.tomiReset": {
+  "de": "Position zurücksetzen",
+  "en": "Reset position"
+ },
+ "set.tomiResetSub": {
+  "de": "Bringt den Knopf an die ursprüngliche Stelle.",
+  "en": "Puts the button back in its original place."
+ },
+ "set.tomiResetBtn": {
+  "de": "↩️ Zurücksetzen",
+  "en": "↩️ Reset"
+ },
+ "set.tabsPrev": {
+  "de": "Weitere Reiter links",
+  "en": "More tabs to the left"
+ },
+ "set.tabsNext": {
+  "de": "Weitere Reiter rechts",
+  "en": "More tabs to the right"
  }
 };
 

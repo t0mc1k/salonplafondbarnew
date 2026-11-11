@@ -9,7 +9,7 @@
 
     // Der öffentliche Schlüssel steht in der Datenbank (Tabelle push_config, SQL 4.1.02) und wird beim Start geladen.
     // Hier nur eintragen, falls er NICHT in der Datenbank steht (Notlösung).
-    let PUSH_VAPID_PUBLIC_KEY = 'BHRZZSHbxLAwuc51N64hccSgCKhEBPKNO8-rrqEN5Q7-udhoCr43LP-geiSkvqwS3stmNqm6uWuixw1ZFwphSPU';
+    let PUSH_VAPID_PUBLIC_KEY = '';
     let pushKeyLoaded = false;
 
     const PUSH_CATS = [
@@ -17,10 +17,12 @@
       ['mention', '@', 'push.cMention', 'push.cMentionSub'],
       ['plan', '🗓️', 'push.cPlan', 'push.cPlanSub'],
       ['swap', '🔄', 'push.cSwap', 'push.cSwapSub'],
-      ['news', '📣', 'push.cNews', 'push.cNewsSub']
+      ['news', '📣', 'push.cNews', 'push.cNewsSub'],
+      ['absence', '🏖️', 'push.cAbsence', '']
     ];
     const PUSH_CATS_ADMIN = [
       ['mgr_swap', '✅', 'push.cMgrSwap', ''],
+      ['mgr_absence', '🏖️', 'push.cMgrAbsence', ''],
       ['fault_urgent', '🚨', 'push.cFaultUrgent', ''],
       ['fault', '🛠️', 'push.cFault', ''],
       ['ticket', '🛟', 'push.cTicket', '']
@@ -181,7 +183,7 @@
 
     // ---------- Meldung angetippt -> richtiges Fenster öffnen ----------
     function pushOpenTarget(target) {
-      const map = { chat: 'openTeamChatModal', swaps: 'openSwapModal', myplan: 'openMyPlanModal', faults: 'openMaintenanceModal', tickets: 'openSupportModal', news: 'openChangelogModal' };
+      const map = { chat: 'openTeamChatModal', swaps: 'openSwapModal', absence: 'openAbsenceModal', myplan: 'openMyPlanModal', faults: 'openMaintenanceModal', tickets: 'openSupportModal', news: 'openChangelogModal' };
       const fn = window[map[target]];
       if (typeof fn === 'function') fn();
     }

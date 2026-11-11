@@ -78,3 +78,24 @@ Weil der erste Schlüssel im Chat stand: in Google AI Studio / Cloud Console den
 4. Datenschutz: Keine IP-Adressen, Chat-Inhalte werden nie gespeichert, automatische Löschung nach 90 Tagen (beim Anmelden), „🗑️ Protokoll leeren“ löscht sofort. Bitte das Team informieren (Hinweis steht auch in Einstellungen → Konto).
 
 Hinweis 4.1.04: Die Tabelle `staff_sessions` gehört zur Anmeldung der App und darf nicht verändert werden. Das Login-Protokoll nutzt eigene Tabellen mit der Vorsilbe `nx_`. Die Datei `sql/4.1.03_presence_log.sql` gibt es nicht mehr; falls sie schon (teilweise) ausgeführt wurde, ist nichts aufzuräumen, denn sie ist vor Änderungen abgebrochen.
+
+## Update 4.1.05 (Urlaub & Krankmeldung, schnelleres TomiAI, TomiAI-Knopf verschiebbar)
+Reihenfolge einhalten:
+1. **SQL Editor:** `sql/4.1.05_absences.sql` ausführen (Tabelle `absence_requests`, Funktionen, Push-Trigger, neue Push-Kategorien). Bei „Potential issue detected“ → *Run query*. Das Skript darf mehrmals ausgeführt werden. Voraussetzung: `4.1.00_push_tomi.sql` und `3.2.03_betrieb.sql` wurden schon ausgeführt.
+2. **Edge Function tomi-ai** neu bereitstellen (Code aus `supabase/functions/tomi-ai/index.ts` einfügen und deployen, oder `supabase functions deploy tomi-ai`). Die Funktion `send-push` bleibt unverändert, die neuen Push-Meldungen laufen darüber.
+3. **App hochladen:** alle geänderten Dateien aus dem 4.1.05-Paket ersetzen und die neuen Dateien `js/version.js` und `js/absence.js` mit hochladen. Danach die App einmal ganz schließen und neu öffnen (oder unter Menü → „App neu laden“).
+4. **Prüfen:**
+   - Dashboard zeigt die Kachel **🏖️ Urlaub / Krank**. Als Kellner einen Urlaub beantragen, als Manager erscheint eine rote Zahl und eine Push-Meldung. Nach dem Genehmigen fragt die App, ob **U/K** in den Arbeitsplan eingetragen werden soll.
+   - Einstellungen → 🎨 Darstellung → **✨ TomiAI-Knopf**: ausblenden, „Knopf verschieben“ einschalten und den Knopf ziehen.
+   - Einstellungen: Auf schmalen Fenstern erscheinen bei den Reitern die Pfeile ‹ ›.
+   - Im Log von `tomi-ai` steht jetzt z. B. `tomi: topics=sched context=120ms prompt=2400 chars (~700 tokens)`. Das zeigt, wie viel an die KI geschickt wurde.
+
+**Neu für Entwickler: Versionsnummer nur an einer Stelle.** Bei einer neuen Version:
+- `js/version.js`: `APP_VERSION` ändern (einzige Stelle; Titel, Anzeige in der App, `?v=` aller Dateien und der Service Worker folgen automatisch).
+- `js/changelog.js`: oben einen neuen Eintrag einfügen.
+- Eine neue JS-Datei muss in `js/version.js` in der Liste `APP_SCRIPTS` eingetragen werden (nicht mehr in `index.html`).
+- `js/version.js` wird absichtlich ohne `?v=` geladen, damit sie immer frisch ist.
+- Nicht automatisch ändern sich die Verlaufseinträge in `changelog.js`, Dateinamen im Ordner `sql/` und diese Dokumentation.
+
+**TomiAI-Hinweise:** Standardmäßig versucht TomiAI zuerst `gemini-2.5-flash-lite` (schnell), bei Plan-Änderungen durch Manager zuerst `gemini-2.5-flash`. Ist das Secret `GEMINI_MODEL` gesetzt, wird dieses Modell immer zuerst genommen. Wenn dir die Antworten zu knapp vorkommen, das Secret auf `gemini-2.5-flash` setzen.
+

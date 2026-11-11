@@ -28,6 +28,7 @@
         loss:     { icon: '🔨', title: adm ? t('dash.lossA') : t('dash.lossS'), sub: adm ? t('dash.lossAS') : t('dash.lossSS'), run: 'openLossModal', need: 'all' },
         teamplan: { icon: '📆', title: t('dash.teamplan'), sub: t('dash.teamplanSub'), run: 'openTeamPlanModal', need: 'admin' },
         swaps:    { icon: '🔄', title: t('dash.swaps'), sub: adm ? t('dash.swapsA') : t('dash.swapsS'), run: 'openSwapModal', need: 'all', badge: 'dashSwapBadge' },
+        absence:  { icon: '🏖️', title: t('dash.absence'), sub: adm ? t('dash.absenceA') : t('dash.absenceS'), run: 'openAbsenceModal', need: 'all', badge: 'dashAbsBadge' },
         payroll:  { icon: '💶', title: t('dash.payroll'), sub: t('dash.payrollSub'), run: 'openPayrollModal', need: 'admin' },
         staff:    { icon: '👤', title: t('dash.staff'), sub: t('dash.staffSub'), run: 'openStaffPinModal', need: 'admin' },
         chat:     { icon: '💬', title: t('dash.chat'), sub: t('dash.chatSub'), run: 'openTeamChatModal', need: 'all', badge: 'dashChatBadge' },
@@ -47,7 +48,7 @@
         return [
           { title: t('dash.g.bar'),  ids: ['drinks', 'allergens', 'season', 'print', 'impexp'] },
           { title: t('dash.g.std'),  ids: ['checklist', 'maint', 'found', 'loss'] },
-          { title: t('dash.g.team'), ids: ['teamplan', 'swaps', 'payroll', 'staff', 'chat'] },
+          { title: t('dash.g.team'), ids: ['teamplan', 'swaps', 'absence', 'payroll', 'staff', 'chat'] },
           { title: t('dash.g.sys'),  ids: ['login', 'settings'] },
           { title: t('dash.g.info'), ids: ['news', 'tomi', 'help', 'support'] }
         ];
@@ -56,7 +57,7 @@
       const bar = ['drinks', 'allergens', 'maint', 'found', 'loss', 'tomi', 'help', 'news'];
       if (userCanEdit) bar.splice(1, 0, 'impexp');
       return [
-        { title: t('dash.g.shift'),      ids: ['checklist', 'myplan', 'swaps', 'chat'] },
+        { title: t('dash.g.shift'),      ids: ['checklist', 'myplan', 'swaps', 'absence', 'chat'] },
         { title: t('dash.g.barService'), ids: bar }
       ];
     }
@@ -122,10 +123,11 @@
       set('dashChatBadge', (typeof chatUnreadCount !== 'undefined') ? chatUnreadCount : 0);
       set('dashTicketBadge', window.dashPendingTickets || 0);
       set('dashSwapBadge', window.dashSwapCount || 0);
+      set('dashAbsBadge', window.dashAbsCount || 0);
       set('dashMaintBadge', window.dashMaintCount || 0);
     }
 
-    // Zähler für Tausch-Anfragen und Störungen laden (höchstens alle 20 Sekunden)
+    // Zähler für Tausch-Anfragen, Urlaub/Krank und Störungen laden (höchstens alle 20 Sekunden)
     let dashCountsAt = 0;
     async function loadDashboardCounts(force) {
       if (!currentWaiterName) return;
@@ -143,6 +145,11 @@
             else if (s.kind === 'pool' ? String(s.requester).toLowerCase() !== me : String(s.target_name || '').toLowerCase() === me) n++;
           });
           window.dashSwapCount = n;
+        }
+        if (userIsAdmin) {
+          // Urlaubsanträge/Krankmeldungen, die auf den Manager warten (Tabelle erst ab SQL 4.1.05)
+          const ab = await _supabase.from('absence_requests').select('id').eq('status', 'pending');
+          if (!ab.error) window.dashAbsCount = (ab.data || []).length;
         }
         if (userIsAdmin) {
           const mt = await _supabase.from('maintenance_reports').select('id').eq('status', 'neu');

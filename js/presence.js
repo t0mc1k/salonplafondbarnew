@@ -16,7 +16,7 @@
     // Funktion (öffnet einen Bereich) -> Name des Bereichs im Protokoll
     const PRESENCE_SECTIONS = {
       showDashboard: 'dashboard', openDrinksView: 'drinks', openAllergenModal: 'allergens', openChecklistModal: 'checklist',
-      openMyPlanModal: 'myplan', openSwapModal: 'swaps', openTeamChatModal: 'chat', openMaintenanceModal: 'faults',
+      openMyPlanModal: 'myplan', openSwapModal: 'swaps', openAbsenceModal: 'absence', openTeamChatModal: 'chat', openMaintenanceModal: 'faults',
       openFoundModal: 'found', openLossModal: 'loss', openHelpModal: 'help', openTomiModal: 'tomi', openShoppingModal: 'shopping',
       openUserProfileModal: 'profile', openUnifiedSettingsModal: 'settings', openChangelogModal: 'news', openSupportModal: 'support',
       openTeamPlanModal: 'teamplan', openPayrollModal: 'payroll', openStaffPinModal: 'staff', openLoginLogModal: 'loginlog',

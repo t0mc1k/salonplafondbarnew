@@ -1,18 +1,26 @@
 /* ============================================================
    js/changelog.js
-   Version, Changelog ("Was ist neu?") und dessen Bedienung
+   „Was ist neu?“ (Änderungsliste) und dessen Bedienung
 
-   NEUE VERSION VERÖFFENTLICHEN (nur hier ändern):
-   1. APP_VERSION unten auf die neue Nummer setzen.
-   2. Oben in CHANGELOG einen neuen Eintrag einfügen (neueste Version zuerst).
+   NEUE VERSION VERÖFFENTLICHEN:
+   1. In js/version.js die Nummer APP_VERSION ändern (einzige Stelle für die Versionsnummer!).
+   2. Hier oben in CHANGELOG einen neuen Eintrag einfügen (neueste Version zuerst).
       Die bisher aktuelle Version rutscht automatisch ins Archiv.
-   3. In index.html alle "?v=..." auf die neue Nummer setzen (Cache).
+   Titel, Anzeige in der App, „?v=“ (Cache) und Service Worker nehmen die Nummer selbst aus version.js.
    Änderungs-Typen: 'new' Neu, 'improved' Verbessert, 'fixed' Behoben,
                     'security' Sicherheit, 'info' Allgemein
    ============================================================ */
-    const APP_VERSION = '4.1.04';
 
     const CHANGELOG = [
+  { version: '4.1.05', range: '', date: 'November 2026', title: 'Urlaub & Krankmeldung, TomiAI schneller, verschiebbarer TomiAI-Knopf',
+    changes: [
+      ['new', 'Neue Kachel „Urlaub / Krank“ im Dashboard: Du kannst Urlaub beantragen und dich krank melden. Manager sehen alle Anträge, genehmigen oder lehnen ab und können Urlaub (U) bzw. Krank (K) mit einem Klick in den Arbeitsplan eintragen. Push-Benachrichtigungen für Anträge und Entscheidungen.'],
+      ['new', 'Einstellungen → Darstellung: Der TomiAI-Knopf lässt sich ausblenden und – wenn eingeschaltet – mit Finger oder Maus an eine beliebige Stelle ziehen. „Position zurücksetzen“ bringt ihn zurück. TomiAI bleibt über das Dashboard erreichbar.'],
+      ['improved', 'TomiAI antwortet deutlich schneller: Statt der ganzen Datenbank bekommt die KI nur noch das, was zur Frage passt (passende Getränke, relevante Tage im Arbeitsplan). Zufalls-Fragen („nenne mir 5 zufällige Drinks“) werden jetzt echt zufällig ausgewählt. Kürzere Wartezeit bei Überlastung.'],
+      ['improved', 'Einstellungs-Reiter: Wenn nicht alle Reiter Platz haben, erscheinen Pfeile links/rechts (auch am PC bedienbar, zusätzlich Mausrad und Ziehen).'],
+      ['improved', 'Die Versionsnummer steht nur noch an einer einzigen Stelle (js/version.js) – für Entwickler.'],
+      ['info', 'Einrichtung: sql/4.1.05_absences.sql im Supabase SQL Editor ausführen. Danach die Edge Function tomi-ai neu bereitstellen (supabase functions deploy tomi-ai).']
+    ] },
   { version: '4.1.04', range: '', date: 'November 2026', title: 'Login-Protokoll: sichere Datenbank-Namen',
     changes: [
       ['fixed', 'Die Datenbank-Einrichtung für das Login-Protokoll brach mit „column started_at does not exist“ ab, weil der Name einer neuen Tabelle schon von der App benutzt wird. Alle neuen Objekte heißen jetzt eindeutig (nx_...), bestehende Daten bleiben unberührt.']

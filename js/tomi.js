@@ -1,11 +1,13 @@
 /* ============================================================
-   js/tomi.js  (v4.1.00)
+   js/tomi.js  (v4.1.05)
    TomiAI: Assistent (Google Gemini) für alle Mitarbeiter.
    - Kellner: Fragen zu Rezepten, Allergenen, Speisekarte, Checklisten und zur App.
    - Manager/Developer: zusätzlich Hilfe bei Plan, Stunden, Tausch und Tickets.
      Die KI ändert NIE selbst etwas. Sie macht Vorschläge, die der Manager hier bestätigen muss.
    - Der API-Schlüssel liegt nur auf dem Server (Edge Function tomi-ai, Secret GEMINI_API_KEY).
    - Der Gesprächsverlauf wird nicht gespeichert; er gilt nur, solange das Fenster offen ist.
+   - v4.1.05: Der schwebende Knopf lässt sich in den Einstellungen ausblenden und verschieben
+     (Position wird nur auf diesem Gerät gespeichert, siehe Abschnitt „TomiAI-Knopf“ unten).
    ============================================================ */
 
     let tomi = { m: null, hist: [], busy: false };
@@ -17,6 +19,7 @@
     }
 
     function openTomiModal() {
+      if (tomiFabDragged) return;   // Nach dem Verschieben des Knopfes kein versehentliches Öffnen
       closeSettingsMenu();
       tomi.hist = [];
       tomi.busy = false;
@@ -200,3 +203,98 @@
       if (res.error) throw new Error(fmDbError(res.error));
       if (!res.data || !res.data.length) throw new Error(fmL('Nichts gespeichert (fehlende Berechtigung?).', 'Nothing saved (missing permission?).'));
     }
+
+
+    // ============================================================
+    // TomiAI-Knopf: ausblenden / verschieben (v4.1.05)
+    // Einstellungen: appSettings.tomiFab (anzeigen) und appSettings.tomiMove (verschiebbar).
+    // Position: in Anteilen (0–1) der freien Fläche, damit sie nach Drehen/Skalieren des Bildschirms passt.
+    // ============================================================
+    const TOMI_POS_KEY = 'nexus_tomi_pos';
+    let tomiFabDragged = false;
+
+    function tomiFabLoadPos() {
+      try {
+        const v = JSON.parse(localStorage.getItem(TOMI_POS_KEY) || 'null');
+        if (v && typeof v.x === 'number' && typeof v.y === 'number') return { x: Math.min(1, Math.max(0, v.x)), y: Math.min(1, Math.max(0, v.y)) };
+      } catch (e) {}
+      return null;
+    }
+
+    function tomiFabApply() {
+      const fab = document.getElementById('tomiFab');
+      if (!fab) return;
+      const movable = !!(appSettings && appSettings.tomiMove) && !(appSettings && appSettings.tomiFab === false);
+      fab.classList.toggle('tomi-fab-movable', movable);
+      const pos = tomiFabLoadPos();
+      if (!pos) {
+        fab.style.left = ''; fab.style.top = ''; fab.style.bottom = ''; fab.style.right = '';
+        return;
+      }
+      const w = fab.offsetWidth || 110, h = fab.offsetHeight || 40, m = 8;
+      const freeX = Math.max(0, window.innerWidth - w - m * 2);
+      const freeY = Math.max(0, window.innerHeight - h - m * 2);
+      fab.style.left = Math.round(m + pos.x * freeX) + 'px';
+      fab.style.top = Math.round(m + pos.y * freeY) + 'px';
+      fab.style.bottom = 'auto';
+      fab.style.right = 'auto';
+    }
+
+    function tomiFabResetPosition(silent) {
+      try { localStorage.removeItem(TOMI_POS_KEY); } catch (e) {}
+      tomiFabApply();
+      if (!silent && typeof fmToast === 'function') fmToast(fmL('TomiAI-Knopf zurückgesetzt', 'TomiAI button reset'));
+    }
+
+    (function tomiFabInitDrag() {
+      const fab = document.getElementById('tomiFab');
+      if (!fab || fab._dragInit) return;
+      fab._dragInit = true;
+      let st = null;
+
+      fab.addEventListener('pointerdown', e => {
+        if (!fab.classList.contains('tomi-fab-movable')) return;
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        const r = fab.getBoundingClientRect();
+        st = { id: e.pointerId, sx: e.clientX, sy: e.clientY, left: r.left, top: r.top, w: r.width, h: r.height, moved: false };
+        try { fab.setPointerCapture(e.pointerId); } catch (err) {}
+      });
+
+      fab.addEventListener('pointermove', e => {
+        if (!st || e.pointerId !== st.id) return;
+        const dx = e.clientX - st.sx, dy = e.clientY - st.sy;
+        if (!st.moved && Math.hypot(dx, dy) < 6) return;
+        st.moved = true;
+        fab.classList.add('dragging');
+        const m = 8;
+        const left = Math.min(Math.max(m, st.left + dx), window.innerWidth - st.w - m);
+        const top = Math.min(Math.max(m, st.top + dy), window.innerHeight - st.h - m);
+        fab.style.left = Math.round(left) + 'px';
+        fab.style.top = Math.round(top) + 'px';
+        fab.style.bottom = 'auto';
+        fab.style.right = 'auto';
+        e.preventDefault();
+      });
+
+      const end = e => {
+        if (!st || (e && e.pointerId !== st.id)) return;
+        fab.classList.remove('dragging');
+        try { fab.releasePointerCapture(st.id); } catch (err) {}
+        if (st.moved) {
+          const m = 8;
+          const freeX = Math.max(1, window.innerWidth - st.w - m * 2);
+          const freeY = Math.max(1, window.innerHeight - st.h - m * 2);
+          const r = fab.getBoundingClientRect();
+          const pos = { x: Math.min(1, Math.max(0, (r.left - m) / freeX)), y: Math.min(1, Math.max(0, (r.top - m) / freeY)) };
+          try { localStorage.setItem(TOMI_POS_KEY, JSON.stringify(pos)); } catch (err) {}
+          tomiFabDragged = true;
+          setTimeout(() => { tomiFabDragged = false; }, 350);
+        }
+        st = null;
+      };
+      fab.addEventListener('pointerup', end);
+      fab.addEventListener('pointercancel', end);
+      window.addEventListener('resize', tomiFabApply);
+      window.addEventListener('orientationchange', () => setTimeout(tomiFabApply, 200));
+      tomiFabApply();
+    })();
