@@ -12,6 +12,15 @@
    ============================================================ */
 
     const CHANGELOG = [
+  { version: '4.1.07', range: '', date: 'November 2026', title: 'Mitteilungen (🔔), Fenster per Klick daneben schließen, TomiAI: vollständige Tagesliste',
+    changes: [
+      ['new', '🔔 Mitteilungen: Unter Begrüßung und Datum im Dashboard blinkt „🔔 3 neu“, wenn etwas für dich da ist (genehmigter Urlaub, Schichttausch, neuer Arbeitsplan, ...). Tippen öffnet die Liste und springt ins passende Fenster. Das funktioniert auch, wenn Push auf dem Gerät nicht ankommt.'],
+      ['new', '🚀 Neue App-Version: Es erscheint „Neu in v…“. Tippen zeigt, was neu ist, danach verschwindet der Hinweis.'],
+      ['new', 'Fenster lassen sich per Klick auf den abgedunkelten Hintergrund schließen. Hast du etwas eingetippt, bleibt das Fenster zur Sicherheit offen. Ein/Aus unter Einstellungen → Darstellung → Fenster.'],
+      ['fixed', 'TomiAI: „Wer arbeitet morgen?“ zeigt jetzt alle Personen mit Anzahl. Der Server stellt die Tagesliste vollständig zusammen, und große Arbeitspläne werden komplett geladen.'],
+      ['improved', 'TomiAI-Fehlermeldungen nennen keinen Anbieter mehr. Manager und Developer sehen zusätzlich einen kurzen technischen Hinweis (z. B. „429×2“).'],
+      ['info', 'Einrichtung: sql/4.1.07_inbox.sql im Supabase SQL Editor ausführen und die Edge Function tomi-ai neu bereitstellen.']
+    ] },
   { version: '4.1.06', range: '', date: 'November 2026', title: 'Tagesangebot: Tageskuchen & Tagessuppe mit Allergenen, Zettel per Foto einlesen',
     changes: [
       ['new', 'Neue Kachel „🍰 Tagesangebot“ im Dashboard: Alle sehen den Tageskuchen und die Tagessuppe von heute mit Preis und Allergenen (A–R, auch im Klartext). Reiter „Kommend“ zeigt die nächsten Tage.'],

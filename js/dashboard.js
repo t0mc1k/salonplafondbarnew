@@ -92,6 +92,8 @@
         pill.className = 'staff-pill ' + (currentStaffRole === 'developer' ? 'pill-dev' : currentStaffRole === 'manager' ? 'pill-manager' : 'pill-staff');
       }
 
+      if (typeof inboxRefresh === 'function') inboxRefresh();   // 🔔 Mitteilungen unter dem Datum
+
       groupsEl.innerHTML = dashLayoutFor().map(g => {
         const tiles = g.ids.map(id => defs[id] ? dashTileHtml(id, defs[id]) : '').join('');
         return `<section class="dash-group">

@@ -16,7 +16,8 @@
       chatToast: true,        // Hinweis bei neuer Chat-Nachricht
       chatSound: false,       // Ton bei neuer Chat-Nachricht
       tomiFab: true,          // TomiAI-Knopf auf dem Bildschirm anzeigen (v4.1.05)
-      tomiMove: false         // TomiAI-Knopf verschiebbar (v4.1.05); Position siehe tomi.js
+      tomiMove: false,        // TomiAI-Knopf verschiebbar (v4.1.05); Position siehe tomi.js
+      closeOutside: true      // Fenster per Klick auf den Hintergrund schließen (v4.1.07, siehe dialogs.js)
     };
     let appSettings = Object.assign({}, SETTINGS_DEFAULTS);
 

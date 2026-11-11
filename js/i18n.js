@@ -1687,16 +1687,16 @@
   "en": "You have reached the daily limit for TomiAI. Try again tomorrow."
  },
  "tomi.errNotConfigured": {
-  "de": "TomiAI ist noch nicht eingerichtet (Gemini-Schlüssel fehlt). Bitte den Manager/Developer informieren.",
-  "en": "TomiAI is not set up yet (Gemini key missing). Please tell the manager/developer."
+  "de": "TomiAI ist noch nicht eingerichtet (KI-Schlüssel fehlt). Bitte den Manager/Developer informieren.",
+  "en": "TomiAI is not set up yet (AI key missing). Please tell the manager/developer."
  },
  "tomi.errDeploy": {
   "de": "TomiAI ist noch nicht eingerichtet (Funktion nicht gefunden). Bitte den Manager/Developer informieren.",
   "en": "TomiAI is not set up yet (function not found). Please tell the manager/developer."
  },
  "tomi.errBusy": {
-  "de": "TomiAI ist gerade stark ausgelastet (Google). Bitte versuche es in einer Minute noch einmal.",
-  "en": "TomiAI is very busy right now (Google). Please try again in a minute."
+  "de": "TomiAI ist gerade stark ausgelastet. Bitte versuche es in einer Minute noch einmal.",
+  "en": "TomiAI is very busy right now. Please try again in a minute."
  },
  "tomi.errAi": {
   "de": "TomiAI ist gerade nicht erreichbar. Bitte versuche es später noch einmal.",
@@ -1913,6 +1913,18 @@
  "dash.specialsSub": {
   "de": "Kuchen & Suppe heute, mit Allergenen",
   "en": "Cake & soup today, with allergens"
+ },
+ "set.winHead": {
+  "de": "🪟 Fenster",
+  "en": "🪟 Windows"
+ },
+ "set.closeOutside": {
+  "de": "Fenster per Klick daneben schließen",
+  "en": "Close windows by clicking outside"
+ },
+ "set.closeOutsideSub": {
+  "de": "Ein Klick auf den abgedunkelten Hintergrund schließt das Fenster. Hast du etwas eingetippt, bleibt es zur Sicherheit offen.",
+  "en": "Clicking the dimmed background closes the window. If you have typed something, it stays open to be safe."
  }
 };
 

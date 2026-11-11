@@ -1,10 +1,12 @@
-// Supabase Edge Function: tomi-ai  (Version 4.1.06)
+// Supabase Edge Function: tomi-ai  (Version 4.1.07)
 // TomiAI: Assistent in der App (Google Gemini). Der API-Schlüssel liegt NUR hier (Secret GEMINI_API_KEY), nie in der App.
 // Secrets: GEMINI_API_KEY (Pflicht), GEMINI_MODEL (optional: eigenes Modell, wird zuerst versucht)
 // v4.1.05: schneller. Die KI bekommt nur noch die Daten, die zur Frage passen (Getränke-Namensverzeichnis statt aller Details,
 //          Arbeitsplan nur für die nächsten ~3 Wochen, „zufällige Drinks“ würfelt der Server), Abfragen laufen parallel,
 //          schnelles Lite-Modell zuerst, kürzere Wartezeiten bei Überlastung.
 // v4.1.06: kennt das Tagesangebot (Tageskuchen/Tagessuppe mit Allergenen, Tabelle daily_specials).
+// v4.1.07: „Wer arbeitet am …?“ bekommt eine vollständige Tagesliste vom Server (kein Mitzählen durch die KI mehr),
+//          Arbeitsplan wird seitenweise geladen (keine 1000-Zeilen-Grenze), Fehler-Detail für Manager.
 // Die Person wird über den Header x-staff-token geprüft (Datenbankfunktion tomi_whoami). Rechte (Manager) kommen vom Server.
 // Die KI ändert nie selbst etwas: Manager bekommen „Vorschläge“, die sie in der App bestätigen müssen.
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -147,7 +149,7 @@ export async function callGeminiWithFallback(
   models: string[],
   sleep: (ms: number) => Promise<void>,
   now: () => number = () => Date.now(),
-  maxMs = 20000,
+  maxMs = 30000,
 ): Promise<{ data?: any; model?: string; error?: "busy" | "ai"; status?: number; log: string[] }> {
   const log: string[] = [];
   const started = now();
@@ -354,6 +356,47 @@ export function modelsFor(env: string, heavy: boolean): string[] {
   const full = ["gemini-2.5-flash", "gemini-flash-latest"];
   return Array.from(new Set([env, ...(heavy ? [...full, ...lite] : [...lite, ...full])].filter(Boolean)));
 }
+
+// ---- v4.1.07: Tagesliste „Wer arbeitet wann?“ – vom Server vollständig zusammengestellt (die KI soll nicht selbst suchen/zählen)
+export type DayRow = { name: string; text: string; minutes: number; station?: string | null };
+export function classifyShift(r: { text: string; minutes: number }): "work" | "off" | "holiday" | "sick" | "other" | "none" {
+  if (r.minutes > 0 || /^\d{1,2}:\d{2}-\d{1,2}:\d{2}/.test(r.text)) return "work";
+  const c = String(r.text).trim().toUpperCase();
+  if (!c || c === "-") return "none";
+  if (c === "X") return "off";
+  if (c === "U") return "holiday";
+  if (c === "K") return "sick";
+  return "other";
+}
+export function rosterLine(iso: string, label: string, rows: DayRow[]): string {
+  const work: string[] = [], off: string[] = [], hol: string[] = [], sick: string[] = [], other: string[] = [];
+  for (const r of rows) {
+    const k = classifyShift(r);
+    if (k === "work") work.push(`${r.name} ${r.text}${r.station ? "(" + r.station + ")" : ""}`);
+    else if (k === "off") off.push(r.name);
+    else if (k === "holiday") hol.push(r.name);
+    else if (k === "sick") sick.push(r.name);
+    else if (k === "other") other.push(`${r.name} ${r.text}`);
+  }
+  work.sort((a, b) => a.localeCompare(b));
+  const parts = [`${iso}${label ? " " + label : ""}: WORKING (${work.length}): ${work.length ? work.join("; ") : "nobody entered"}`];
+  if (off.length) parts.push(`OFF (${off.length}): ${off.sort().join(", ")}`);
+  if (hol.length) parts.push(`HOLIDAY U (${hol.length}): ${hol.sort().join(", ")}`);
+  if (sick.length) parts.push(`SICK K (${sick.length}): ${sick.sort().join(", ")}`);
+  if (other.length) parts.push(`OTHER: ${other.join(", ")}`);
+  return parts.join(" | ");
+}
+
+// Kurze, anbieterneutrale Zusammenfassung der Fehler (nur für Manager sichtbar), z. B. „429×2, timeout“
+export function summarizeLog(log: string[]): string {
+  const c = new Map<string, number>();
+  for (const l of log) {
+    const m = l.match(/ (\d{3}) /) ;
+    const key = /network|timeout|abort/i.test(l) ? "timeout" : /time limit/.test(l) ? "time limit" : m ? m[1] : (/ ok$/.test(l) ? "" : "");
+    if (key) c.set(key, (c.get(key) ?? 0) + 1);
+  }
+  return Array.from(c).map(([k, n]) => (n > 1 ? `${k}×${n}` : k)).join(", ");
+}
 // >>helpers
 
 const SCHEMA = {
@@ -381,6 +424,18 @@ function viennaNow() {
   const iso = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Vienna" }).format(d);
   const wd = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Vienna", weekday: "long" }).format(d);
   return { iso, wd };
+}
+
+// Alle Zeilen seitenweise laden (Supabase liefert sonst höchstens 1000 Zeilen pro Abfrage)
+async function fetchAllRows(make: () => any, pageSize = 1000, maxPages = 6): Promise<any[]> {
+  const out: any[] = [];
+  for (let p = 0; p < maxPages; p++) {
+    const { data, error } = await make().range(p * pageSize, p * pageSize + pageSize - 1);
+    if (error || !data) break;
+    out.push(...data);
+    if (data.length < pageSize) break;
+  }
+  return out;
 }
 
 async function buildContext(db: any, me: any, isAdmin: boolean, recent: string, latest: string) {
@@ -476,10 +531,12 @@ async function buildContext(db: any, me: any, isAdmin: boolean, recent: string, 
     addM(Number(winEnd.slice(0, 4)), Number(winEnd.slice(5, 7)));
     for (const h of monthHints(recent, now.iso)) addM(h.y, h.m);
     await Promise.all(Array.from(want.values()).map(async ({ y: yy, m: mm }) => {
-      let q = db.from("work_schedules").select("*").eq("year", yy).eq("month", mm).order("day", { ascending: true });
-      if (!isAdmin) q = q.ilike("employee_name", `%${me.name}%`);
-      const { data: rows } = await q;
-      schedRows.push({ y: yy, m: mm, rows: (rows ?? []) as any[] });
+      const rows = await fetchAllRows(() => {
+        let q = db.from("work_schedules").select("*").eq("year", yy).eq("month", mm).order("day", { ascending: true }).order("employee_name", { ascending: true });
+        if (!isAdmin) q = q.ilike("employee_name", `%${me.name}%`);
+        return q;
+      });
+      schedRows.push({ y: yy, m: mm, rows });
     }));
   };
 
@@ -515,7 +572,7 @@ async function buildContext(db: any, me: any, isAdmin: boolean, recent: string, 
     safe(tSched, undefined as unknown as void),
   ]);
 
-  // ---- Arbeitsplan: Stunden aus dem ganzen Monat, Tage nur für das Zeitfenster (heute -2 … +21 Tage) bzw. angefragte Monate/Personen
+  // ---- Arbeitsplan: Stunden aus dem ganzen Monat; Tage nur für das Zeitfenster (heute -2 … +21 Tage) bzw. angefragte Monate/Personen
   let schedTxt = "";
   if (topics.sched && schedRows.length) {
     const winStart = addDaysIso(now.iso, -2), winEnd = addDaysIso(now.iso, 21);
@@ -525,6 +582,7 @@ async function buildContext(db: any, me: any, isAdmin: boolean, recent: string, 
     const asked = isAdmin ? new Set(mentionedNames(Array.from(new Set(allNames.concat(staffNames))), recent).map(norm)) : new Set<string>();
     const lines: string[] = [];
     const hoursByMonth: string[] = [];
+    const byDay = new Map<string, DayRow[]>();
     schedRows.sort((a, b) => (a.y * 12 + a.m) - (b.y * 12 + b.m));
     for (const sr of schedRows) {
       const by = new Map<string, any[]>();
@@ -543,21 +601,35 @@ async function buildContext(db: any, me: any, isAdmin: boolean, recent: string, 
         for (const r of rs) {
           const s = shiftText(r); min += s.minutes;
           const iso = `${sr.y}-${String(sr.m).padStart(2, "0")}-${String(r.day).padStart(2, "0")}`;
-          if (printAll || (iso >= winStart && iso <= winEnd)) shown.push(`${r.day}:${s.text}${r.station ? "(" + r.station + ")" : ""}`);
+          if (isAdmin && (iso >= winStart && iso <= winEnd || hinted.has(`${sr.y}-${sr.m}`))) {
+            if (!byDay.has(iso)) byDay.set(iso, []);
+            byDay.get(iso)!.push({ name: n, text: s.text, minutes: s.minutes, station: r.station });
+          }
+          // Personenzeilen: Mitarbeiter sehen ihren eigenen Plan; Manager nur für genannte Personen bzw. genannte Monate
+          if (printAll) shown.push(`${r.day}:${s.text}${r.station ? "(" + r.station + ")" : ""}`);
         }
         hours.push(`${n} ${fmtHours(min)}h`);
         if (shown.length) lines.push(`${label} ${n} [${fmtHours(min)}h planned in month] ${shown.join(" ")}`);
       }
       if (isAdmin && hours.length) hoursByMonth.push(`${label}: ${hours.join(", ")}`);
     }
-    if (lines.length) {
-      const head = isAdmin
-        ? `WORK SCHEDULE (all staff; format: month name [hours planned in the whole month] day:shift; X=off, U=holiday, K=sick). Days shown: ${winStart} to ${winEnd}${hinted.size ? " plus the months named in the question" : ""}${asked.size ? " plus all days of the people named in the question" : ""}. A person missing on a day has no entry (no shift)`
-        : "YOUR OWN WORK SCHEDULE (day:shift; X=off, U=holiday, K=sick)";
-      schedTxt = `CALENDAR (Europe/Vienna, use this to resolve weekdays and 'next week'):\n${calendarLines(now.iso).join("\n")}\n\n${head}:\n${lines.join("\n")}`;
+    const cal = calendarLines(now.iso);
+    const calLabel = new Map<string, string>();
+    for (const l of cal) { const m = l.match(/^(\w{3}) (\d{4}-\d{2}-\d{2}) \((.*)\)$/); if (m) calLabel.set(m[2], `${m[1]} (${m[3]})`); }
+    const wdFmt = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", weekday: "short" });
+    schedTxt = `CALENDAR (Europe/Vienna, use this to resolve weekdays and 'next week'):\n${cal.join("\n")}`;
+    if (isAdmin) {
+      const days = Array.from(byDay.keys()).sort();
+      if (days.length) {
+        schedTxt += `\n\nWHO WORKS WHEN (complete roster per day, built by the server from the schedule. For "who works on <day>" use ONLY this block, list EVERY person shown for that day and state the count. Days not listed here have no data loaded):\n` +
+          days.map((iso) => rosterLine(iso, calLabel.get(iso) ?? wdFmt.format(new Date(iso + "T00:00:00Z")), byDay.get(iso)!)).join("\n");
+      } else schedTxt += `\n\nWHO WORKS WHEN: no schedule entries found for ${winStart} to ${winEnd}.`;
+      if (lines.length) schedTxt += `\n\nDETAILED SCHEDULE of the people/months named in the question (month name [hours in whole month] day:shift; X=off, U=holiday, K=sick):\n${lines.join("\n")}`;
       if (hoursByMonth.length) schedTxt += `\n\nPLANNED HOURS PER PERSON (whole month):\n${hoursByMonth.join("\n")}`;
+    } else if (lines.length) {
+      schedTxt += `\n\nYOUR OWN WORK SCHEDULE (day:shift; X=off, U=holiday, K=sick):\n${lines.join("\n")}`;
     } else {
-      schedTxt = `CALENDAR (Europe/Vienna, use this to resolve weekdays and 'next week'):\n${calendarLines(now.iso).join("\n")}\n\nWORK SCHEDULE: no entries found for this period.`;
+      schedTxt += `\n\nWORK SCHEDULE: no entries found for this period.`;
     }
   }
 
@@ -577,6 +649,7 @@ Proposal types: schedule_set (employee, date YYYY-MM-DD, start HH:MM, end HH:MM,
 LANGUAGE: Answer in the language of the user's latest message (German, English or Slovak). If unsure, use the app language.
 STYLE: Short, friendly, practical, in plain words for beginners. Use short lists when helpful. No long introductions.
 SOURCES: Use ONLY the DATA below. The DATA contains only the parts that fit the latest question (for example no food menu for a drink question). If something you need is missing from the DATA, ask the user to name the topic (e.g. "food menu", "my schedule") instead of guessing; if it is truly not in the app, say so and suggest asking the manager. Never invent recipes, ingredients, allergens, prices, shifts or rules.
+ROSTER: For questions like "who works tomorrow / on Friday" use the WHO WORKS WHEN block, list every person it shows for that day (never shorten, never write "and others") and give the number of people.
 DATES: Always use the CALENDAR block in the DATA to resolve weekdays, "tomorrow", "next week" or "Friday". Never calculate dates yourself.
 RANDOM: If the DATA has a RANDOM PICKS block, the server already chose the drinks at random. Present exactly those drinks (name, short description, main ingredients) and nothing else.
 ALLERGENS: Only report allergens that appear in the DATA. "none entered" means nothing was recorded; never say a dish or drink is allergen-free, and for guests with allergies always add that the kitchen should confirm.
@@ -640,7 +713,7 @@ Deno.serve(async (req) => {
     return fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": GEMINI_KEY },
-      signal: AbortSignal.timeout(14000),   // hängt eine Anfrage, nicht ewig warten: nächstes Modell versuchen
+      signal: AbortSignal.timeout(22000),   // hängt eine Anfrage, nicht ewig warten: nächstes Modell versuchen
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: system }] },
         contents: messages.map((m: any) => ({ role: m.role, parts: [{ text: m.text }] })),
@@ -668,7 +741,8 @@ Deno.serve(async (req) => {
   console.log(`gemini: total=${Date.now() - t0}ms`, result.log.join(" | "));
   if (!result.data) {
     await refund(me.name);
-    return json({ error: result.error ?? "ai", status: result.status }, result.error === "busy" ? 503 : 502);
+    // Nur Manager/Developer bekommen eine kurze technische Zusammenfassung (ohne Anbieternamen), z. B. „429×3, timeout“
+    return json({ error: result.error ?? "ai", status: result.status, detail: isAdmin ? summarizeLog(result.log) : undefined }, result.error === "busy" ? 503 : 502);
   }
   const data = result.data;
   const text = (data?.candidates?.[0]?.content?.parts ?? []).map((p: any) => p?.text ?? "").join("").trim();

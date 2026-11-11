@@ -118,3 +118,20 @@ Reihenfolge einhalten:
 - Weitere Arten wie „Tagesgericht“: in `js/specials.js` die Liste `SP_KINDS` erweitern (die Datenbank erlaubt `dish` bereits).
 - `js/specials.js` ist in `js/version.js` unter `APP_SCRIPTS` eingetragen.
 
+## Update 4.1.07 (Mitteilungen 🔔, Fenster per Klick daneben schließen, TomiAI: vollständige Tagesliste)
+Reihenfolge einhalten:
+1. **SQL Editor:** `sql/4.1.07_inbox.sql` ausführen (Tabellen `inbox_items` und `inbox_state`, Funktionen `inbox_list`, `inbox_unread_count`, `inbox_mark_read` und eine erweiterte `push_enqueue`, die Meldungen zusätzlich als Mitteilung speichert). Bei „Potential issue detected“ → *Run query*. Das Skript darf mehrmals ausgeführt werden. Voraussetzung: `4.1.00_push_tomi.sql` wurde schon ausgeführt.
+2. **Edge Function `tomi-ai`** neu bereitstellen (`supabase/functions/tomi-ai/index.ts`). **Wichtig:** Hast du in dieser Datei selbst etwas geändert (z. B. die Modell-Reihenfolge in der Funktion `modelsFor`), diese Änderung nach dem Einfügen wieder eintragen. Wenn du die Modelle über das Secret `GEMINI_MODEL` gesetzt hast, bleibt das unverändert wirksam.
+3. **App hochladen:** alle geänderten Dateien aus dem 4.1.07-Paket ersetzen und die neuen Dateien `js/inbox.js` und `js/dialogs.js` mit hochladen. Danach die App einmal ganz schließen und neu öffnen.
+4. **Prüfen:**
+   - Unter dem Datum im Dashboard erscheint beim ersten Start **„🚀 Neu in v4.1.07“**. Tippen öffnet „Was ist neu?“, danach verschwindet der Hinweis.
+   - Als Kellner Urlaub beantragen, als Manager genehmigen: Beim Kellner blinkt **„🔔 1 neu“**. Das klappt auch, wenn Push auf dem Gerät aus ist.
+   - Fenster öffnen und neben das Fenster klicken: es schließt. Etwas eintippen und daneben klicken: es bleibt offen und wackelt. Ein/Aus unter Einstellungen → Darstellung → **Fenster**.
+   - TomiAI fragen: „kto zajtra pracuje“. Die Antwort nennt alle Personen mit Anzahl. Im Log von `tomi-ai` steht `prompt=… chars`.
+   - Tritt bei TomiAI ein Fehler auf, zeigen Manager/Developer in eckigen Klammern einen kurzen Code, z. B. `[429×2]` (Limit) oder `[timeout]`. Normale Mitarbeiter sehen ihn nicht.
+
+**Hinweise:**
+- Mitteilungen werden 30 Tage angezeigt, ältere Einträge nach 45 Tagen gelöscht. Chat gehört nicht dazu. Welche Arten du bekommst, folgt den Einstellungen unter Hinweise (Push und Mitteilungen).
+- Vor Ausführen des SQL zeigt die Glocke nichts an (außer „Neue Version“), und das Fenster weist auf das fehlende SQL hin.
+- `js/inbox.js` und `js/dialogs.js` sind in `js/version.js` unter `APP_SCRIPTS` eingetragen.
+

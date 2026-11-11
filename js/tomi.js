@@ -1,6 +1,6 @@
 /* ============================================================
    js/tomi.js  (v4.1.05)
-   TomiAI: Assistent (Google Gemini) für alle Mitarbeiter.
+   TomiAI: KI-Assistent für alle Mitarbeiter.
    - Kellner: Fragen zu Rezepten, Allergenen, Speisekarte, Checklisten und zur App.
    - Manager/Developer: zusätzlich Hilfe bei Plan, Stunden, Tausch und Tickets.
      Die KI ändert NIE selbst etwas. Sie macht Vorschläge, die der Manager hier bestätigen muss.
@@ -108,17 +108,22 @@
     }
 
     async function tomiErrorText(error, data) {
-      let code = data && data.error;
+      let body = (data && typeof data === 'object') ? data : null;
       try {
-        if (!code && error && error.context && typeof error.context.json === 'function') code = (await error.context.json()).error;
+        if (!body && error && error.context && typeof error.context.json === 'function') body = await error.context.json();
       } catch (e) {}
+      const code = body && body.error;
       const status = error && error.context && error.context.status;
-      if (code === 'busy' || status === 503) return t('tomi.errBusy');
-      if (code === 'auth' || status === 401) return t('tomi.errAuth');
-      if (code === 'quota' || status === 429) return t('tomi.errQuota');
-      if (code === 'not_configured') return t('tomi.errNotConfigured');
-      if (status === 404) return t('tomi.errDeploy');
-      return t('tomi.errAi');
+      let text;
+      if (code === 'busy' || status === 503) text = t('tomi.errBusy');
+      else if (code === 'auth' || status === 401) text = t('tomi.errAuth');
+      else if (code === 'quota' || status === 429) text = t('tomi.errQuota');
+      else if (code === 'not_configured') text = t('tomi.errNotConfigured');
+      else if (status === 404) text = t('tomi.errDeploy');
+      else text = t('tomi.errAi');
+      // Nur Manager/Developer sehen einen kurzen technischen Hinweis (ohne Anbieternamen), z. B. „429×2, Timeout“
+      const detail = (userIsAdmin && body && body.detail) ? String(body.detail) : (userIsAdmin && status ? 'HTTP ' + status : '');
+      return detail ? text + ' [' + detail + ']' : text;
     }
 
     async function tomiSend(preset) {

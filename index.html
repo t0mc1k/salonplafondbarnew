@@ -562,6 +562,7 @@
         <div class="min-w-0">
           <h2 class="dash-hello" id="dashHello">Hallo!</h2>
           <p class="dash-date" id="dashDate"></p>
+          <button type="button" id="dashInbox" class="dash-inbox hidden" onclick="openInboxModal()" aria-live="polite"></button>
         </div>
         <span id="dashRolePill" class="staff-pill pill-staff"></span>
       </section>
@@ -1046,6 +1047,14 @@
               <div class="set-text"><b data-i18n="set.tomiReset">Position zurücksetzen</b><small data-i18n="set.tomiResetSub">Bringt den Knopf an die ursprüngliche Stelle.</small></div>
               <button type="button" onclick="tomiFabResetPosition()" class="ui-btn-ghost" data-i18n="set.tomiResetBtn">↩️ Zurücksetzen</button>
             </div>
+          </div>
+        </section>
+
+        <section class="set-card">
+          <h4 class="set-head" data-i18n="set.winHead">🪟 Fenster</h4>
+          <div class="set-row">
+            <div class="set-text"><b data-i18n="set.closeOutside">Fenster per Klick daneben schließen</b><small data-i18n="set.closeOutsideSub">Ein Klick auf den abgedunkelten Hintergrund schließt das Fenster. Hast du etwas eingetippt, bleibt es zur Sicherheit offen.</small></div>
+            <label class="switch"><input type="checkbox" data-setting-check="closeOutside" onchange="setSetting('closeOutside',this.checked)"><span class="switch-track"></span></label>
           </div>
         </section>
         </div>
