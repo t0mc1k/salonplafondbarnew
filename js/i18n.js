@@ -326,6 +326,18 @@
   "de": "Design",
   "en": "Theme"
  },
+ "set.skin": {
+  "de": "Stil",
+  "en": "Style"
+ },
+ "set.skinSub": {
+  "de": "„NeXuS Glass“: Glas-Look mit Bar-Hintergrund (immer dunkel). Braucht mehr Leistung, bei Ruckeln „Weichzeichner“ ausschalten.",
+  "en": "“NeXuS Glass”: glass look with a bar background (always dark). Needs more performance; if it stutters, turn off “Blur effect”."
+ },
+ "set.skinClassic": {
+  "de": "Original",
+  "en": "Original"
+ },
  "set.light": {
   "de": "☀️ Hell",
   "en": "☀️ Light"

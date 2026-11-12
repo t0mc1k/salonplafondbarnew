@@ -12,6 +12,11 @@
    ============================================================ */
 
     const CHANGELOG = [
+  { version: '4.2.01', range: '', date: 'November 2026', title: 'Neuer Stil „NeXuS Glass“ (Glas-Look mit Bar-Hintergrund)',
+    changes: [
+      ['new', 'Einstellungen → Darstellung → Stil: „✨ NeXuS Glass“ schaltet einen Glas-Look in Schwarz und Gold mit Bar-Hintergrund ein (Anmeldung, Karten, Fenster, Eingabefelder). „Original“ bleibt der Standard.'],
+      ['info', 'NeXuS Glass ist immer dunkel und wird nur geladen, wenn er gewählt ist. Bei Ruckeln auf älteren Geräten „Weichzeichner“ ausschalten. Gespeichert pro Gerät, gedruckt wird immer im Original-Aussehen.']
+    ] },
   { version: '4.2.00', range: '', date: 'November 2026', title: 'Exklusiv-Schicht: Tischtabelle mit Soll / Ist / Gerichten, Drucken und Excel',
     changes: [
       ['new', 'Neue Kachel „🍽️ Exklusiv-Schicht“ (nur Manager/Developer): Tabelle mit Soll, Ist, Tisch-Nr. und frei benennbaren Gerichten. Soll und Ist beginnen leer, Summen für Gäste und jedes Gericht stehen automatisch unten.'],

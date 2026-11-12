@@ -10,7 +10,7 @@
 
    Diese Datei wird in index.html OHNE „?v=“ geladen (damit sie immer frisch ist).
    ============================================================ */
-    const APP_VERSION = '4.2.00';
+    const APP_VERSION = '4.2.01';
 
     // Dateinamen mit Versionsnummer (Cache-Busting), z. B. appAsset('js/ui.js') -> 'js/ui.js?v=4.1.05'
     function appAsset(path) { return path + '?v=' + encodeURIComponent(APP_VERSION); }
@@ -27,6 +27,13 @@
 
     // Stylesheet sofort einbinden (diese Datei steht im <head>)
     document.write('<link rel="stylesheet" href="' + appAsset('css/style.css') + '">');
+    // Stil „NeXuS Glass“ (v4.2.01): Zusatz-Stylesheet und Klasse nur laden, wenn gewählt (sonst keine Mehrkosten)
+    try {
+      if ((JSON.parse(localStorage.getItem('salon_settings') || '{}')).skin === 'glass') {
+        document.documentElement.classList.add('skin-glass');
+        document.write('<link rel="stylesheet" id="skinGlassCss" href="' + appAsset('css/theme-nexus-glass.css') + '">');
+      }
+    } catch (e) {}
     document.title = 'Salonplafond NeXuS · BAR v' + APP_VERSION;
 
     // Wird am Ende von <body> aufgerufen: lädt alle Skripte nacheinander (document.write = gleiche Reihenfolge und

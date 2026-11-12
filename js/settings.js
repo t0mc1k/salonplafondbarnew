@@ -7,6 +7,7 @@
     const SETTINGS_KEY = 'salon_settings';
     const SETTINGS_DEFAULTS = {
       theme: 'dark',          // 'dark' | 'light' | 'auto'
+      skin: 'classic',        // 'classic' | 'glass' (NeXuS Glass, v4.2.01, siehe css/theme-nexus-glass.css)
       fontScale: 100,         // Prozent: 90 | 100 | 112 | 125
       viewMode: 'grid',       // 'grid' | 'list'
       sort: 'newest',         // newest | name_asc | name_desc | price_asc | price_desc | favorites
@@ -27,6 +28,7 @@
         if (raw) Object.assign(appSettings, JSON.parse(raw));
       } catch (e) {}
       if (['dark', 'light', 'auto'].indexOf(appSettings.theme) === -1) appSettings.theme = 'dark';
+      if (appSettings.skin !== 'glass') appSettings.skin = 'classic';
       viewMode = appSettings.viewMode === 'list' ? 'list' : 'grid';
     }
 
@@ -43,6 +45,7 @@
 
     // ---------- Design (Dunkel / Hell / Automatisch) ----------
     function resolveTheme() {
+      if (appSettings.skin === 'glass') return 'dark';   // NeXuS Glass ist immer dunkel
       if (appSettings.theme === 'auto') {
         const dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         return dark ? 'dark' : 'light';
@@ -58,6 +61,17 @@
       document.body.classList.toggle('light-mode', !dark);
       const meta = document.querySelector('meta[name="theme-color"]');
       if (meta) meta.setAttribute('content', dark ? '#0f172a' : '#f6f4ef');
+    }
+
+    // Stil „NeXuS Glass“: Zusatz-Stylesheet erst beim Einschalten laden
+    function applySkin() {
+      const glass = appSettings.skin === 'glass';
+      if (glass && !document.getElementById('skinGlassCss')) {
+        const l = document.createElement('link');
+        l.rel = 'stylesheet'; l.id = 'skinGlassCss'; l.href = appAsset('css/theme-nexus-glass.css');
+        document.head.appendChild(l);
+      }
+      document.documentElement.classList.toggle('skin-glass', glass);
     }
 
     function toggleThemeMode() {
@@ -91,6 +105,7 @@
     function applySetting(key) {
       switch (key) {
         case 'theme': applyTheme(); break;
+        case 'skin': applySkin(); applyTheme(); break;
         case 'fontScale': document.documentElement.style.fontSize = appSettings.fontScale + '%'; break;
         case 'reduceMotion': document.documentElement.classList.toggle('reduce-motion', !!appSettings.reduceMotion); break;
         case 'tomiFab':
@@ -106,6 +121,7 @@
     }
 
     function applyAllSettings() {
+      applySkin();
       applyTheme();
       applySetting('fontScale');
       applySetting('reduceMotion');

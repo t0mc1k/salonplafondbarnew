@@ -30,7 +30,7 @@
       if (st.reduceMotion) de.classList.add('reduce-motion');
       if (st.tomiFab === false) de.classList.add('tomi-fab-off');
       var th = localStorage.getItem('salon_theme') || st.theme || 'dark';
-      var dark = th === 'auto' ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) : th !== 'light';
+      var dark = st.skin === 'glass' || (th === 'auto' ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) : th !== 'light');
       if (dark) de.classList.add('dark');
       window.__salonDark = dark;
     } catch (e) { document.documentElement.classList.add('dark'); window.__salonDark = true; }
@@ -1002,6 +1002,13 @@
         <div class="set-panel" data-panel="look">
         <section class="set-card">
           <h4 class="set-head" data-i18n="set.appearance">🎨 Darstellung</h4>
+          <div class="set-row">
+            <div class="set-text"><b data-i18n="set.skin">Stil</b><small data-i18n="set.skinSub">„NeXuS Glass“: Glas-Look mit Bar-Hintergrund (immer dunkel). Braucht mehr Leistung, bei Ruckeln „Weichzeichner“ ausschalten.</small></div>
+            <div class="seg">
+              <button type="button" class="seg-btn" data-setting="skin" data-value="classic" onclick="setSetting('skin','classic')" data-i18n="set.skinClassic">Original</button>
+              <button type="button" class="seg-btn" data-setting="skin" data-value="glass" onclick="setSetting('skin','glass')">✨ NeXuS Glass</button>
+            </div>
+          </div>
           <div class="set-row">
             <div class="set-text"><b data-i18n="set.theme">Design</b><small id="settingsThemeInfo">Hell ist augenschonend bei Tageslicht, Dunkel für die Bar am Abend.</small></div>
             <div class="seg">
