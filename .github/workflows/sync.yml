@@ -1,0 +1,32 @@
+name: Gastronaut Sync
+
+on:
+  schedule:
+    - cron: '*/30 * * * *' # Spustí sa automaticky každých 30 minút
+  workflow_dispatch: # Umožňuje spustiť ho aj manuálne jedným klikom z webu
+
+jobs:
+  run-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npx playwright install --with-deps chromium
+
+      - name: Run script
+        env:
+          GASTRONAUT_EMAIL: ${{ secrets.GASTRONAUT_EMAIL }}
+          GASTRONAUT_PASSWORD: ${{ secrets.GASTRONAUT_PASSWORD }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        node: node sync.js
+        run: node sync.js
