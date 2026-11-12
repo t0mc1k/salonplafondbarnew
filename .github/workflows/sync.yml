@@ -28,5 +28,4 @@ jobs:
           GASTRONAUT_PASSWORD: ${{ secrets.GASTRONAUT_PASSWORD }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-        node: node sync.js
         run: node sync.js
