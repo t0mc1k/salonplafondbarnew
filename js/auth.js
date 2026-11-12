@@ -216,6 +216,7 @@
       startLoginWatcher();
       // Startseite nach dem Login: Dashboard (Standard) oder Getränke, je nach Einstellung des Kontos
       await loadStartPage();
+      if (typeof loadUserSkin === 'function') await loadUserSkin();   // Stil „NeXuS Glass“ dieser Person (v4.2.01)
       showDashboard();
       if (userStartPage === 'drinks') openDrinksView();
       if (typeof pushOnLogin === 'function') pushOnLogin();   // Gerät für Benachrichtigungen dieser Person zuordnen

@@ -74,6 +74,33 @@
       document.documentElement.classList.toggle('skin-glass', glass);
     }
 
+    // Stil gehört zur Person: Konto (SQL 4.2.01) + Kopie pro Person im Gerät
+    function skinKey() { return 'nexus_skin_' + String(currentWaiterName || '').toLowerCase(); }
+
+    async function loadUserSkin() {
+      let skin = null;
+      try { skin = localStorage.getItem(skinKey()); } catch (e) {}
+      try {
+        const res = await Promise.race([_supabase.rpc('get_my_skin'), new Promise(r => setTimeout(() => r({ timeout: true }), 1500))]);
+        if (res && !res.timeout && !res.error && (res.data === 'glass' || res.data === 'classic')) {
+          skin = res.data;
+          try { localStorage.setItem(skinKey(), skin); } catch (e) {}
+        }
+      } catch (e) {}
+      if ((skin === 'glass' || skin === 'classic') && skin !== appSettings.skin) {
+        appSettings.skin = skin;
+        saveSettings();
+        applySkin();
+        applyTheme();
+        updateUnifiedSettingsUI();
+      }
+    }
+
+    async function saveUserSkin(skin) {
+      try { localStorage.setItem(skinKey(), skin); } catch (e) {}
+      try { await _supabase.rpc('set_my_skin', { p_skin: skin }); } catch (e) {}
+    }
+
     function toggleThemeMode() {
       setSetting('theme', themeMode === 'dark' ? 'light' : 'dark');
     }
@@ -98,6 +125,7 @@
       if (key === 'fontScale') value = Number(value);
       appSettings[key] = value;
       saveSettings();
+      if (key === 'skin') saveUserSkin(value);
       applySetting(key);
       updateUnifiedSettingsUI();
     }
