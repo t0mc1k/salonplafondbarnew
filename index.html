@@ -561,7 +561,10 @@
       <section class="dash-hero">
         <div class="min-w-0">
           <h2 class="dash-hello" id="dashHello">Hallo!</h2>
-          <p class="dash-date" id="dashDate"></p>
+          <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 14px">
+            <p class="dash-date" id="dashDate"></p>
+            <span class="dash-date hidden" id="dashRsv" onclick="openReservationsModal()" style="cursor:pointer" title="Reservierungen (Gastronaut)"></span>
+          </div>
           <button type="button" id="dashInbox" class="dash-inbox hidden" onclick="openInboxModal()" aria-live="polite"></button>
         </div>
         <span id="dashRolePill" class="staff-pill pill-staff"></span>
