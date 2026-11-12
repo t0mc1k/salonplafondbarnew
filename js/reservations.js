@@ -1,0 +1,66 @@
+/* ============================================================
+   js/reservations.js  (v4.2.02)
+   Kachel „Reservierungen“: zeigt die Gastronaut-Daten aus der Tabelle
+   gastronaut_sync (Zeile id = 1), Frühschicht, Abendschicht und Tag gesamt.
+   Die Daten werden alle 30 Minuten von einem externen Skript aktualisiert,
+   sie sind also nicht garantiert aktuell. Nur Lesen. Rechte: sql/4.2.02_gastronaut.sql
+   ============================================================ */
+
+    // Personenzahl aus „12:00 • 4 Pers.“ lesen
+    function rsvPersons(r) {
+      const m = String((r && r.cas_a_osoby) || '').match(/(\d+)\s*Pers/i);
+      return m ? parseInt(m[1], 10) : 0;
+    }
+
+    function rsvShiftStats(shift) {
+      const list = (shift && Array.isArray(shift.rezervacie)) ? shift.rezervacie : [];
+      return { list, count: list.length, persons: list.reduce((s, r) => s + rsvPersons(r), 0) };
+    }
+
+    function rsvShiftHtml(title, shift) {
+      const st = rsvShiftStats(shift);
+      const rows = st.list.map(r => `<div class="fm-item"><div class="fm-item-main">
+          <div class="fm-row-flex" style="justify-content:space-between;flex-wrap:nowrap">
+            <div class="fm-item-title">${escapeHtml(r.kod_a_meno || '')}</div>
+            <span>${escapeHtml(r.cas_a_osoby || '')}</span>
+          </div>
+          ${r.stol ? `<div class="fm-item-sub">🪑 ${escapeHtml(r.stol)}</div>` : ''}
+        </div></div>`).join('');
+      return `<h4 style="margin:14px 0 6px;font-weight:700">${escapeHtml(title)}
+          <small style="font-weight:400;opacity:.75"> · ${st.count} ${escapeHtml(fmL('Reservierungen', 'reservations'))} · ${st.persons} ${escapeHtml(fmL('Gäste', 'guests'))}</small></h4>
+        ${rows || `<p class="staff-empty">${escapeHtml(fmL('Keine Reservierungen.', 'No reservations.'))}</p>`}`;
+    }
+
+    async function openReservationsModal() {
+      closeSettingsMenu();
+      const m = fmOpen('rsvModal', {
+        title: '📒 ' + fmL('Reservierungen', 'Reservations'),
+        sub: fmL('Heute, aus Gastronaut', 'Today, from Gastronaut')
+      });
+      m.setBody('<p class="staff-empty">' + escapeHtml(fmL('Lade ...', 'Loading ...')) + '</p>');
+      m.setFoot('<button type="button" class="ui-btn-primary" onclick="fmClose(\'rsvModal\')">' + escapeHtml(fmL('Fertig', 'Done')) + '</button>');
+
+      const { data: row, error } = await _supabase.from('gastronaut_sync').select('data, updated_at').eq('id', 1).single();
+      if (error) { m.setBody(fmErrorHtml(error)); return; }
+      const d = (row && row.data) || {};
+      const f = rsvShiftStats(d.fruhschicht), a = rsvShiftStats(d.abendschicht);
+      const ts = row.updated_at || d.aktualisiert;
+      const when = ts ? new Date(ts).toLocaleString(langLocale(), { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '–';
+
+      const box = (label, st) => `<div style="flex:1;min-width:90px;padding:10px;border-radius:12px;background:rgba(245,158,11,.12);text-align:center">
+          <div style="font-size:12px;opacity:.8">${escapeHtml(label)}</div>
+          <div style="font-size:22px;font-weight:800">${st.persons}</div>
+          <div style="font-size:12px;opacity:.8">${st.count} ${escapeHtml(fmL('Res.', 'res.'))}</div></div>`;
+
+      m.setBody(`
+        <p class="ui-head-sub" style="margin:0 0 10px">⚠️ ${escapeHtml(fmL(
+          'Die Daten werden alle 30 Minuten aktualisiert und sind nicht garantiert aktuell. Stand: ',
+          'Data is refreshed every 30 minutes and may not be up to date. Last update: '))}<b>${escapeHtml(when)}</b></p>
+        <div class="fm-row-flex" style="gap:8px;flex-wrap:wrap">
+          ${box(fmL('Früh', 'Early'), f)}
+          ${box(fmL('Abend', 'Evening'), a)}
+          ${box(fmL('Gesamt', 'Total'), { persons: f.persons + a.persons, count: f.count + a.count })}
+        </div>
+        ${rsvShiftHtml('☀️ ' + fmL('Frühschicht', 'Early shift'), d.fruhschicht)}
+        ${rsvShiftHtml('🌙 ' + fmL('Abendschicht', 'Evening shift'), d.abendschicht)}`);
+    }

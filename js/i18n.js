@@ -678,6 +678,14 @@
   "de": "Etwas kaputt?",
   "en": "Something broken?"
  },
+ "dash.reserv": {
+  "de": "Reservierungen",
+  "en": "Reservations"
+ },
+ "dash.reservSub": {
+  "de": "Früh, Abend und Tag gesamt",
+  "en": "Early, evening and day total"
+ },
  "dash.found": {
   "de": "Fundsachen",
   "en": "Lost & Found"

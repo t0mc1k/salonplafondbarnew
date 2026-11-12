@@ -12,6 +12,12 @@
    ============================================================ */
 
     const CHANGELOG = [
+  { version: '4.2.02', range: '', date: 'November 2026', title: 'Neue Kachel „Reservierungen“ (Gastronaut)',
+    changes: [
+      ['new', 'Neue Kachel „📒 Reservierungen“: zeigt Frühschicht, Abendschicht und den ganzen Tag (Reservierungen und Gäste) aus Gastronaut, inklusive Liste mit Uhrzeit, Name und Tisch.'],
+      ['info', 'Die Daten werden alle 30 Minuten aktualisiert und sind nicht garantiert aktuell. Das steht auch im Fenster.'],
+      ['info', 'Einrichtung: sql/4.2.02_gastronaut.sql im Supabase SQL Editor ausführen (Leserecht auf gastronaut_sync).']
+    ] },
   { version: '4.2.01', range: '', date: 'November 2026', title: 'Neuer Stil „NeXuS Glass“ (Glas-Look mit Bar-Hintergrund)',
     changes: [
       ['new', 'Einstellungen → Darstellung → Stil: „✨ NeXuS Glass“ schaltet einen Glas-Look in Schwarz und Gold mit Bar-Hintergrund ein (Anmeldung, Karten, Fenster, Eingabefelder). „Original“ bleibt der Standard.'],
