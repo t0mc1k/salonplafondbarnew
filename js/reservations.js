@@ -16,6 +16,21 @@
       return { count: nums[RSV_IDX_COUNT] || 0, persons: nums[RSV_IDX_GUESTS] || 0 };
     }
 
+    // Zeile unter der Begrüßung neben dem Datum: „Gesamt: 237 · Früh: 135 · Abend: 102“ (nur Gästezahlen, höchstens alle 60 s laden)
+    let rsvHeroAt = 0;
+    async function rsvLoadHero() {
+      const el = document.getElementById('dashRsv');
+      if (!el || Date.now() - rsvHeroAt < 60000) return;
+      rsvHeroAt = Date.now();
+      try {
+        const { data: row, error } = await _supabase.from('gastronaut_sync').select('data').eq('id', 1).single();
+        if (error || !row || !row.data) { el.classList.add('hidden'); return; }
+        const f = rsvShiftStats(row.data.fruhschicht).persons, a = rsvShiftStats(row.data.abendschicht).persons;
+        el.textContent = '📒 ' + fmL('Gesamt', 'Total') + ': ' + (f + a) + ' · ' + fmL('Früh', 'Early') + ': ' + f + ' · ' + fmL('Abend', 'Evening') + ': ' + a;
+        el.classList.remove('hidden');
+      } catch (e) { el.classList.add('hidden'); }
+    }
+
     async function openReservationsModal() {
       closeSettingsMenu();
       const m = fmOpen('rsvModal', {

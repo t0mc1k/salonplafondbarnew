@@ -106,6 +106,7 @@
 
       refreshDashboardBadges();
       loadDashboardCounts();
+      if (typeof rsvLoadHero === 'function') rsvLoadHero();
       if (typeof pushRenderBanner === 'function') pushRenderBanner();
     }
 
