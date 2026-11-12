@@ -11,24 +11,9 @@
     const RSV_IDX_COUNT = 0, RSV_IDX_GUESTS = 1;
 
     function rsvShiftStats(shift) {
-      const list = (shift && Array.isArray(shift.rezervacie)) ? shift.rezervacie : [];
       const nums = ((shift && Array.isArray(shift.suhrnne_hodnoty)) ? shift.suhrnne_hodnoty : [])
         .map(v => String(v).trim()).filter(v => /^\d+$/.test(v)).map(Number);
-      return { list, count: nums[RSV_IDX_COUNT] || 0, persons: nums[RSV_IDX_GUESTS] || 0 };
-    }
-
-    function rsvShiftHtml(title, shift) {
-      const st = rsvShiftStats(shift);
-      const rows = st.list.map(r => `<div class="fm-item"><div class="fm-item-main">
-          <div class="fm-row-flex" style="justify-content:space-between;flex-wrap:nowrap">
-            <div class="fm-item-title">${escapeHtml(r.kod_a_meno || '')}</div>
-            <span>${escapeHtml(r.cas_a_osoby || '')}</span>
-          </div>
-          ${r.stol ? `<div class="fm-item-sub">🪑 ${escapeHtml(r.stol)}</div>` : ''}
-        </div></div>`).join('');
-      return `<h4 style="margin:14px 0 6px;font-weight:700">${escapeHtml(title)}
-          <small style="font-weight:400;opacity:.75"> · ${st.count} ${escapeHtml(fmL('Reservierungen', 'reservations'))}</small></h4>
-        ${rows || `<p class="staff-empty">${escapeHtml(fmL('Keine Reservierungen.', 'No reservations.'))}</p>`}`;
+      return { count: nums[RSV_IDX_COUNT] || 0, persons: nums[RSV_IDX_GUESTS] || 0 };
     }
 
     async function openReservationsModal() {
@@ -60,7 +45,5 @@
           ${box(fmL('Früh', 'Early'), f)}
           ${box(fmL('Abend', 'Evening'), a)}
           ${box(fmL('Gesamt', 'Total'), { persons: f.persons + a.persons, count: f.count + a.count })}
-        </div>
-        ${rsvShiftHtml('☀️ ' + fmL('Frühschicht', 'Early shift'), d.fruhschicht)}
-        ${rsvShiftHtml('🌙 ' + fmL('Abendschicht', 'Evening shift'), d.abendschicht)}`);
+        </div>`);
     }
