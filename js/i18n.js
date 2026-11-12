@@ -1925,6 +1925,14 @@
  "set.closeOutsideSub": {
   "de": "Ein Klick auf den abgedunkelten Hintergrund schließt das Fenster. Hast du etwas eingetippt, bleibt es zur Sicherheit offen.",
   "en": "Clicking the dimmed background closes the window. If you have typed something, it stays open to be safe."
+ },
+ "dash.exclusive": {
+  "de": "Exklusiv-Schicht",
+  "en": "Exclusive shift"
+ },
+ "dash.exclusiveSub": {
+  "de": "Tische, Gäste & Gerichte",
+  "en": "Tables, guests & dishes"
  }
 };
 

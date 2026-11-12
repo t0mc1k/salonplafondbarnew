@@ -135,3 +135,14 @@ Reihenfolge einhalten:
 - Vor Ausführen des SQL zeigt die Glocke nichts an (außer „Neue Version“), und das Fenster weist auf das fehlende SQL hin.
 - `js/inbox.js` und `js/dialogs.js` sind in `js/version.js` unter `APP_SCRIPTS` eingetragen.
 
+## Update 4.2.00 (Exklusiv-Schicht: Tischtabelle)
+Reihenfolge einhalten:
+1. **SQL Editor:** `sql/4.2.00_exclusive.sql` ausführen (Tabellen `exclusive_shifts` und `exclusive_tables`, Funktion `exclusive_set_field`; alles nur für Manager/Developer). Bei „Potential issue detected“ → *Run query*. Das Skript darf mehrmals ausgeführt werden.
+2. **App hochladen:** alle geänderten Dateien aus dem 4.2.00-Paket ersetzen und die neue Datei `js/exclusive.js` mit hochladen. Danach die App einmal ganz schließen und neu öffnen. Die Edge Functions bleiben unverändert.
+3. **Prüfen** (als Manager): Dashboard → Bereich Bar → **🍽️ Exklusiv-Schicht** → **➕ Neue Schicht** → Tische wählen → Werte eintragen: Summen unten stimmen. **🖨️ Drucken** und **📊 Excel** testen.
+
+**Hinweise:**
+- Die Tabelle ist nur für Manager und Developer sichtbar und änderbar (auch in der Datenbank abgesichert). Eine Küchenansicht und Live-Anbindung sind bewusst noch nicht enthalten. Die Daten liegen in einfachen Tabellen, damit später eine andere App angebunden werden kann.
+- Die Excel-Datei wird ohne Zusatzbibliothek direkt in der App erzeugt (Aussehen wie die Vorlage: grüne Kopfzeile, gelbe Tisch-Nr., graue Summenzeile, fixierte Kopfzeile und Spalten, Querformat).
+- `js/exclusive.js` ist in `js/version.js` unter `APP_SCRIPTS` eingetragen.
+

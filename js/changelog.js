@@ -12,6 +12,14 @@
    ============================================================ */
 
     const CHANGELOG = [
+  { version: '4.2.00', range: '', date: 'November 2026', title: 'Exklusiv-Schicht: Tischtabelle mit Soll / Ist / Gerichten, Drucken und Excel',
+    changes: [
+      ['new', 'Neue Kachel „🍽️ Exklusiv-Schicht“ (nur Manager/Developer): Tabelle mit Soll, Ist, Tisch-Nr. und frei benennbaren Gerichten. Soll und Ist beginnen leer, Summen für Gäste und jedes Gericht stehen automatisch unten.'],
+      ['new', 'Gerichtsnamen direkt in der Kopfzeile ändern. Über „Gerichte“ Spalten hinzufügen, löschen, ordnen und als „Anzahl“ oder „Notiz“ (z. B. Medium Well) festlegen.'],
+      ['new', '„Tisch hinzufügen“ legt eine neue Zeile mit der nächsten Nummer an. Neue Schicht mit Standardtischen (101–110, 301–311, 401–411, 666), Auswahl einzelner Tische oder Übernahme der letzten Schicht.'],
+      ['new', '🖨️ Drucken (A4/A3 quer) und 📊 Excel-Export im Aussehen der Vorlage, Summen unten.'],
+      ['info', 'Einrichtung: sql/4.2.00_exclusive.sql im Supabase SQL Editor ausführen. Die Daten liegen in einfachen Tabellen (exclusive_shifts, exclusive_tables), damit später eine andere App angebunden werden kann.']
+    ] },
   { version: '4.1.07', range: '', date: 'November 2026', title: 'Mitteilungen (🔔), Fenster per Klick daneben schließen, TomiAI: vollständige Tagesliste',
     changes: [
       ['new', '🔔 Mitteilungen: Unter Begrüßung und Datum im Dashboard blinkt „🔔 3 neu“, wenn etwas für dich da ist (genehmigter Urlaub, Schichttausch, neuer Arbeitsplan, ...). Tippen öffnet die Liste und springt ins passende Fenster. Das funktioniert auch, wenn Push auf dem Gerät nicht ankommt.'],
