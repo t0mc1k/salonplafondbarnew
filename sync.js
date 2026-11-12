@@ -1,19 +1,23 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
+const { createClient } = require('@supabase/supabase-js');
 
-// DOPLŇ SVOJE PRIHLASOVACIE ÚDAJE DO GASTROONAUTU:
-const EMAIL = 'willkommen@salonplafond.wien';
-const PASSWORD = 'Salonplafond6';
+// Načítanie premenných z prostredia (z GitHub Secrets)
+const EMAIL = process.env.GASTRONAUT_EMAIL;
+const PASSWORD = process.env.GASTRONAUT_PASSWORD;
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const AUTH_FILE = path.join(__dirname, 'auth.json');
 
 async function stiahniData() {
-  console.log('1. Spúšťam prehliadač...');
-  const browser = await chromium.launch({ headless: false }); 
+  console.log('1. Spúšťam prehliadač v cloudovom prostredí...');
+  const browser = await chromium.launch({ headless: true }); // V cloude beží bez okna
   
   let contextOptions = {};
   if (fs.existsSync(AUTH_FILE)) {
-    console.log('> Našiel som uloženú reláciu (auth.json), skúšam ju použiť...');
     contextOptions = { storageState: AUTH_FILE };
   }
 
@@ -25,43 +29,29 @@ async function stiahniData() {
     await page.goto('https://app.gastronaut.ai/', { waitUntil: 'networkidle' }).catch(() => {});
     await page.waitForTimeout(3000);
 
-    // Skontrolujeme, či nás to hodilo na prihlasovaciu stránku (čiže auth.json exspiroval)
     if (page.url().includes('/auth/login')) {
-      console.log('> Uložená relácia vypršala alebo neplatí. Prihlasujem sa nanovo...');
-      
-      // Ak existuje starý nefunkčný auth.json, zmažeme ho
-      if (fs.existsSync(AUTH_FILE)) {
-        fs.unlinkSync(AUTH_FILE);
-      }
+      console.log('> Relácia vypršala alebo neexistuje, prihlasujem sa nanovo...');
+      if (fs.existsSync(AUTH_FILE)) fs.unlinkSync(AUTH_FILE);
 
       await page.fill('input[name="email"]', EMAIL);
       await page.fill('input[name="password"]', PASSWORD);
       await page.click('button[type="submit"]');
-
-      console.log('3. Čakám na prebehnutie prihlásenia...');
       await page.waitForTimeout(5000);
 
-      // Uložíme novú čerstvú reláciu
       await context.storageState({ path: AUTH_FILE });
-      console.log('> Nová relácia úspešne uložená do auth.json.');
-      
-      // Prejdeme na hlavnú stránku
       await page.goto('https://app.gastronaut.ai/', { waitUntil: 'networkidle' }).catch(() => {});
       await page.waitForTimeout(3000);
     } else {
-      console.log('> Úspešne prihlásený cez uloženú reláciu!');
+      console.log('> Úspešne prihlásený cez uloženú reláciu.');
     }
 
-    console.log('4. Hľadám a klikam na kachličku Reservierungen...');
+    console.log('3. Otváram rezervácie...');
     const rezervacieBtn = page.locator('button[aria-label="Reservierungen"]');
     await rezervacieBtn.waitFor({ state: 'visible', timeout: 20000 });
     await page.waitForTimeout(1000);
     await rezervacieBtn.click();
+    await page.waitForTimeout(6000);
 
-    console.log('5. Čakám na načítanie layoutu stolov (tablePlan)...');
-    await page.waitForTimeout(6000); // Priestor pre WebSocket dáta
-
-    // Funkcia na vyťahovanie štatistík a zoznamu z aktuálnej smeny
     async function vybalSmenuKomplet() {
       for (let i = 0; i < 4; i++) {
         await page.mouse.wheel(0, 1000);
@@ -102,10 +92,8 @@ async function stiahniData() {
       });
     }
 
-    // Bezpečné prepínanie smén
     async function prepniSmenu(nazovSmeny) {
       console.log(`Prepínam smenu na: ${nazovSmeny}...`);
-      
       const tlacidloSmeny = page.locator('button:has-text("Ganzer Tag"), button:has-text("FRÜHSCHICHT"), button:has-text("ABENDSCHICHT")').first();
       await tlacidloSmeny.click();
       await page.waitForTimeout(1500);
@@ -115,29 +103,35 @@ async function stiahniData() {
         const ciel = spans.find(el => el.innerText.trim() === hladanyText && el.offsetParent !== null);
         if (ciel) ciel.click();
       }, nazovSmeny);
-
       await page.waitForTimeout(5000);
     }
 
-    // 1. Frühschicht
     await prepniSmenu('FRÜHSCHICHT');
     const fruhData = await vybalSmenuKomplet();
-    console.log(`Frühschicht hotová – Počet v zozname: ${fruhData.pocet_v_zozname}`);
 
-    // 2. Abendschicht
     await prepniSmenu('ABENDSCHICHT');
     const abendData = await vybalSmenuKomplet();
-    console.log(`Abendschicht hotová – Počet v zozname: ${abendData.pocet_v_zozname}`);
 
-    // Finálny objekt
     const kompletnyVysledok = {
-      aktualizovane: new Date().toLocaleString('sk-SK'),
+      aktualizovane: new Date().toISOString(),
       fruhschicht: fruhData,
       abendschicht: abendData
     };
 
-    fs.writeFileSync('data.json', JSON.stringify(kompletnyVysledok, null, 2), 'utf-8');
-    console.log('HOTOVO! Všetky dáta úspešne uložené do data.json.');
+    console.log('Odosielam dáta do Supabase...');
+    const { error } = await supabase
+      .from('gastronaut_sync') // Názov tabuľky v Supabase
+      .upsert({ 
+        id: 1, 
+        data: kompletnyVysledok,
+        updated_at: new Date()
+      });
+
+    if (error) {
+      console.error('Chyba pri zápise do Supabase:', error.message);
+    } else {
+      console.log('HOTOVO! Dáta úspešne synchronizované so Supabase.');
+    }
 
   } catch (chyba) {
     console.error('Nastala chyba:', chyba);
