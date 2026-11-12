@@ -6,15 +6,15 @@
    sie sind also nicht garantiert aktuell. Nur Lesen. Rechte: sql/4.2.02_gastronaut.sql
    ============================================================ */
 
-    // Personenzahl aus „12:00 • 4 Pers.“ lesen
-    function rsvPersons(r) {
-      const m = String((r && r.cas_a_osoby) || '').match(/(\d+)\s*Pers/i);
-      return m ? parseInt(m[1], 10) : 0;
-    }
+    // suhrnne_hodnoty = z. B. ["FRÜHSCHICHT","Fertig","Abgesagt","46","135","16"]: die reinen Zahlen der Reihe nach.
+    // ANNAHME: 1. Zahl = Reservierungen, 2. Zahl = Gäste. Falls anders, hier die Positionen (0 = erste Zahl) ändern.
+    const RSV_IDX_COUNT = 0, RSV_IDX_GUESTS = 1;
 
     function rsvShiftStats(shift) {
       const list = (shift && Array.isArray(shift.rezervacie)) ? shift.rezervacie : [];
-      return { list, count: list.length, persons: list.reduce((s, r) => s + rsvPersons(r), 0) };
+      const nums = ((shift && Array.isArray(shift.suhrnne_hodnoty)) ? shift.suhrnne_hodnoty : [])
+        .map(v => String(v).trim()).filter(v => /^\d+$/.test(v)).map(Number);
+      return { list, count: nums[RSV_IDX_COUNT] || 0, persons: nums[RSV_IDX_GUESTS] || 0 };
     }
 
     function rsvShiftHtml(title, shift) {
@@ -27,7 +27,7 @@
           ${r.stol ? `<div class="fm-item-sub">🪑 ${escapeHtml(r.stol)}</div>` : ''}
         </div></div>`).join('');
       return `<h4 style="margin:14px 0 6px;font-weight:700">${escapeHtml(title)}
-          <small style="font-weight:400;opacity:.75"> · ${st.count} ${escapeHtml(fmL('Reservierungen', 'reservations'))} · ${st.persons} ${escapeHtml(fmL('Gäste', 'guests'))}</small></h4>
+          <small style="font-weight:400;opacity:.75"> · ${st.count} ${escapeHtml(fmL('Reservierungen', 'reservations'))}</small></h4>
         ${rows || `<p class="staff-empty">${escapeHtml(fmL('Keine Reservierungen.', 'No reservations.'))}</p>`}`;
     }
 
