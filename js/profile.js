@@ -210,6 +210,31 @@
       }
     }
 
+    // Leichter PIN (0000, 1234, 123456, 4321, 1111 ...) – wird beim Anmelden geprüft
+    function isWeakPin(pin) {
+      if (!/^\d{4,6}$/.test(pin || '')) return false;
+      if (/^(\d)\1+$/.test(pin)) return true;
+      const seq = '01234567890123456789', rev = '98765432109876543210';
+      return seq.indexOf(pin) !== -1 || rev.indexOf(pin) !== -1 ||
+        ['1212', '2580', '1122', '2020', '2024', '2025', '2026', '1004', '2000'].indexOf(pin) !== -1;
+    }
+
+    function showWeakPinNotice() {
+      const m = fmOpen('weakPinNotice', { title: '🔐 ' + fmL('Dein PIN ist zu leicht', 'Your PIN is too easy') });
+      m.setBody('<p>' + escapeHtml(fmL(
+        'Du hast dich mit einem sehr einfachen PIN (z. B. 1234 oder 0000) angemeldet. Andere könnten ihn leicht erraten und in deinem Namen arbeiten. Bitte wähle jetzt einen neuen PIN.',
+        'You logged in with a very simple PIN (e.g. 1234 or 0000). Others could easily guess it and act in your name. Please choose a new PIN now.')) + '</p>');
+      m.setFoot('<button type="button" class="ui-btn-ghost" onclick="fmClose(\'weakPinNotice\')">' + escapeHtml(fmL('Später', 'Later')) + '</button>' +
+        '<button type="button" class="ui-btn-primary" onclick="weakPinChangeNow()">' + escapeHtml(fmL('PIN jetzt ändern', 'Change PIN now')) + '</button>');
+    }
+
+    async function weakPinChangeNow() {
+      fmClose('weakPinNotice');
+      await openUserProfileModal();
+      const el = document.getElementById('profileInputNewPin');
+      if (el) { el.scrollIntoView({ block: 'center' }); el.focus(); }
+    }
+
     async function saveMyUserProfile() {
       const newPin = document.getElementById('profileInputNewPin').value.trim();
       const pin2 = document.getElementById('profileInputPin2').value.trim();

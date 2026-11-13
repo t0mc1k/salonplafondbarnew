@@ -296,7 +296,29 @@
       if (!file || !sp.scan) return;
       const status = document.getElementById('spScanStatus');
       if (!/^image\//.test(file.type)) { if (status) status.textContent = fmL('Bitte ein Bild auswählen.', 'Please choose an image.'); return; }
-      if (status) status.textContent = '⏳ ' + fmL('Die KI liest den Zettel (ca. 5–15 Sekunden) ...', 'The AI is reading the sheet (about 5–15 seconds) ...');
+      sp.scan.file = file;
+      await spScanRun();
+    }
+
+    // Animation + Fehlerbereich mit „Erneut versuchen“ (das Foto bleibt gespeichert)
+    function spScanBusy(on) {
+      const status = document.getElementById('spScanStatus');
+      if (!status) return;
+      if (on) status.innerHTML = '<span class="sp-spin"></span> ' + escapeHtml(fmL('Die KI liest den Zettel (ca. 5–15 Sekunden) ...', 'The AI is reading the sheet (about 5–15 seconds) ...'));
+    }
+    function spScanFail(text) {
+      const status = document.getElementById('spScanStatus');
+      if (!status) return;
+      status.innerHTML = escapeHtml('⚠️ ' + text) +
+        '<br><button type="button" class="ui-btn-primary" style="margin-top:.5rem;padding:.6rem 1rem" onclick="spScanRun()">🔄 ' + escapeHtml(fmL('Erneut versuchen (gleiches Foto)', 'Try again (same photo)')) + '</button>';
+    }
+
+    async function spScanRun() {
+      const file = sp.scan && sp.scan.file;
+      const status = document.getElementById('spScanStatus');
+      if (!file) return;
+      const input = { value: '' };
+      spScanBusy(true);
       try {
         let blob = (typeof compressImageFile === 'function') ? await compressImageFile(file, 1600, 0.82) : file;
         if (blob.size > 4.5 * 1024 * 1024 && typeof compressImageFile === 'function') blob = await compressImageFile(file, 1200, 0.7);
@@ -311,13 +333,12 @@
         });
         if (!sp.scan) return;   // Fenster inzwischen geschlossen
         if (error || !data || data.error || !Array.isArray(data.items)) {
-          if (status) status.textContent = '⚠️ ' + await spScanErrorText(error, data);
-          input.value = '';
+          const msg = await spScanErrorText(error, data);
+          if (sp.scan) spScanFail(msg);
           return;
         }
         if (!data.readable || !data.items.length) {
-          if (status) status.textContent = '⚠️ ' + fmL('Auf dem Foto wurde keine lesbare Liste gefunden. Bitte näher, gerader und heller fotografieren.', 'No readable list was found in the photo. Please take it closer, straighter and brighter.');
-          input.value = '';
+          spScanFail(fmL('Auf dem Foto wurde keine lesbare Liste gefunden. Bitte näher, gerader und heller fotografieren.', 'No readable list was found in the photo. Please take it closer, straighter and brighter.'));
           return;
         }
         const withDates = data.items.find(i => i.valid_from && i.valid_to);
@@ -331,10 +352,9 @@
         }));
         spScanReview();
       } catch (e) {
-        if (status) status.textContent = '⚠️ ' + (e && e.code === 'too_large'
+        if (sp.scan) spScanFail(e && e.code === 'too_large'
           ? fmL('Das Foto ist zu groß. Bitte ein kleineres Foto wählen.', 'The photo is too large. Please choose a smaller one.')
-          : fmL('Das Foto konnte nicht verarbeitet werden.', 'The photo could not be processed.'));
-        input.value = '';
+          : fmL('Das Foto konnte nicht verarbeitet werden. Netzwerkproblem?', 'The photo could not be processed. Network problem?'));
       }
     }
 

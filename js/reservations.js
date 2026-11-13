@@ -54,8 +54,8 @@
 
       m.setBody(`
         <p class="ui-head-sub" style="margin:0 0 10px">⚠️ ${escapeHtml(fmL(
-          'Die Daten werden alle 30 Minuten aktualisiert und sind nicht garantiert aktuell. Stand: ',
-          'Data is refreshed every 30 minutes and may not be up to date. Last update: '))}<b>${escapeHtml(when)}</b></p>
+          'Die Daten werden alle 30 Minuten aktualisiert (nicht zwischen 1:00 und 8:00 Uhr) und sind nicht garantiert aktuell. Stand: ',
+          'Data is refreshed every 30 minutes (not between 1:00 and 8:00 am) and may not be up to date. Last update: '))}<b>${escapeHtml(when)}</b></p>
         <div class="fm-row-flex" style="gap:8px;flex-wrap:wrap">
           ${box(fmL('Früh', 'Early'), f)}
           ${box(fmL('Abend', 'Evening'), a)}

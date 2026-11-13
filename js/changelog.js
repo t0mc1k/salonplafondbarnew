@@ -12,9 +12,15 @@
    ============================================================ */
 
     const CHANGELOG = [
+  { version: '4.2.03', range: '', date: 'November 2026', title: 'Zettel-Scan mit Ladeanzeige, Hinweis zu leichtem PIN',
+    changes: [
+      ['improved', 'Tagesangebot → Zettel einlesen: Beim Lesen dreht sich eine Ladeanzeige. Schlägt es fehl (z. B. KI überlastet), bleibt das Foto erhalten und „Erneut versuchen“ startet ohne neues Hochladen.'],
+      ['security', 'Wer sich mit einem sehr leichten PIN (z. B. 1234, 0000) anmeldet, bekommt einen Hinweis und kann den PIN direkt ändern.'],
+      ['info', 'Reservierungen: Hinweis ergänzt, dass die Daten zwischen 1:00 und 8:00 Uhr nicht aktualisiert werden.']
+    ] },
   { version: '4.2.02', range: '', date: 'November 2026', title: 'Neue Kachel „Reservierungen“ (Gastronaut)',
     changes: [
-      ['new', 'Neue Kachel „📒 Reservierungen“: zeigt Frühschicht, Abendschicht und den ganzen Tag (Reservierungen und Gäste) aus Gastronaut, inklusive Liste mit Uhrzeit, Name und Tisch.'],
+      ['new', 'Neue Kachel „📒 Reservierungen“: zeigt Frühschicht, Abendschicht und den ganzen Tag (Reservierungen und Gäste) aus Gastronaut, nur als Kartenzahlen, ohne Namen oder Tische.'],
       ['info', 'Die Daten werden alle 30 Minuten aktualisiert und sind nicht garantiert aktuell. Das steht auch im Fenster.'],
       ['info', 'Einrichtung: sql/4.2.02_gastronaut.sql im Supabase SQL Editor ausführen (Leserecht auf gastronaut_sync).']
     ] },

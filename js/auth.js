@@ -187,6 +187,7 @@
       rememberRecentLogin(row.out_name);
       currentWaiterName = row.out_name;
       sessionStorage.setItem('salon_waiter_name', currentWaiterName);
+      const usedWeakPin = isWeakPin(currentEnteredPin);
       currentEnteredPin = "";
       updatePinDisplay();
       await finalizeAppStartForStaff({
@@ -195,6 +196,7 @@
         avatar_url: row.out_avatar,
         can_edit_drinks: row.out_can_edit_drinks
       }, { fresh: true });
+      if (usedWeakPin) showWeakPinNotice();
     }
 
     async function finalizeAppStartForStaff(staffRecord, opts) {
