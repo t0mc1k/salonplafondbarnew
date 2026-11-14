@@ -2,7 +2,7 @@ name: Gastronaut Sync
 
 on:
   schedule:
-    - cron: '*/30 7-23,0 * * *'
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -29,3 +29,4 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: node sync.js
+      
